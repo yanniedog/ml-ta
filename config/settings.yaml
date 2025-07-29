@@ -1,0 +1,105 @@
+# Technical Analysis Configuration
+app:
+  name: "Technical Analysis Backtesting"
+  version: "1.0.0"
+  seed: 42
+
+data:
+  symbols: ["SOLUSDT", "PAXGUSDT"]
+  intervals: ["1m", "5m", "1h", "4h"]
+  horizons: [1, 3, 5]
+  start_date: "2023-01-01"
+  end_date: "2024-12-31"
+  
+binance:
+  base_url: "https://api.binance.com"
+  klines_endpoint: "/api/v3/klines"
+  limit: 1000
+  request_delay_ms: 325
+  max_retries: 5
+  backoff_factor: 2
+
+indicators:
+  sma: [50, 200]
+  ema: [12, 26, 50, 200]
+  macd: [12, 26, 9]
+  rsi: [14]
+  stochastic: [14, 3, 3]
+  bollinger: [20, 2]
+  parabolic_sar: [0.02, 0.2]
+  ichimoku: [9, 26, 52]
+  atr: [14]
+  cci: [20]
+  roc: [14]
+  williams_r: [14]
+  keltner: [20, 10, 2]
+  supertrend: [10, 3]
+  dpo: [20]
+  trix: [15, 9]
+  momentum: [10]
+  adx: [14]
+  mfi: [14]
+  chaikin_money_flow: [20]
+  vwap: [1]  # daily reset
+  chaikin_oscillator: [3, 10]
+  ease_of_movement: [14]
+  force_index: [13]
+  volume_roc: [14]
+  nvi: [255]
+  mfv: [20]
+  close_std: [20]
+
+model:
+  algorithm: "lightgbm"
+  params:
+    objective: "binary"
+    metric: "binary_logloss"
+    num_leaves: 64
+    learning_rate: 0.03
+    n_estimators: 1200
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_alpha: 1
+    reg_lambda: 3
+    early_stopping_rounds: 100
+    verbose: -1
+    random_state: 42
+
+walkforward:
+  training_bars:
+    "1m": 200000
+    "5m": 120000
+    "1h": 20000
+    "4h": 12000
+  test_bars:
+    "1m": 20000
+    "5m": 12000
+    "1h": 4000
+    "4h": 2500
+
+backtest:
+  taker_fee_bps: 10
+  slippage_bps: 2
+  position_threshold: 0.5
+  fixed_notional: 10000  # USD
+
+features:
+  lags: [1, 2, 3, 5]
+  interactions: true
+  regime_flags: true
+  z_score_windows: [20, 50, 100]
+
+paths:
+  data: "data"
+  logs: "logs"
+  artefacts: "artefacts"
+  tests: "tests"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/app.log"
+
+shap:
+  sample_size: 1000
+  max_display: 20
