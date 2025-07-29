@@ -610,5 +610,11 @@ class TechnicalIndicators:
         
         # Drop duplicate columns, keeping the last occurrence (the prefixed one)
         result_df = result_df.loc[:, ~result_df.columns.duplicated(keep='last')]
-        self.logger.info(f"Calculated {len(result_df.columns) - len(df.columns)} technical indicators")
+        
+        # Count actual new indicators added
+        original_columns = set(df.columns)
+        new_columns = set(result_df.columns) - original_columns
+        indicators_added = len(new_columns)
+        
+        self.logger.info(f"Calculated {indicators_added} technical indicators")
         return result_df

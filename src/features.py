@@ -133,12 +133,20 @@ class FeaturePipeline:
         # Replace infinity values
         X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
         
-        # Fill NaN with median
-        X_clean = X_clean.fillna(X_clean.median())
-        
-        # Clip extreme values
+        # Enhanced NaN handling
         for col in X_clean.columns:
             if X_clean[col].dtype in ['float64', 'float32']:
+                # Forward fill first, then backward fill
+                X_clean[col] = X_clean[col].fillna(method='ffill').fillna(method='bfill')
+                
+                # If still NaN, fill with median
+                if X_clean[col].isna().any():
+                    median_val = X_clean[col].median()
+                    if pd.isna(median_val):
+                        median_val = 0.0
+                    X_clean[col] = X_clean[col].fillna(median_val)
+                
+                # Clip extreme values
                 Q1 = X_clean[col].quantile(0.001)
                 Q3 = X_clean[col].quantile(0.999)
                 X_clean[col] = X_clean[col].clip(Q1, Q3)
