@@ -197,31 +197,19 @@ def demo_model_training(df_with_features, df_with_labels):
         config = load_config("config/settings.yaml")
         trainer = ModelTrainer(config)
         
-        # Ensure both DataFrames have the same index and length
-        # Get the common index between features and labels
+        # Ensure both DataFrames have the same index
         common_index = df_with_features.index.intersection(df_with_labels.index)
-        
-        if len(common_index) == 0:
-            logger.error("No common indices between feature matrix and label matrix")
-            return None
-        
-        # Align both DataFrames to the common index
         df_features_aligned = df_with_features.loc[common_index]
         df_labels_aligned = df_with_labels.loc[common_index]
-        
-        logger.info(f"Feature matrix shape after alignment: {df_features_aligned.shape}")
-        logger.info(f"Label matrix shape after alignment: {df_labels_aligned.shape}")
         
         # Combine features and labels
         df_combined = pd.concat([df_features_aligned, df_labels_aligned[['label_class_1']]], axis=1)
         
-        # Check for NaN values in the target variable
-        nan_count = df_combined['label_class_1'].isna().sum()
-        if nan_count > 0:
-            logger.warning(f"Found {nan_count} NaN values in target variable, dropping them")
-            df_combined = df_combined.dropna(subset=['label_class_1'])
+        # Remove any rows with NaN values
+        df_combined = df_combined.dropna()
         
-        logger.info(f"Final combined dataset shape: {df_combined.shape}")
+        logger.info(f"Aligned data shape: {df_combined.shape}")
+        logger.info(f"Label distribution: {df_combined['label_class_1'].value_counts().to_dict()}")
         
         # Train a single model
         results = trainer.train_single_model(
@@ -300,7 +288,7 @@ def demo_real_time_prediction(df_with_features, feature_engineer, trained_result
         return None
 
 
-def demo_backtesting(df_with_features, df_with_labels, training_results):
+def demo_backtesting(df_with_features, df_with_labels, trained_results):
     """Demonstrate backtesting functionality."""
     logger = logging.getLogger(__name__)
     logger.info("=" * 60)
@@ -311,52 +299,38 @@ def demo_backtesting(df_with_features, df_with_labels, training_results):
         config = load_config("config/settings.yaml")
         backtester = Backtester(config)
         
-        # Ensure both DataFrames have the same index and length
+        # Ensure both DataFrames have the same index
         common_index = df_with_features.index.intersection(df_with_labels.index)
-        
-        if len(common_index) == 0:
-            logger.error("No common indices between feature matrix and label matrix")
-            return None
-        
-        # Align both DataFrames to the common index
         df_features_aligned = df_with_features.loc[common_index]
         df_labels_aligned = df_with_labels.loc[common_index]
         
         # Combine features and labels
         df_combined = pd.concat([df_features_aligned, df_labels_aligned[['label_class_1']]], axis=1)
         
-        # Check for NaN values in the target variable
-        nan_count = df_combined['label_class_1'].isna().sum()
-        if nan_count > 0:
-            logger.warning(f"Found {nan_count} NaN values in target variable, dropping them")
-            df_combined = df_combined.dropna(subset=['label_class_1'])
+        # Remove any rows with NaN values
+        df_combined = df_combined.dropna()
         
-        logger.info(f"Backtest dataset shape: {df_combined.shape}")
+        # Run backtest
+        # First, we need to generate predictions for the backtest
+        model = trained_results['model']
+        X = df_combined.drop(columns=['label_class_1'])
+        predictions = model.predict(X)
+        probabilities = model.predict_proba(X)[:, 1]  # Probability of class 1
         
-        # Get the trained model from training results
-        if training_results and 'model' in training_results:
-            model = training_results['model']
-            
-            # Run backtest with model
-            backtest_results = backtester.run_backtest_with_model(
-                df_combined,
-                model,
-                'label_class_1'
-            )
-            
-            if backtest_results:
-                logger.info("Backtest completed successfully!")
-                performance = backtest_results.get('performance', {})
-                logger.info(f"Total return: {performance.get('total_return', 'N/A')}")
-                logger.info(f"Sharpe ratio: {performance.get('sharpe_ratio', 'N/A')}")
-                logger.info(f"Max drawdown: {performance.get('max_drawdown', 'N/A')}")
-                logger.info(f"Hit rate: {performance.get('hit_rate', 'N/A')}")
-                logger.info(f"Total trades: {performance.get('total_trades', 'N/A')}")
-            
-            return backtest_results
-        else:
-            logger.error("No trained model available for backtesting")
-            return None
+        backtest_results = backtester.run_backtest(
+            df_combined,
+            pd.Series(predictions, index=df_combined.index),
+            pd.Series(probabilities, index=df_combined.index)
+        )
+        
+        if backtest_results:
+            logger.info("Backtest completed successfully!")
+            logger.info(f"Total return: {backtest_results.get('total_return', 'N/A')}")
+            logger.info(f"Sharpe ratio: {backtest_results.get('sharpe_ratio', 'N/A')}")
+            logger.info(f"Max drawdown: {backtest_results.get('max_drawdown', 'N/A')}")
+            logger.info(f"Win rate: {backtest_results.get('win_rate', 'N/A')}")
+        
+        return backtest_results
         
     except Exception as e:
         logger.error(f"Backtesting failed: {e}")
@@ -414,13 +388,13 @@ def main():
     logger.info("DEMO COMPLETED SUCCESSFULLY!")
     logger.info("=" * 60)
     logger.info("All components are working correctly:")
-    logger.info("+ Data loading")
-    logger.info("+ Technical indicators calculation")
-    logger.info("+ Feature engineering")
-    logger.info("+ Label construction")
-    logger.info("+ Model training")
-    logger.info("+ Real-time prediction")
-    logger.info("+ Backtesting")
+    logger.info("✓ Data loading")
+    logger.info("✓ Technical indicators calculation")
+    logger.info("✓ Feature engineering")
+    logger.info("✓ Label construction")
+    logger.info("✓ Model training")
+    logger.info("✓ Real-time prediction")
+    logger.info("✓ Backtesting")
 
 
 if __name__ == "__main__":

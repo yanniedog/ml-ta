@@ -1,164 +1,459 @@
+#!/usr/bin/env python3
 """
-Model module for LightGBM implementation with enhanced evaluation and SHAP analysis.
+Enhanced model training module with ensemble methods and advanced ML techniques.
 """
-import logging
-from typing import Dict, List, Optional, Tuple
 
-import lightgbm as lgb
+import logging
 import numpy as np
 import pandas as pd
-import shap
-from sklearn.metrics import accuracy_score, classification_report, mean_squared_error, r2_score, roc_auc_score, precision_recall_fscore_support
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from typing import Dict, List, Optional, Tuple
+from sklearn.model_selection import TimeSeriesSplit, cross_val_score, train_test_split
+from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, classification_report, precision_recall_fscore_support
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
+import lightgbm as lgb
+import xgboost as xgb
+from catboost import CatBoostClassifier
+import optuna
+import shap
+import joblib
+from pathlib import Path
+import warnings
+warnings.filterwarnings('ignore')
+
+logger = logging.getLogger(__name__)
 
 from .utils import Config
 from .indicators import TechnicalIndicators
-from .features import FeatureEngineer
+from .features import FeatureEngineer, FeaturePipeline
+
+
+class TimeSeriesValidator:
+    """Time series validation with proper train/test separation."""
+    
+    def __init__(self, n_splits: int = 5, test_size: float = 0.2):
+        self.n_splits = n_splits
+        self.test_size = test_size
+        self.logger = logging.getLogger(__name__)
+    
+    def split_data(self, df: pd.DataFrame) -> List[Tuple[pd.DataFrame, pd.DataFrame]]:
+        """Split data chronologically for time series validation."""
+        splits = []
+        total_rows = len(df)
+        test_rows = int(total_rows * self.test_size)
+        
+        for i in range(self.n_splits):
+            # Calculate split points
+            test_start = total_rows - (self.n_splits - i) * test_rows
+            test_end = test_start + test_rows
+            
+            # Ensure valid ranges
+            test_start = max(0, test_start)
+            test_end = min(total_rows, test_end)
+            
+            if test_start >= test_end:
+                continue
+            
+            # Split data
+            train_data = df.iloc[:test_start]
+            test_data = df.iloc[test_start:test_end]
+            
+            if len(train_data) > 0 and len(test_data) > 0:
+                splits.append((train_data, test_data))
+                self.logger.info(f"Split {i+1}: Train {len(train_data)}, Test {len(test_data)}")
+        
+        return splits
+
+
+class AdvancedModelTrainer:
+    """Advanced model trainer with ensemble methods and hyperparameter optimization."""
+    
+    def __init__(self, config):
+        self.config = config
+        self.models = {}
+        self.scalers = {}
+        self.feature_importance = {}
+        self.ensemble_model = None
+        self.validator = TimeSeriesValidator(n_splits=5)
+        self.feature_engineers = {}  # Store fitted feature engineers
+        
+    def optimize_hyperparameters(self, X, y, n_trials=50):
+        """Optimize hyperparameters using Optuna with TimeSeriesSplit."""
+        logger.info("Starting hyperparameter optimization...")
+        
+        # Clean data first
+        X_clean = X.copy()
+        X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
+        X_clean = X_clean.fillna(X_clean.median())
+        
+        # Clip extreme values
+        for col in X_clean.columns:
+            if X_clean[col].dtype in ['float64', 'float32']:
+                Q1 = X_clean[col].quantile(0.001)
+                Q3 = X_clean[col].quantile(0.999)
+                X_clean[col] = X_clean[col].clip(Q1, Q3)
+        
+        def objective(trial):
+            try:
+                # LightGBM parameters with stronger regularization to prevent overfitting
+                lgb_params = {
+                    'num_leaves': trial.suggest_int('num_leaves', 10, 100),
+                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
+                    'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
+                    'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
+                    'bagging_freq': trial.suggest_int('bagging_freq', 1, 10),
+                    'min_child_samples': trial.suggest_int('min_child_samples', 5, 50),
+                    'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
+                    'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
+                    # Add stronger regularization
+                    'min_data_in_leaf': trial.suggest_int('min_data_in_leaf', 10, 100),
+                    'max_depth': trial.suggest_int('max_depth', 3, 10),
+                    'subsample': trial.suggest_float('subsample', 0.6, 1.0),
+                    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
+                    'early_stopping_rounds': 50,
+                    'verbose': -1
+                }
+                
+                # Use TimeSeriesSplit for proper validation
+                tscv = TimeSeriesSplit(n_splits=3)
+                scores = []
+                
+                for train_idx, val_idx in tscv.split(X_clean):
+                    X_train_fold, X_val_fold = X_clean.iloc[train_idx], X_clean.iloc[val_idx]
+                    y_train_fold, y_val_fold = y.iloc[train_idx], y.iloc[val_idx]
+                    
+                    # Train model
+                    model = lgb.LGBMClassifier(**lgb_params, random_state=42)
+                    model.fit(X_train_fold, y_train_fold, 
+                            eval_set=[(X_val_fold, y_val_fold)],
+                            callbacks=[lgb.early_stopping(50), lgb.log_evaluation(0)])
+                    
+                    # Predict
+                    y_pred_proba = model.predict_proba(X_val_fold)[:, 1]
+                    
+                    # Calculate ROC AUC (better for imbalanced data)
+                    try:
+                        score = roc_auc_score(y_val_fold, y_pred_proba)
+                        scores.append(score)
+                    except:
+                        scores.append(0.5)  # Default score for edge cases
+                
+                # Return mean score
+                return np.mean(scores)
+                
+            except Exception as e:
+                logger.warning(f"Trial failed: {e}")
+                return 0.5  # Return default score for failed trials
+        
+        study = optuna.create_study(direction='maximize')
+        study.optimize(objective, n_trials=n_trials)
+        
+        logger.info(f"Best hyperparameters found: {study.best_params}")
+        logger.info(f"Best CV score: {study.best_value:.4f}")
+        
+        return study.best_params
+    
+    def train_ensemble_model(self, X, y, label_name, task_type='classification', feature_engineer=None):
+        """Train an ensemble model with multiple algorithms using proper validation."""
+        logger.info(f"Training ensemble model for {label_name}")
+        
+        # Store the feature engineer if provided
+        if feature_engineer is not None:
+            self.feature_engineers[label_name] = feature_engineer
+        
+        # Clean data - handle infinity and extreme values more aggressively
+        X_clean = X.copy()
+        X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
+        X_clean = X_clean.fillna(X_clean.median())
+        
+        # More aggressive clipping for extreme values
+        for col in X_clean.columns:
+            if X_clean[col].dtype in ['float64', 'float32']:
+                Q1 = X_clean[col].quantile(0.001)  # More aggressive
+                Q3 = X_clean[col].quantile(0.999)  # More aggressive
+                X_clean[col] = X_clean[col].clip(Q1, Q3)
+                
+                # Additional check for very large values
+                if X_clean[col].abs().max() > 1e6:
+                    X_clean[col] = X_clean[col].clip(-1e6, 1e6)
+        
+        logger.info(f"Data cleaned: {X_clean.shape}")
+        logger.info(f"Infinity values removed: {(X == np.inf).sum().sum()}")
+        
+        # Use TimeSeriesSplit for proper validation
+        tscv = TimeSeriesSplit(n_splits=3)
+        
+        # Train individual models
+        models = {}
+        scores = {}
+        
+        # LightGBM
+        logger.info("Training lgb model...")
+        lgb_params = self.optimize_hyperparameters(X_clean, y, n_trials=20)
+        lgb_model = lgb.LGBMClassifier(**lgb_params, random_state=42)
+        
+        # Cross-validate with TimeSeriesSplit
+        lgb_scores = cross_val_score(lgb_model, X_clean, y, cv=tscv, scoring='roc_auc')
+        lgb_model.fit(X_clean, y)
+        
+        models['lgb'] = lgb_model
+        scores['lgb'] = {
+            'roc_auc': lgb_scores.mean(),
+            'roc_auc_std': lgb_scores.std(),
+            'accuracy': accuracy_score(y, lgb_model.predict(X_clean)),
+            'precision': precision_score(y, lgb_model.predict(X_clean)),
+            'recall': recall_score(y, lgb_model.predict(X_clean)),
+            'f1': f1_score(y, lgb_model.predict(X_clean))
+        }
+        
+        # Random Forest
+        logger.info("Training rf model...")
+        rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf_scores = cross_val_score(rf_model, X_clean, y, cv=tscv, scoring='roc_auc')
+        rf_model.fit(X_clean, y)
+        
+        models['rf'] = rf_model
+        scores['rf'] = {
+            'roc_auc': rf_scores.mean(),
+            'roc_auc_std': rf_scores.std(),
+            'accuracy': accuracy_score(y, rf_model.predict(X_clean)),
+            'precision': precision_score(y, rf_model.predict(X_clean)),
+            'recall': recall_score(y, rf_model.predict(X_clean)),
+            'f1': f1_score(y, rf_model.predict(X_clean))
+        }
+        
+        # Gradient Boosting
+        logger.info("Training gb model...")
+        gb_model = GradientBoostingClassifier(n_estimators=100, random_state=42)
+        gb_scores = cross_val_score(gb_model, X_clean, y, cv=tscv, scoring='roc_auc')
+        gb_model.fit(X_clean, y)
+        
+        models['gb'] = gb_model
+        scores['gb'] = {
+            'roc_auc': gb_scores.mean(),
+            'roc_auc_std': gb_scores.std(),
+            'accuracy': accuracy_score(y, gb_model.predict(X_clean)),
+            'precision': precision_score(y, gb_model.predict(X_clean)),
+            'recall': recall_score(y, gb_model.predict(X_clean)),
+            'f1': f1_score(y, gb_model.predict(X_clean))
+        }
+        
+        # Create ensemble
+        logger.info("Training ensemble model...")
+        ensemble_model = VotingClassifier(
+            estimators=[
+                ('lgb', models['lgb']),
+                ('rf', models['rf']),
+                ('gb', models['gb'])
+            ],
+            voting='soft'
+        )
+        
+        ensemble_scores = cross_val_score(ensemble_model, X_clean, y, cv=tscv, scoring='roc_auc')
+        ensemble_model.fit(X_clean, y)
+        
+        models['ensemble'] = ensemble_model
+        scores['ensemble'] = {
+            'roc_auc': ensemble_scores.mean(),
+            'roc_auc_std': ensemble_scores.std(),
+            'accuracy': accuracy_score(y, ensemble_model.predict(X_clean)),
+            'precision': precision_score(y, ensemble_model.predict(X_clean)),
+            'recall': recall_score(y, ensemble_model.predict(X_clean)),
+            'f1': f1_score(y, ensemble_model.predict(X_clean))
+        }
+        
+        # Store results
+        self.models = models
+        self.ensemble_model = ensemble_model
+        
+        # Calculate feature importance for LightGBM
+        if hasattr(lgb_model, 'feature_importances_'):
+            feature_importance = pd.DataFrame({
+                'feature': X_clean.columns,
+                'importance': lgb_model.feature_importances_
+            }).sort_values('importance', ascending=False)
+            self.feature_importance = feature_importance
+        
+        return {
+            'models': models,
+            'scores': scores,
+            'feature_importance': self.feature_importance
+        }
+    
+    def cross_validate_ensemble(self, X, y, n_splits=5):
+        """Cross-validate ensemble model with TimeSeriesSplit."""
+        tscv = TimeSeriesSplit(n_splits=n_splits)
+        
+        cv_scores = {
+            'accuracy': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='accuracy'),
+            'roc_auc': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='roc_auc'),
+            'precision': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='precision'),
+            'recall': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='recall'),
+            'f1': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='f1')
+        }
+        
+        return cv_scores
+    
+    def get_feature_importance(self, X, label_name):
+        """Get feature importance from trained model."""
+        if self.feature_importance is not None:
+            return self.feature_importance
+        else:
+            logger.warning("No feature importance available")
+            return pd.DataFrame()
+    
+    def predict_ensemble(self, X):
+        """Make ensemble predictions."""
+        if self.ensemble_model is None:
+            raise ValueError("No ensemble model trained")
+        
+        return self.ensemble_model.predict(X)
+    
+    def save_models(self, filepath):
+        """Save trained models."""
+        model_data = {
+            'models': self.models,
+            'ensemble_model': self.ensemble_model,
+            'feature_importance': self.feature_importance
+        }
+        joblib.dump(model_data, filepath)
+        logger.info(f"Models saved to {filepath}")
+    
+    def load_models(self, filepath):
+        """Load trained models."""
+        model_data = joblib.load(filepath)
+        self.models = model_data['models']
+        self.ensemble_model = model_data['ensemble_model']
+        self.feature_importance = model_data['feature_importance']
+        logger.info(f"Models loaded from {filepath}")
 
 
 class LightGBMModel:
-    """LightGBM model implementation for technical analysis with enhanced evaluation."""
+    """LightGBM model with proper time series validation."""
     
     def __init__(self, config: Config):
         self.config = config
         self.logger = logging.getLogger(__name__)
         self.model = None
         self.feature_importance = None
-        self.validation_metrics = {}
-        self.shap_values = None
-        self.explainer = None
+        self.is_trained = False
         
     def prepare_features_and_labels(self, df: pd.DataFrame, label_column: str) -> Tuple[pd.DataFrame, pd.Series]:
-        """Prepare features and labels from DataFrame."""
-        # Remove timestamp and label columns from features
-        exclude_columns = ['timestamp', label_column]
+        """Prepare features and labels with proper train/test separation."""
+        # Remove timestamp and labels from features
+        exclude_columns = ['timestamp']
+        label_columns = [col for col in df.columns if col.startswith('label_')]
+        return_columns = [col for col in df.columns if col.startswith('return_')]
+        exclude_columns.extend(label_columns)
+        exclude_columns.extend(return_columns)
+        
         feature_columns = [col for col in df.columns if col not in exclude_columns]
-        
-        # Also exclude return columns (they contain future information)
-        feature_columns = [col for col in feature_columns if not col.startswith('return_')]
-        
-        X = df[feature_columns]
+        X = df[feature_columns].copy()
         y = df[label_column]
         
-        self.logger.info(f"Prepared {len(feature_columns)} features for {len(df)} samples")
+        # Ensure all features are numeric
+        for col in X.columns:
+            if X[col].dtype == 'object' or X[col].dtype == 'datetime64[ns]':
+                X = X.drop(columns=[col])
+        
+        # Align data
+        common_index = X.index.intersection(y.index)
+        X = X.loc[common_index]
+        y = y.loc[common_index]
+        
         return X, y
     
     def train_model(self, X_train: pd.DataFrame, y_train: pd.Series, 
                    X_val: pd.DataFrame, y_val: pd.Series,
                    task_type: str = "classification") -> lgb.LGBMClassifier:
-        """Train LightGBM model with enhanced parameters."""
-        self.logger.info(f"Training {task_type} model")
+        """Train LightGBM model with proper validation."""
+        self.logger.info("Training LightGBM model")
         
-        # Get model parameters
-        params = self.config.model["params"].copy()
+        # Model parameters
+        params = {
+            'objective': 'binary' if task_type == "classification" else 'regression',
+            'metric': 'binary_logloss' if task_type == "classification" else 'rmse',
+            'boosting_type': 'gbdt',
+            'num_leaves': 64,
+            'learning_rate': 0.03,
+            'n_estimators': 1200,
+            'subsample': 0.8,
+            'colsample_bytree': 0.8,
+            'reg_alpha': 1,
+            'reg_lambda': 3,
+            'early_stopping_rounds': 100,
+            'verbose': -1,
+            'random_state': 42
+        }
         
-        if task_type == "classification":
-            model = lgb.LGBMClassifier(**params)
-        else:
-            # For regression, change objective
-            params['objective'] = 'regression'
-            params['metric'] = 'rmse'
-            model = lgb.LGBMRegressor(**params)
+        # Create dataset
+        train_data = lgb.Dataset(X_train, label=y_train)
+        val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
         
         # Train model
-        model.fit(
-            X_train, y_train,
-            eval_set=[(X_val, y_val)],
-            callbacks=[lgb.early_stopping(stopping_rounds=params['early_stopping_rounds'])]
+        self.model = lgb.train(
+            params,
+            train_data,
+            valid_sets=[val_data],
+            callbacks=[lgb.log_evaluation(0)]
         )
         
-        self.model = model
-        self.logger.info("Model training completed")
-        return model
+        self.is_trained = True
+        self.logger.info("LightGBM model training completed")
+        
+        return self.model
     
     def evaluate_model(self, X_test: pd.DataFrame, y_test: pd.Series, 
                       task_type: str = "classification") -> Dict:
-        """Evaluate model performance with comprehensive metrics."""
-        if self.model is None:
+        """Evaluate model performance."""
+        if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        # Make predictions
-        y_pred = self.model.predict(X_test)
-        y_pred_proba = self.model.predict_proba(X_test) if task_type == "classification" else None
-        
-        # Calculate metrics
-        metrics = {}
+        predictions = self.model.predict(X_test)
         
         if task_type == "classification":
-            metrics['accuracy'] = accuracy_score(y_test, y_pred)
-            metrics['classification_report'] = classification_report(y_test, y_pred, output_dict=True)
+            # Convert probabilities to binary predictions
+            binary_predictions = (predictions > 0.5).astype(int)
             
-            # Additional classification metrics
-            if y_pred_proba is not None:
-                metrics['roc_auc'] = roc_auc_score(y_test, y_pred_proba[:, 1])
-                metrics['positive_probability_mean'] = y_pred_proba[:, 1].mean()
-                metrics['positive_probability_std'] = y_pred_proba[:, 1].std()
-            
-            # Precision, Recall, F1 for each class
-            precision, recall, f1, support = precision_recall_fscore_support(y_test, y_pred, average=None)
-            metrics['precision_per_class'] = precision.tolist()
-            metrics['recall_per_class'] = recall.tolist()
-            metrics['f1_per_class'] = f1.tolist()
-            metrics['support_per_class'] = support.tolist()
+            metrics = {
+                'accuracy': accuracy_score(y_test, binary_predictions),
+                'roc_auc': roc_auc_score(y_test, predictions),
+                'precision': precision_score(y_test, binary_predictions),
+                'recall': recall_score(y_test, binary_predictions),
+                'f1': f1_score(y_test, binary_predictions)
+            }
+        else:
+            # Regression metrics
+            from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+            metrics = {
+                'rmse': np.sqrt(mean_squared_error(y_test, predictions)),
+                'mae': mean_absolute_error(y_test, predictions),
+                'r2': r2_score(y_test, predictions)
+            }
         
-        else:  # regression
-            metrics['mse'] = mean_squared_error(y_test, y_pred)
-            metrics['rmse'] = np.sqrt(metrics['mse'])
-            metrics['r2'] = r2_score(y_test, y_pred)
-            metrics['mae'] = np.mean(np.abs(y_test - y_pred))
-            metrics['mape'] = np.mean(np.abs((y_test - y_pred) / y_test)) * 100
-        
-        self.logger.info(f"Model evaluation completed: {metrics}")
         return metrics
     
     def cross_validate(self, X: pd.DataFrame, y: pd.Series, 
-                      task_type: str = "classification", cv_folds: int = 5) -> Dict:
-        """Perform cross-validation with comprehensive metrics."""
-        self.logger.info(f"Performing {cv_folds}-fold cross-validation")
+                      task_type: str = "classification", cv_folds: int = 3) -> Dict:
+        """Cross-validate model using TimeSeriesSplit."""
+        tscv = TimeSeriesSplit(n_splits=cv_folds)
         
-        if task_type == "classification":
-            cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=42)
-            scoring = ['accuracy', 'roc_auc', 'precision', 'recall', 'f1']
-        else:
-            cv = cv_folds
-            scoring = ['neg_mean_squared_error', 'r2', 'neg_mean_absolute_error']
+        cv_scores = {
+            'accuracy': cross_val_score(self.model, X, y, cv=tscv, scoring='accuracy'),
+            'roc_auc': cross_val_score(self.model, X, y, cv=tscv, scoring='roc_auc'),
+            'precision': cross_val_score(self.model, X, y, cv=tscv, scoring='precision'),
+            'recall': cross_val_score(self.model, X, y, cv=tscv, scoring='recall'),
+            'f1': cross_val_score(self.model, X, y, cv=tscv, scoring='f1')
+        }
         
-        cv_scores = {}
-        for metric in scoring:
-            try:
-                # Create a copy of the model without early stopping for CV
-                if hasattr(self.model, 'get_params'):
-                    model_params = self.model.get_params()
-                    # Remove early stopping parameters for CV
-                    model_params.pop('callbacks', None)
-                    model_params.pop('eval_set', None)
-                    
-                    if task_type == "classification":
-                        cv_model = lgb.LGBMClassifier(**model_params)
-                    else:
-                        cv_model = lgb.LGBMRegressor(**model_params)
-                    
-                    scores = cross_val_score(cv_model, X, y, cv=cv, scoring=metric)
-                    cv_scores[f'cv_{metric}'] = {
-                        'mean': scores.mean(),
-                        'std': scores.std(),
-                        'scores': scores.tolist()
-                    }
-                else:
-                    self.logger.warning(f"Could not perform CV for metric {metric}")
-            except Exception as e:
-                self.logger.warning(f"CV failed for metric {metric}: {e}")
-        
-        self.logger.info(f"Cross-validation completed: {cv_scores}")
         return cv_scores
     
     def compute_shap_values(self, X: pd.DataFrame, sample_size: Optional[int] = None) -> Dict:
         """Compute SHAP values for model interpretability."""
-        if self.model is None:
+        if not self.is_trained:
             raise ValueError("Model not trained yet")
-        
-        self.logger.info("Computing SHAP values")
         
         # Sample data if specified
         if sample_size and len(X) > sample_size:
@@ -166,461 +461,427 @@ class LightGBMModel:
         else:
             X_sample = X
         
-        # Create explainer
-        self.explainer = shap.TreeExplainer(self.model)
-        self.shap_values = self.explainer.shap_values(X_sample)
+        # Compute SHAP values
+        explainer = shap.TreeExplainer(self.model)
+        shap_values = explainer.shap_values(X_sample)
         
-        # Calculate feature importance from SHAP
-        if isinstance(self.shap_values, list):
-            # For classification, use the positive class SHAP values
-            shap_importance = np.abs(self.shap_values[1]).mean(axis=0)
-        else:
-            shap_importance = np.abs(self.shap_values).mean(axis=0)
-        
-        feature_importance_df = pd.DataFrame({
+        # Create feature importance DataFrame
+        feature_importance = pd.DataFrame({
             'feature': X_sample.columns,
-            'shap_importance': shap_importance
-        }).sort_values('shap_importance', ascending=False)
-        
-        self.logger.info(f"SHAP analysis completed. Top features: {feature_importance_df.head(10)['feature'].tolist()}")
+            'importance': np.abs(shap_values).mean(0)
+        }).sort_values('importance', ascending=False)
         
         return {
-            'shap_values': self.shap_values,
-            'explainer': self.explainer,
-            'feature_importance': feature_importance_df,
-            'expected_value': self.explainer.expected_value
+            'shap_values': shap_values,
+            'feature_importance': feature_importance,
+            'explainer': explainer
         }
     
     def get_feature_importance(self) -> pd.DataFrame:
         """Get feature importance from trained model."""
         if self.model is None:
-            raise ValueError("Model not trained yet")
+            return pd.DataFrame()
         
-        importance = self.model.feature_importances_
-        feature_names = self.model.feature_name_
+        importance = self.model.feature_importance(importance_type='gain')
+        feature_names = self.model.feature_name()
         
-        feature_importance_df = pd.DataFrame({
+        feature_importance = pd.DataFrame({
             'feature': feature_names,
             'importance': importance
         }).sort_values('importance', ascending=False)
         
-        self.feature_importance = feature_importance_df
-        return feature_importance_df
+        return feature_importance
     
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        """Make predictions using trained model."""
-        if self.model is None:
+        """Make predictions."""
+        if not self.is_trained:
             raise ValueError("Model not trained yet")
         
         return self.model.predict(X)
     
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        """Make probability predictions using trained model."""
-        if self.model is None:
+        """Make probability predictions."""
+        if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        if hasattr(self.model, 'predict_proba'):
-            return self.model.predict_proba(X)
-        else:
-            raise ValueError("Model does not support probability predictions")
+        return self.model.predict(X)
     
     def save_model(self, filepath: str) -> None:
-        """Save trained model to file."""
-        if self.model is None:
+        """Save trained model."""
+        if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        self.model.booster_.save_model(filepath)
+        self.model.save_model(filepath)
         self.logger.info(f"Model saved to {filepath}")
     
     def load_model(self, filepath: str, task_type: str = "classification") -> None:
-        """Load trained model from file."""
-        if task_type == "classification":
-            self.model = lgb.LGBMClassifier()
-        else:
-            self.model = lgb.LGBMRegressor()
-        
-        self.model.booster_ = lgb.Booster(model_file=filepath)
+        """Load trained model."""
+        self.model = lgb.Booster(model_file=filepath)
+        self.is_trained = True
         self.logger.info(f"Model loaded from {filepath}")
 
 
 class ModelTrainer:
-    """Enhanced model trainer with hyperparameter tuning and comprehensive evaluation."""
+    """Model trainer with proper time series validation."""
     
     def __init__(self, config: Config):
         self.config = config
         self.logger = logging.getLogger(__name__)
         self.models = {}
-        self.results = {}
-        self.best_model = None
-        self.best_score = 0
-    
+        self.feature_engineers = {}
+        self.validators = {}
+        
     def train_single_model(self, df: pd.DataFrame, label_column: str, 
                           task_type: str = "classification",
                           test_size: float = 0.2, random_state: int = 42,
                           perform_cv: bool = True, compute_shap: bool = True) -> Dict:
-        """Train a single model with comprehensive evaluation."""
-        self.logger.info(f"Training model for {label_column} ({task_type})")
+        """Train a single model with proper time series validation."""
+        self.logger.info(f"Training model for {label_column}")
         
-        # Prepare features and labels
-        X, y = self.prepare_features_and_labels(df, label_column)
+        # Create feature engineer
+        feature_engineer = FeatureEngineer(self.config)
         
-        # Auto-detect task type if not specified
-        if task_type == "auto":
-            if label_column.startswith('label_reg'):
-                task_type = "regression"
-            elif label_column.startswith('label_class'):
-                task_type = "classification"
-            else:
-                # Check if target is binary
-                unique_values = y.nunique()
-                if unique_values == 2:
-                    task_type = "classification"
-                else:
-                    task_type = "regression"
+        # Split data chronologically
+        split_idx = int(len(df) * (1 - test_size))
+        train_df = df.iloc[:split_idx]
+        test_df = df.iloc[split_idx:]
         
-        # For regression tasks, ensure we have enough data
-        if task_type == "regression" and len(y) < 10:
-            self.logger.warning(f"Insufficient data for regression: {len(y)} samples")
-            return {}
+        self.logger.info(f"Train set: {len(train_df)}, Test set: {len(test_df)}")
         
-        # Split data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=random_state, 
-            stratify=y if task_type == "classification" and y.nunique() > 1 else None
-        )
+        # Build features for training data
+        X_train = feature_engineer.build_feature_matrix(train_df, fit_pipeline=True)
+        y_train = train_df[label_column]
         
-        # Further split training data for validation
-        X_train, X_val, y_train, y_val = train_test_split(
-            X_train, y_train, test_size=0.2, random_state=random_state,
-            stratify=y_train if task_type == "classification" and y_train.nunique() > 1 else None
-        )
+        # Build features for test data (no fitting)
+        X_test = feature_engineer.build_feature_matrix(test_df, fit_pipeline=False)
+        y_test = test_df[label_column]
         
-        # Create and train model
+        # Align data
+        common_train_idx = X_train.index.intersection(y_train.index)
+        X_train = X_train.loc[common_train_idx]
+        y_train = y_train.loc[common_train_idx]
+        
+        common_test_idx = X_test.index.intersection(y_test.index)
+        X_test = X_test.loc[common_test_idx]
+        y_test = y_test.loc[common_test_idx]
+        
+        # Train model
         model = LightGBMModel(self.config)
-        trained_model = model.train_model(X_train, y_train, X_val, y_val, task_type)
+        trained_model = model.train_model(X_train, y_train, X_test, y_test, task_type)
         
-        # Evaluate on test set
+        # Evaluate model
         test_metrics = model.evaluate_model(X_test, y_test, task_type)
         
-        # Perform cross-validation if requested
-        cv_results = None
+        # Cross-validation
+        cv_scores = None
         if perform_cv:
-            cv_results = model.cross_validate(X, y, task_type)
+            cv_scores = model.cross_validate(X_train, y_train, task_type)
         
-        # Compute SHAP values if requested
+        # SHAP analysis
         shap_results = None
         if compute_shap:
-            shap_results = model.compute_shap_values(X, sample_size=min(1000, len(X)))
-        
-        # Get feature importance
-        feature_importance = model.get_feature_importance()
+            shap_results = model.compute_shap_values(X_test)
         
         # Store results
         results = {
             'model': model,
-            'label_column': label_column,
-            'task_type': task_type,
+            'feature_engineer': feature_engineer,
             'test_metrics': test_metrics,
-            'cv_results': cv_results,
+            'cv_scores': cv_scores,
             'shap_results': shap_results,
-            'feature_importance': feature_importance,
-            'data_shape': X.shape,
-            'train_shape': X_train.shape,
-            'val_shape': X_val.shape,
-            'test_shape': X_test.shape
+            'feature_importance': model.get_feature_importance()
         }
         
-        self.models[label_column] = model
-        self.results[label_column] = results
+        self.models[label_column] = results
+        self.feature_engineers[label_column] = feature_engineer
         
-        # Update best model
-        if task_type == "classification":
-            score = test_metrics.get('accuracy', 0)
-        else:
-            score = test_metrics.get('r2', 0)
+        self.logger.info(f"Model training completed. Test accuracy: {test_metrics.get('accuracy', 0):.4f}")
         
-        if score > self.best_score:
-            self.best_score = score
-            self.best_model = model
-        
-        self.logger.info(f"Model training completed for {label_column}")
         return results
     
     def hyperparameter_tuning(self, df: pd.DataFrame, label_column: str,
                             task_type: str = "classification", n_trials: int = 50) -> Dict:
-        """Perform hyperparameter tuning using Optuna."""
-        try:
-            import optuna
-        except ImportError:
-            self.logger.warning("Optuna not available. Skipping hyperparameter tuning.")
-            return {}
+        """Hyperparameter tuning with Optuna."""
+        self.logger.info("Starting hyperparameter tuning")
         
-        self.logger.info(f"Starting hyperparameter tuning for {label_column}")
+        # Prepare features and labels
+        feature_engineer = FeatureEngineer(self.config)
+        X = feature_engineer.build_feature_matrix(df, fit_pipeline=True)
+        y = df[label_column]
         
-        X, y = self.prepare_features_and_labels(df, label_column)
+        # Align data
+        common_idx = X.index.intersection(y.index)
+        X = X.loc[common_idx]
+        y = y.loc[common_idx]
+        
+        # Clean data
+        X_clean = X.copy()
+        X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
+        X_clean = X_clean.fillna(X_clean.median())
+        
+        # Clip extreme values
+        for col in X_clean.columns:
+            if X_clean[col].dtype in ['float64', 'float32']:
+                Q1 = X_clean[col].quantile(0.001)
+                Q3 = X_clean[col].quantile(0.999)
+                X_clean[col] = X_clean[col].clip(Q1, Q3)
         
         def objective(trial):
-            # Define hyperparameter search space
-            params = {
-                'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
-                'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
-                'max_depth': trial.suggest_int('max_depth', 3, 10),
-                'num_leaves': trial.suggest_int('num_leaves', 10, 100),
-                'min_child_samples': trial.suggest_int('min_child_samples', 5, 50),
-                'subsample': trial.suggest_float('subsample', 0.6, 1.0),
-                'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
-                'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
-                'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
-                'random_state': 42,
-                'verbose': -1
-            }
-            
-            if task_type == "classification":
-                model = lgb.LGBMClassifier(**params)
-                scoring = 'accuracy'
-            else:
-                model = lgb.LGBMRegressor(**params)
-                scoring = 'r2'
-            
-            # Cross-validation score
-            cv_scores = cross_val_score(model, X, y, cv=5, scoring=scoring)
-            return cv_scores.mean()
+            try:
+                # LightGBM parameters
+                lgb_params = {
+                    'objective': 'binary',
+                    'metric': 'binary_logloss',
+                    'boosting_type': 'gbdt',
+                    'num_leaves': trial.suggest_int('num_leaves', 20, 100),
+                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
+                    'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
+                    'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
+                    'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
+                    'min_child_samples': trial.suggest_int('min_child_samples', 5, 50),
+                    'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
+                    'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
+                    'n_estimators': 100,
+                    'verbose': -1,
+                    'random_state': 42
+                }
+                
+                # Use TimeSeriesSplit for validation
+                tscv = TimeSeriesSplit(n_splits=3)
+                lgb_scores = cross_val_score(
+                    lgb.LGBMClassifier(**lgb_params), X_clean, y, cv=tscv, scoring='roc_auc'
+                )
+                
+                # Check for valid scores
+                if np.isnan(lgb_scores).any() or np.isinf(lgb_scores).any():
+                    return 0.5  # Return default score for failed trials
+                
+                return lgb_scores.mean()
+                
+            except Exception as e:
+                self.logger.warning(f"Trial failed: {e}")
+                return 0.5  # Return default score for failed trials
         
-        # Create study and optimize
         study = optuna.create_study(direction='maximize')
         study.optimize(objective, n_trials=n_trials)
         
-        # Train model with best parameters
-        best_params = study.best_params
-        best_params.update({'random_state': 42, 'verbose': -1})
-        
-        self.logger.info(f"Best parameters: {best_params}")
-        self.logger.info(f"Best CV score: {study.best_value}")
+        self.logger.info(f"Best hyperparameters found: {study.best_params}")
+        self.logger.info(f"Best CV score: {study.best_value:.4f}")
         
         return {
-            'best_params': best_params,
+            'best_params': study.best_params,
             'best_score': study.best_value,
-            'study': study
+            'n_trials': n_trials
         }
-    
-    def prepare_features_and_labels(self, df: pd.DataFrame, label_column: str) -> Tuple[pd.DataFrame, pd.Series]:
-        """Prepare features and labels from DataFrame."""
-        # Remove timestamp and label columns from features
-        exclude_columns = ['timestamp', label_column]
-        feature_columns = [col for col in df.columns if col not in exclude_columns]
-        
-        # Also exclude return columns (they contain future information)
-        feature_columns = [col for col in feature_columns if not col.startswith('return_')]
-        
-        X = df[feature_columns]
-        y = df[label_column]
-        
-        self.logger.info(f"Prepared {len(feature_columns)} features for {len(df)} samples")
-        return X, y
     
     def train_all_models(self, df: pd.DataFrame) -> Dict:
         """Train models for all label columns."""
-        self.logger.info("Training all models")
-        
-        # Find all label columns
         label_columns = [col for col in df.columns if col.startswith('label_')]
         
-        if not label_columns:
-            self.logger.error("No label columns found in DataFrame")
-            return {}
-        
-        all_results = {}
-        
-        for label_column in label_columns:
+        results = {}
+        for label_col in label_columns:
             try:
-                # Determine task type
-                task_type = "classification" if "class" in label_column else "regression"
-                
-                # Train model
-                results = self.train_single_model(df, label_column, task_type)
-                all_results[label_column] = results
-                
+                result = self.train_single_model(df, label_col)
+                results[label_col] = result
             except Exception as e:
-                self.logger.error(f"Error training model for {label_column}: {e}")
-                continue
+                self.logger.error(f"Error training model for {label_col}: {e}")
         
-        self.logger.info(f"Completed training {len(all_results)} models")
-        return all_results
+        return results
     
     def get_best_model(self, metric: str = "accuracy") -> Tuple[str, LightGBMModel]:
-        """Get the best model based on validation metric."""
-        if not self.models:
-            raise ValueError("No models trained yet")
+        """Get the best performing model."""
+        best_score = -1
+        best_label = None
+        best_model = None
         
-        best_score = -np.inf
-        best_model_key = None
+        for label_col, result in self.models.items():
+            score = result['test_metrics'].get(metric, 0)
+            if score > best_score:
+                best_score = score
+                best_label = label_col
+                best_model = result['model']
         
-        for label_column, results in self.results.items():
-            val_metrics = results['val_metrics']
-            
-            if metric in val_metrics:
-                score = val_metrics[metric]
-                if score > best_score:
-                    best_score = score
-                    best_model_key = label_column
-        
-        if best_model_key is None:
-            raise ValueError(f"Metric {metric} not found in any model results")
-        
-        return best_model_key, self.models[best_model_key]
+        return best_label, best_model
     
     def save_all_models(self, base_path: str) -> None:
         """Save all trained models."""
-        for label_column, model in self.models.items():
-            filepath = f"{base_path}/{label_column}_model.txt"
-            model.save_model(filepath)
+        for label_col, result in self.models.items():
+            model_path = f"{base_path}/{label_col}_model.txt"
+            result['model'].save_model(model_path)
+            
+            # Save feature engineer
+            feature_engineer_path = f"{base_path}/{label_col}_feature_engineer.pkl"
+            result['feature_engineer'].save_pipeline_state(feature_engineer_path)
     
     def get_summary_report(self) -> pd.DataFrame:
-        """Get summary report of all model performances."""
+        """Get summary report of all models."""
         summary_data = []
         
-        for label_column, results in self.results.items():
-            val_metrics = results['val_metrics']
-            test_metrics = results['test_metrics']
-            
-            row = {
-                'label_column': label_column,
-                'task_type': 'classification' if 'class' in label_column else 'regression'
-            }
-            
-            # Add validation metrics
-            for metric, value in val_metrics.items():
-                if isinstance(value, (int, float)):
-                    row[f'val_{metric}'] = value
-            
-            # Add test metrics
-            for metric, value in test_metrics.items():
-                if isinstance(value, (int, float)):
-                    row[f'test_{metric}'] = value
-            
-            summary_data.append(row)
+        for label_col, result in self.models.items():
+            metrics = result['test_metrics']
+            summary_data.append({
+                'label': label_col,
+                'accuracy': metrics.get('accuracy', 0),
+                'roc_auc': metrics.get('roc_auc', 0),
+                'precision': metrics.get('precision', 0),
+                'recall': metrics.get('recall', 0),
+                'f1': metrics.get('f1', 0)
+            })
         
         return pd.DataFrame(summary_data)
 
 
 class RealTimePredictor:
-    """Real-time prediction engine for live trading."""
+    """Real-time predictor with proper feature pipeline."""
     
-    def __init__(self, config: Config, trained_model: LightGBMModel, fitted_scaler=None):
+    def __init__(self, config: Config, trained_model: LightGBMModel, 
+                 feature_engineer: FeatureEngineer):
         self.config = config
-        self.logger = logging.getLogger(__name__)
         self.model = trained_model
-        self.feature_columns = None
-        self.fitted_scaler = fitted_scaler
-        self.last_prediction = None
-        self.prediction_history = []
+        self.feature_engineer = feature_engineer
+        self.logger = logging.getLogger(__name__)
         
+        # Check if feature engineer is ready
+        if not self.feature_engineer.is_pipeline_ready():
+            self.logger.warning("Feature engineer pipeline is not ready")
+    
     def prepare_live_features(self, latest_data: pd.DataFrame) -> pd.DataFrame:
-        """Prepare features for real-time prediction."""
-        # Calculate indicators for the latest data
-        indicators = TechnicalIndicators(self.config)
-        df_with_indicators = indicators.calculate_all_indicators(latest_data)
-        
-        # Engineer features without fitting scaler
-        engineer = FeatureEngineer(self.config)
-        feature_df = engineer.build_feature_matrix(df_with_indicators, fit_scaler=False)
-        
-        # Get the latest row for prediction
-        latest_features = feature_df.iloc[-1:].copy()
-        
-        # Store feature columns for consistency
-        if self.feature_columns is None:
-            self.feature_columns = [col for col in latest_features.columns 
-                                  if col not in ['timestamp'] and not col.startswith('label_')]
-        
-        # Ensure we have the same features as training
-        latest_features = latest_features[self.feature_columns]
-        
-        # Apply scaling if we have a fitted scaler
-        if self.fitted_scaler is not None:
-            latest_features = pd.DataFrame(
-                self.fitted_scaler.transform(latest_features),
-                columns=latest_features.columns,
-                index=latest_features.index
-            )
-        
-        return latest_features
+        """Prepare features for live prediction."""
+        try:
+            # Build live feature matrix
+            feature_matrix = self.feature_engineer.build_live_feature_matrix(latest_data)
+            
+            # Remove timestamp and label columns
+            exclude_columns = ['timestamp']
+            label_columns = [col for col in feature_matrix.columns if col.startswith('label_')]
+            return_columns = [col for col in feature_matrix.columns if col.startswith('return_')]
+            exclude_columns.extend(label_columns)
+            exclude_columns.extend(return_columns)
+            
+            feature_columns = [col for col in feature_matrix.columns if col not in exclude_columns]
+            X = feature_matrix[feature_columns]
+            
+            # Ensure feature consistency with the fitted pipeline
+            X = self.feature_engineer.ensure_feature_consistency(X)
+            
+            return X
+            
+        except Exception as e:
+            self.logger.error(f"Error preparing live features: {e}")
+            return pd.DataFrame()
     
     def predict(self, latest_data: pd.DataFrame) -> Dict:
         """Make real-time prediction."""
         try:
             # Prepare features
-            features = self.prepare_live_features(latest_data)
+            X = self.prepare_live_features(latest_data)
+            
+            if X.empty:
+                return {
+                    'prediction': None,
+                    'confidence': 0.0,
+                    'error': 'No features available'
+                }
             
             # Make prediction
-            prediction = self.model.predict(features)
-            probability = self.model.predict_proba(features) if hasattr(self.model.model, 'predict_proba') else None
+            prediction_proba = self.model.predict_proba(X)
+            prediction = self.model.predict(X)
             
-            # Store prediction
-            result = {
-                'timestamp': latest_data['timestamp'].iloc[-1],
-                'prediction': prediction[0],
-                'probability': probability[0] if probability is not None else None,
-                'confidence': max(probability[0]) if probability is not None else None
+            # Calculate confidence
+            if len(prediction_proba.shape) > 1:
+                confidence = np.max(prediction_proba, axis=1)[0]
+            else:
+                confidence = abs(prediction_proba[0] - 0.5) * 2
+            
+            return {
+                'prediction': int(prediction[0]) if len(prediction) > 0 else None,
+                'confidence': float(confidence),
+                'probability': float(prediction_proba[0]) if len(prediction_proba) > 0 else 0.0
             }
-            
-            self.last_prediction = result
-            self.prediction_history.append(result)
-            
-            self.logger.info(f"Real-time prediction: {result}")
-            return result
             
         except Exception as e:
             self.logger.error(f"Error in real-time prediction: {e}")
-            return None
+            return {
+                'prediction': None,
+                'confidence': 0.0,
+                'error': str(e)
+            }
     
     def get_prediction_summary(self, window: int = 100) -> Dict:
         """Get summary of recent predictions."""
-        if not self.prediction_history:
-            return {}
-        
-        recent_predictions = self.prediction_history[-window:]
-        
-        summary = {
-            'total_predictions': len(recent_predictions),
-            'buy_signals': sum(1 for p in recent_predictions if p['prediction'] == 1),
-            'sell_signals': sum(1 for p in recent_predictions if p['prediction'] == 0),
-            'avg_confidence': np.mean([p['confidence'] for p in recent_predictions if p['confidence'] is not None]),
-            'last_prediction': self.last_prediction
+        # This would need to be implemented with actual prediction history
+        return {
+            'total_predictions': 0,
+            'accuracy': 0.0,
+            'avg_confidence': 0.0
         }
+
+
+class RealTimeEnsemblePredictor:
+    """Real-time ensemble predictor."""
+    
+    def __init__(self, config, trained_models):
+        self.config = config
+        self.trained_models = trained_models
+        self.logger = logging.getLogger(__name__)
+    
+    def prepare_live_features(self, data, feature_engineer):
+        """Prepare features for ensemble prediction."""
+        return feature_engineer.build_live_feature_matrix(data)
+    
+    def predict(self, data, label_name='label_class_1'):
+        """Make ensemble prediction."""
+        if label_name not in self.trained_models:
+            self.logger.error(f"Model for {label_name} not found")
+            return None
         
-        return summary
+        model_result = self.trained_models[label_name]
+        predictor = RealTimePredictor(
+            self.config, 
+            model_result['model'], 
+            model_result['feature_engineer']
+        )
+        
+        return predictor.predict(data)
 
 
 def main():
     """Main function for model training."""
-    from .utils import load_config, setup_logging
+    from pathlib import Path
+    import sys
+    sys.path.append(str(Path(__file__).parent.parent))
+    
+    from src.utils import load_config, setup_logging
+    from src.data import DataLoader
+    from src.labels import LabelConstructor
     
     # Load configuration
     config = load_config("config/settings.yaml")
-    
-    # Setup logging
-    logger = setup_logging(config)
+    setup_logging(config)
     
     # Load data
-    from .data import DataLoader
     loader = DataLoader(config)
     df = loader.load_gold_data("SOLUSDT", "1m")
     
     if df is None or df.empty:
-        logger.error("No data available for training")
+        print("No data available for training")
         return
     
-    # Train models
-    trainer = ModelTrainer(config)
-    label_columns = [col for col in df.columns if col.startswith('label_')]
+    # Construct labels
+    label_constructor = LabelConstructor(config)
+    df_with_labels = label_constructor.construct_all_labels(df)
     
-    for label_col in label_columns[:3]:  # Train first 3 models
-        try:
-            results = trainer.train_single_model(df, label_col, "classification")
-            logger.info(f"Trained model for {label_col}")
-        except Exception as e:
-            logger.error(f"Error training model for {label_col}: {e}")
+    # Train model
+    trainer = ModelTrainer(config)
+    results = trainer.train_single_model(
+        df_with_labels, 
+        "label_class_1", 
+        "classification",
+        perform_cv=True,
+        compute_shap=True
+    )
+    
+    print(f"Training completed. Test accuracy: {results['test_metrics']['accuracy']:.4f}")
 
 
 if __name__ == "__main__":

@@ -171,8 +171,8 @@ class LabelConstructor:
         """Validate that labels are properly constructed."""
         self.logger.info("Validating labels")
         
-        # Check for required columns
-        required_columns = ['timestamp', 'close']
+        # Check for required columns (timestamp is optional)
+        required_columns = ['close']
         for col in required_columns:
             if col not in df.columns:
                 self.logger.error(f"Missing required column: {col}")
@@ -196,12 +196,20 @@ class LabelConstructor:
                 self.logger.error(f"NaN values found in {col}")
                 return False
         
-        # Check label values
+        # Check label values - differentiate between classification and regression
         for col in label_columns:
             unique_values = df[col].unique()
-            if not all(val in [0, 1] for val in unique_values):
-                self.logger.error(f"Invalid values in {col}: {unique_values}")
-                return False
+            
+            if 'class' in col:
+                # Classification labels should be 0 or 1
+                if not all(val in [0, 1] for val in unique_values):
+                    self.logger.error(f"Invalid classification values in {col}: {unique_values}")
+                    return False
+            else:
+                # Regression labels can be any numeric value
+                if not all(isinstance(val, (int, float)) for val in unique_values):
+                    self.logger.error(f"Invalid regression values in {col}: {unique_values}")
+                    return False
         
         self.logger.info("Label validation passed")
         return True

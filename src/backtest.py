@@ -230,29 +230,200 @@ class Backtester:
             'turnover': turnover
         }
     
-    def run_backtest_with_model(self, df: pd.DataFrame, model, label_column: str) -> Dict:
-        """Run backtest using trained model predictions."""
+    def run_backtest_with_model(self, df: pd.DataFrame, model, label_column: str, 
+                               fitted_feature_engineer=None) -> Dict:
+        """Run backtest using trained model predictions with consistent feature preparation."""
         self.logger.info(f"Running backtest with model for {label_column}")
         
-        # Prepare features
-        exclude_columns = ['timestamp', label_column]
-        feature_columns = [col for col in df.columns if col not in exclude_columns]
-        feature_columns = [col for col in feature_columns if not col.startswith('return_')]
+        try:
+            # Use the fitted feature engineer if provided, otherwise create a new one
+            if fitted_feature_engineer is None:
+                from .features import FeatureEngineer
+                feature_engineer = FeatureEngineer(self.config)
+                # Build feature matrix using the same method as training
+                feature_df = feature_engineer.build_feature_matrix(df, fit_pipeline=False)
+            else:
+                # Use the fitted feature engineer
+                feature_df = fitted_feature_engineer.build_feature_matrix(df, fit_pipeline=False)
+            
+            if feature_df.empty:
+                self.logger.error("No features available for backtesting")
+                return {}
+            
+            # Prepare features and labels using the same method as model training
+            # Remove timestamp and ALL label columns from features (not just the one being predicted)
+            exclude_columns = ['timestamp']
+            # Exclude all label columns to match model training
+            label_columns = [col for col in feature_df.columns if col.startswith('label_')]
+            exclude_columns.extend(label_columns)
+            
+            # Also exclude return columns (they contain future information)
+            return_columns = [col for col in feature_df.columns if col.startswith('return_')]
+            exclude_columns.extend(return_columns)
+            
+            # Features to use for prediction
+            feature_columns = [col for col in feature_df.columns if col not in exclude_columns]
+            
+            if not feature_columns:
+                self.logger.error("No features available for backtesting")
+                return {}
+            
+            # Prepare feature matrix
+            X = feature_df[feature_columns].copy()
+            
+            # Ensure feature consistency if using fitted feature engineer
+            if fitted_feature_engineer is not None:
+                X = fitted_feature_engineer.ensure_feature_consistency(X)
+            
+            # Clean data - handle infinity and extreme values
+            X = X.replace([np.inf, -np.inf], np.nan)
+            X = X.fillna(X.median())
+            
+            # Clip extreme values
+            for col in X.columns:
+                if X[col].dtype in ['float64', 'float32']:
+                    Q1 = X[col].quantile(0.01)
+                    Q3 = X[col].quantile(0.99)
+                    X[col] = X[col].clip(Q1, Q3)
+            
+            # Make predictions
+            if hasattr(model, 'predict_proba'):
+                predictions_proba = model.predict_proba(X)
+                predictions = predictions_proba[:, 1]  # Get positive class probability
+            else:
+                predictions = model.predict(X)
+            
+            # Convert predictions to pandas Series for proper indexing
+            predictions_series = pd.Series(predictions, index=feature_df.index)
+            
+            # Get actual labels
+            y_true = feature_df[label_column]
+            
+            # Run backtest with predictions
+            backtest_results = self.run_backtest(feature_df, predictions_series, predictions_series)
+            
+            # Add model performance metrics
+            from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score
+            
+            # Convert predictions to binary for classification metrics
+            predictions_binary = (predictions > 0.5).astype(int)
+            
+            model_metrics = {
+                'accuracy': accuracy_score(y_true, predictions_binary),
+                'roc_auc': roc_auc_score(y_true, predictions),
+                'precision': precision_score(y_true, predictions_binary),
+                'recall': recall_score(y_true, predictions_binary),
+                'f1': f1_score(y_true, predictions_binary)
+            }
+            
+            backtest_results['model_metrics'] = model_metrics
+            self.logger.info(f"Model metrics: {model_metrics}")
+            
+            return backtest_results
+            
+        except Exception as e:
+            self.logger.error(f"Error in backtest with model: {e}")
+            return {}
+    
+    def calculate_advanced_metrics(self, equity_curve: pd.Series, trades: List[Dict]) -> Dict:
+        """Calculate advanced performance metrics."""
+        try:
+            # Basic metrics
+            total_return = (equity_curve.iloc[-1] / equity_curve.iloc[0]) - 1
+            returns = equity_curve.pct_change().dropna()
+            
+            # Risk metrics
+            volatility = returns.std() * np.sqrt(252)  # Annualized
+            sharpe_ratio = (returns.mean() * 252) / volatility if volatility > 0 else 0
+            
+            # Drawdown analysis
+            rolling_max = equity_curve.expanding().max()
+            drawdown = (equity_curve - rolling_max) / rolling_max
+            max_drawdown = drawdown.min()
+            
+            # Trade analysis
+            if trades:
+                winning_trades = [t for t in trades if t['net_pnl'] > 0]
+                losing_trades = [t for t in trades if t['net_pnl'] < 0]
+                
+                win_rate = len(winning_trades) / len(trades) if trades else 0
+                avg_win = np.mean([t['net_pnl'] for t in winning_trades]) if winning_trades else 0
+                avg_loss = np.mean([t['net_pnl'] for t in losing_trades]) if losing_trades else 0
+                
+                profit_factor = abs(sum([t['net_pnl'] for t in winning_trades]) / 
+                                 sum([t['net_pnl'] for t in losing_trades])) if losing_trades else float('inf')
+                
+                # Risk-adjusted metrics
+                calmar_ratio = (total_return * 252) / abs(max_drawdown) if max_drawdown != 0 else 0
+                sortino_ratio = (returns.mean() * 252) / (returns[returns < 0].std() * np.sqrt(252)) if returns[returns < 0].std() > 0 else 0
+                
+                # Additional metrics
+                max_consecutive_wins = self._calculate_max_consecutive(trades, 'win')
+                max_consecutive_losses = self._calculate_max_consecutive(trades, 'loss')
+                avg_trade_duration = np.mean([t.get('hold_period', 0) for t in trades]) if trades else 0
+                
+                # Volatility metrics
+                var_95 = np.percentile(returns, 5)  # 95% VaR
+                cvar_95 = returns[returns <= var_95].mean()  # Conditional VaR
+                
+                return {
+                    'total_return': total_return,
+                    'annualized_return': total_return * 252 / len(equity_curve),
+                    'volatility': volatility,
+                    'sharpe_ratio': sharpe_ratio,
+                    'sortino_ratio': sortino_ratio,
+                    'max_drawdown': max_drawdown,
+                    'calmar_ratio': calmar_ratio,
+                    'win_rate': win_rate,
+                    'profit_factor': profit_factor,
+                    'avg_win': avg_win,
+                    'avg_loss': avg_loss,
+                    'max_consecutive_wins': max_consecutive_wins,
+                    'max_consecutive_losses': max_consecutive_losses,
+                    'avg_trade_duration': avg_trade_duration,
+                    'var_95': var_95,
+                    'cvar_95': cvar_95,
+                    'total_trades': len(trades),
+                    'winning_trades': len(winning_trades),
+                    'losing_trades': len(losing_trades)
+                }
+            else:
+                return {
+                    'total_return': total_return,
+                    'volatility': volatility,
+                    'sharpe_ratio': sharpe_ratio,
+                    'max_drawdown': max_drawdown,
+                    'total_trades': 0
+                }
+                
+        except Exception as e:
+            self.logger.error(f"Error calculating advanced metrics: {e}")
+            return {
+                'total_return': 0.0,
+                'sharpe_ratio': 0.0,
+                'max_drawdown': 0.0,
+                'total_trades': 0
+            }
+    
+    def _calculate_max_consecutive(self, trades: List[Dict], trade_type: str) -> int:
+        """Calculate maximum consecutive wins or losses."""
+        if not trades:
+            return 0
         
-        X = df[feature_columns]
+        max_consecutive = 0
+        current_consecutive = 0
         
-        # Make predictions
-        predictions = model.predict(X)
-        probabilities = model.predict_proba(X)[:, 1] if hasattr(model, 'predict_proba') else None
+        for trade in trades:
+            is_win = trade['net_pnl'] > 0
+            is_target = (trade_type == 'win' and is_win) or (trade_type == 'loss' and not is_win)
+            
+            if is_target:
+                current_consecutive += 1
+                max_consecutive = max(max_consecutive, current_consecutive)
+            else:
+                current_consecutive = 0
         
-        # Convert to pandas Series
-        predictions_series = pd.Series(predictions, index=df.index)
-        probabilities_series = pd.Series(probabilities, index=df.index) if probabilities is not None else None
-        
-        # Run backtest
-        results = self.run_backtest(df, predictions_series, probabilities_series)
-        
-        return results
+        return max_consecutive
     
     def save_backtest_results(self, results: Dict, symbol: str, interval: str, 
                             label_column: str, output_dir: str) -> None:

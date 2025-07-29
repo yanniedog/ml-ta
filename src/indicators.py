@@ -26,7 +26,7 @@ class TechnicalIndicators:
         return prices.ewm(span=window).mean()
     
     def macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.DataFrame:
-        """MACD (Moving Average Convergence Divergence)."""
+        """Moving Average Convergence Divergence."""
         ema_fast = self.ema(prices, fast)
         ema_slow = self.ema(prices, slow)
         macd_line = ema_fast - ema_slow
@@ -389,8 +389,12 @@ class TechnicalIndicators:
         if reset_daily and hasattr(typical_price.index, 'date'):
             # Reset daily only if index has date attribute
             vwap = pd.Series(index=typical_price.index, dtype=float)
-            for date in typical_price.index.date.unique():
-                mask = typical_price.index.date == date
+            # Convert to pandas Series to use unique() method
+            date_series = pd.Series(typical_price.index.date, index=typical_price.index)
+            unique_dates = date_series.unique()
+            
+            for date in unique_dates:
+                mask = date_series == date
                 date_pv = price_volume[mask]
                 date_vol = volume[mask]
                 vwap[mask] = date_pv.cumsum() / date_vol.cumsum()

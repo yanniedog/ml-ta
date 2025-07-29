@@ -12,6 +12,7 @@ import pandas as pd
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
+import numpy as np
 
 from .utils import Config, ensure_directory, save_parquet, load_parquet
 
@@ -257,6 +258,105 @@ class BinanceDataFetcher:
                 except Exception as e:
                     self.logger.error(f"Failed to fetch {symbol} {interval}: {e}")
                     continue
+
+
+class DataLoader:
+    """Unified data loader for different data sources."""
+    
+    def __init__(self, config: Config):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+        
+        # Ensure data directories exist
+        ensure_directory(config.paths["data"])
+        ensure_directory(f"{config.paths['data']}/bronze")
+        ensure_directory(f"{config.paths['data']}/silver")
+        ensure_directory(f"{config.paths['data']}/gold")
+    
+    def load_bronze_data(self, symbol: str, interval: str) -> Optional[pd.DataFrame]:
+        """Load bronze data from parquet file."""
+        try:
+            bronze_path = f"{self.config.paths['data']}/bronze/{symbol}_{interval}_bronze.parquet"
+            
+            if Path(bronze_path).exists():
+                df = load_parquet(bronze_path)
+                self.logger.info(f"Loaded bronze data: {df.shape}")
+                return df
+            else:
+                self.logger.warning(f"Bronze data file not found: {bronze_path}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"Error loading bronze data: {e}")
+            return None
+    
+    def load_silver_data(self, symbol: str, interval: str) -> Optional[pd.DataFrame]:
+        """Load silver data from parquet file."""
+        try:
+            silver_path = f"{self.config.paths['data']}/silver/{symbol}_{interval}_silver.parquet"
+            
+            if Path(silver_path).exists():
+                df = load_parquet(silver_path)
+                self.logger.info(f"Loaded silver data: {df.shape}")
+                return df
+            else:
+                self.logger.warning(f"Silver data file not found: {silver_path}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"Error loading silver data: {e}")
+            return None
+    
+    def load_gold_data(self, symbol: str, interval: str) -> Optional[pd.DataFrame]:
+        """Load gold data from parquet file."""
+        try:
+            gold_path = f"{self.config.paths['data']}/gold/{symbol}_{interval}_gold.parquet"
+            
+            if Path(gold_path).exists():
+                df = load_parquet(gold_path)
+                self.logger.info(f"Loaded gold data: {df.shape}")
+                return df
+            else:
+                self.logger.warning(f"Gold data file not found: {gold_path}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"Error loading gold data: {e}")
+            return None
+    
+    def create_sample_data(self, symbol: str, interval: str, num_records: int = 5000) -> pd.DataFrame:
+        """Create sample data for testing when no real data is available."""
+        self.logger.info(f"Creating sample data for {symbol} {interval}")
+        
+        # Create realistic sample data
+        dates = pd.date_range('2023-01-01', periods=num_records, freq='1min')
+        np.random.seed(42)
+        
+        # Generate realistic price data with trends and volatility
+        returns = np.random.normal(0, 0.001, num_records)
+        # Add some trend
+        trend = np.linspace(0, 0.1, num_records)
+        returns += trend
+        
+        prices = 100 * np.exp(np.cumsum(returns))
+        
+        # Generate OHLCV data
+        df = pd.DataFrame({
+            'timestamp': dates,
+            'open': prices * (1 + np.random.normal(0, 0.0005, num_records)),
+            'high': prices * (1 + np.abs(np.random.normal(0, 0.001, num_records))),
+            'low': prices * (1 - np.abs(np.random.normal(0, 0.001, num_records))),
+            'close': prices,
+            'volume': np.random.randint(1000, 10000, num_records)
+        })
+        
+        # Ensure high >= low
+        df['high'] = np.maximum(df['high'], df['low'])
+        df['high'] = np.maximum(df['high'], df['close'])
+        df['low'] = np.minimum(df['low'], df['close'])
+        
+        self.logger.info(f"Created sample data: {df.shape}")
+        return df
 
 
 def main():
