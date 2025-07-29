@@ -336,17 +336,17 @@ class FeatureEngineer:
         # Ensure only numeric columns are included in the final feature matrix
         # Exclude timestamp and any non-numeric columns
         exclude_columns = ['timestamp']
-        label_columns = [col for col in result_df.columns if col.startswith('label_')]
-        return_columns = [col for col in result_df.columns if col.startswith('return_')]
+        label_columns = [col for col in df_with_indicators.columns if col.startswith('label_')]
+        return_columns = [col for col in df_with_indicators.columns if col.startswith('return_')]
         exclude_columns.extend(label_columns)
         exclude_columns.extend(return_columns)
         
         # Get only numeric columns for features
-        numeric_columns = result_df.select_dtypes(include=[np.number]).columns
+        numeric_columns = df_with_indicators.select_dtypes(include=[np.number]).columns
         feature_columns = [col for col in numeric_columns if col not in exclude_columns]
         
         # Create final feature matrix with only numeric features (NO timestamp)
-        final_df = result_df[feature_columns].copy()
+        final_df = df_with_indicators[feature_columns].copy()
         
         # Store feature columns in pipeline if fitting
         if fit_pipeline:
@@ -394,10 +394,10 @@ class FeatureEngineer:
         # Check if all expected columns are present
         missing_columns = [col for col in expected_columns if col not in df.columns]
         if missing_columns:
-            self.logger.warning(f"Missing expected feature columns: {missing_columns}")
+            self.logger.error(f"Missing expected feature columns: {missing_columns}")
             # Add missing columns with zeros
             for col in missing_columns:
-                df[col] = 0
+                df[col] = 0.0
         
         # Remove extra columns that are not in the expected set
         extra_columns = [col for col in df.columns if col not in expected_columns]

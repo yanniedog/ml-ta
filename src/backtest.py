@@ -77,7 +77,13 @@ class Backtester:
         
         # Get price data
         prices = df['close'].values
-        timestamps = df['timestamp'].values
+        
+        # Handle timestamp column - use index if timestamp not available
+        if 'timestamp' in df.columns:
+            timestamps = df['timestamp'].values
+        else:
+            # Use index as timestamp if no timestamp column
+            timestamps = df.index.values
         
         for i in range(len(df)):
             current_price = prices[i]
@@ -250,6 +256,13 @@ class Backtester:
                 self.logger.error("No features available for backtesting")
                 return {}
             
+            # Get actual labels from original data first
+            if label_column not in df.columns:
+                self.logger.error(f"Label column {label_column} not found in original data")
+                return {}
+            
+            y_true = df[label_column].loc[feature_df.index]
+            
             # Prepare features and labels using the same method as model training
             # Remove timestamp and ALL label columns from features (not just the one being predicted)
             exclude_columns = ['timestamp']
@@ -286,18 +299,32 @@ class Backtester:
                     Q3 = X[col].quantile(0.99)
                     X[col] = X[col].clip(Q1, Q3)
             
-            # Make predictions
+            # Handle different model types
             if hasattr(model, 'predict_proba'):
+                # Direct model (LightGBM, etc.)
                 predictions_proba = model.predict_proba(X)
-                predictions = predictions_proba[:, 1]  # Get positive class probability
-            else:
+                if len(predictions_proba.shape) > 1:
+                    predictions = predictions_proba[:, 1]  # Get positive class probability
+                else:
+                    predictions = predictions_proba
+            elif hasattr(model, 'predict'):
+                # Ensemble or other model types
                 predictions = model.predict(X)
+                if hasattr(model, 'predict_proba'):
+                    predictions_proba = model.predict_proba(X)
+                    if len(predictions_proba.shape) > 1:
+                        predictions = predictions_proba[:, 1]
+                    else:
+                        predictions = predictions_proba
+                else:
+                    # Convert binary predictions to probabilities
+                    predictions = predictions.astype(float)
+            else:
+                self.logger.error("Model does not have predict method")
+                return {}
             
             # Convert predictions to pandas Series for proper indexing
             predictions_series = pd.Series(predictions, index=feature_df.index)
-            
-            # Get actual labels
-            y_true = feature_df[label_column]
             
             # Run backtest with predictions
             backtest_results = self.run_backtest(feature_df, predictions_series, predictions_series)

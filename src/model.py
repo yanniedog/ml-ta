@@ -787,16 +787,29 @@ class RealTimePredictor:
             prediction_proba = self.model.predict_proba(X)
             prediction = self.model.predict(X)
             
-            # Calculate confidence
-            if len(prediction_proba.shape) > 1:
-                confidence = np.max(prediction_proba, axis=1)[0]
+            # Handle single prediction case
+            if len(prediction) == 1:
+                pred_value = int(prediction[0])
+                if len(prediction_proba.shape) > 1:
+                    confidence = float(np.max(prediction_proba, axis=1)[0])
+                    prob_value = float(prediction_proba[0, 1])  # Positive class probability
+                else:
+                    confidence = float(abs(prediction_proba[0] - 0.5) * 2)
+                    prob_value = float(prediction_proba[0])
             else:
-                confidence = abs(prediction_proba[0] - 0.5) * 2
+                # Handle multiple predictions - take the last one for real-time
+                pred_value = int(prediction[-1])
+                if len(prediction_proba.shape) > 1:
+                    confidence = float(np.max(prediction_proba, axis=1)[-1])
+                    prob_value = float(prediction_proba[-1, 1])
+                else:
+                    confidence = float(abs(prediction_proba[-1] - 0.5) * 2)
+                    prob_value = float(prediction_proba[-1])
             
             return {
-                'prediction': int(prediction[0]) if len(prediction) > 0 else None,
-                'confidence': float(confidence),
-                'probability': float(prediction_proba[0]) if len(prediction_proba) > 0 else 0.0
+                'prediction': pred_value,
+                'confidence': confidence,
+                'probability': prob_value
             }
             
         except Exception as e:

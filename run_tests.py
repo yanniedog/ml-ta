@@ -282,10 +282,10 @@ def test_real_time_prediction(df, trainer):
             
             print(f"✓ Prediction for {data_points} data points: {prediction}")
         
-        print("✓ Real-time prediction test passed")
+        print("✓ Real-time prediction tests passed")
         
     except Exception as e:
-        print(f"✗ Real-time prediction test failed: {e}")
+        print(f"✗ Real-time prediction failed: {e}")
         import traceback
         traceback.print_exc()
 
@@ -318,9 +318,18 @@ def test_backtesting(df, trainer):
             train_df = df.iloc[:split_idx]
             fitted_feature_engineer.build_feature_matrix(train_df, fit_pipeline=True)
         
+        # Get the ensemble model from the trainer
+        if hasattr(trainer, 'ensemble_model') and trainer.ensemble_model is not None:
+            model = trainer.ensemble_model
+        elif hasattr(trainer, 'models') and label_column in trainer.models:
+            model = trainer.models[label_column]
+        else:
+            print("⚠ No ensemble model available, skipping backtesting")
+            return
+        
         # Run backtest with fitted feature engineer
         backtest_results = backtester.run_backtest_with_model(
-            df, trainer.ensemble_model, label_column, fitted_feature_engineer
+            df, model, label_column, fitted_feature_engineer
         )
         
         if backtest_results:
@@ -337,6 +346,8 @@ def test_backtesting(df, trainer):
         
     except Exception as e:
         print(f"✗ Backtesting failed: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def main():
