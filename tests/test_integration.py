@@ -12,7 +12,7 @@ from src.utils import Config
 from src.data import DataLoader
 from src.features import FeatureEngineer
 from src.labels import LabelConstructor
-from src.model import ModelTrainer, LightGBMModel
+from src.model import ModelTrainer
 from src.backtest import Backtester
 from src.risk_management import RiskManager, RiskLimits
 

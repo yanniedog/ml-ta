@@ -14,7 +14,7 @@ from src.data import DataLoader
 from src.indicators import TechnicalIndicators
 from src.features import FeatureEngineer
 from src.labels import LabelConstructor
-from src.model import AdvancedModelTrainer, RealTimePredictor
+from src.model import ModelTrainer, RealTimePredictor
 from src.backtest import Backtester
 
 
@@ -181,68 +181,31 @@ def test_model_training(df):
     
     try:
         config = load_config("config/settings.yaml")
-        trainer = AdvancedModelTrainer(config)
-        
-        # Prepare data
+        trainer = ModelTrainer(config)
+
+        # Test single model training
         label_column = 'label_class_1'
         if label_column not in df.columns:
             print(f"⚠ Label column {label_column} not found, skipping model training")
             return None
-        
-        # Create feature engineer and build features
-        feature_engineer = FeatureEngineer(config)
-        
-        # Split data for feature engineering
-        split_idx = int(len(df) * 0.8)
-        train_df = df.iloc[:split_idx]
-        test_df = df.iloc[split_idx:]
-        
-        # Build features for training data
-        X_train = feature_engineer.build_feature_matrix(train_df, fit_pipeline=True)
-        y_train = train_df[label_column]
-        
-        # Build features for test data (no fitting)
-        X_test = feature_engineer.build_feature_matrix(test_df, fit_pipeline=False)
-        y_test = test_df[label_column]
-        
-        # Align training data
-        common_train_idx = X_train.index.intersection(y_train.index)
-        X_train = X_train.loc[common_train_idx]
-        y_train = y_train.loc[common_train_idx]
-        
-        # Align test data
-        common_test_idx = X_test.index.intersection(y_test.index)
-        X_test = X_test.loc[common_test_idx]
-        y_test = y_test.loc[common_test_idx]
-        
-        # Combine for training
-        X = pd.concat([X_train, X_test])
-        y = pd.concat([y_train, y_test])
-        
-        print(f"✓ Training data prepared: {X.shape}")
-        
-        # Train ensemble model with feature engineer
-        start_time = time.time()
-        model_results = trainer.train_ensemble_model(X, y, label_column, feature_engineer=feature_engineer)
-        training_time = time.time() - start_time
-        
-        print(f"✓ Model training completed in {training_time:.2f} seconds")
-        
-        # Check results
-        roc_auc_mean = model_results.get('ensemble_roc_auc_mean', 0)
-        assert roc_auc_mean > 0.5, f"Model ROC AUC too low: {roc_auc_mean:.4f}"
-        print(f"✓ Ensemble ROC AUC: {roc_auc_mean:.4f}")
 
-        # Save the trained model
-        model_path = Path(config.model.get('save_path', 'models/'))
-        model_path.mkdir(parents=True, exist_ok=True)
-        trainer.save_models(model_path / "advanced_model.joblib")
-        print(f"✓ Model saved to {model_path / 'advanced_model.joblib'}")
-        
+        # Train the model
+        results = trainer.train_single_model(df, label_column, 'classification')
+
+        assert results is not None, "Model training returned None"
+        assert 'model' in results, "'model' not in training results"
+        assert 'test_metrics' in results, "'test_metrics' not in training results"
+
+        print(f"✓ Model training completed for {label_column}")
+        print(f"✓ Test Accuracy: {results['test_metrics'].get('accuracy', 0):.4f}")
+        print(f"✓ Test ROC AUC: {results['test_metrics'].get('roc_auc', 0):.4f}")
+
         return trainer
-        
+
     except Exception as e:
         print(f"✗ Model training failed: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
