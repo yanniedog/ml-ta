@@ -1,21 +1,15 @@
-print("Executing src/backtest.py top-level")
+import logging
+from pathlib import Path
+from typing import Dict, List, Optional, Any, Tuple
 
-try:
-    import logging
-    from pathlib import Path
-    from typing import Dict, List, Optional, Any, Tuple
-    import numpy as np
-    import pandas as pd
-    from tqdm import tqdm
-    from src.utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
-    from src.risk_management import PositionSizer, RiskLimits
-    from src.labels import LabelConstructor
-    from src.report import ReportGenerator
-    print("Top-level imports successful.")
-except Exception as e:
-    print(f"Error during top-level import: {e}")
-    import sys
-    sys.exit(1)
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
+from src.utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
+from src.risk_management import PositionSizer, RiskLimits
+from src.labels import LabelConstructor
+from src.report import ReportGenerator
 
 """
 Backtesting module for technical analysis strategies.
@@ -573,36 +567,19 @@ class Backtester:
 
 def main():
     """Main function for backtesting."""
-    print("Backtester main function started.")
-    try:
-        print("Attempting to import from src.utils...")
-        from src.utils import load_config, setup_logging, set_deterministic_seed, load_parquet
-        print("Successfully imported from src.utils.")
-    except Exception as e:
-        print(f"Error importing from src.utils: {e}")
-        return
-
-    try:
-        print("Attempting to import from src.model...")
-        from src.model import ModelTrainer
-        print("Successfully imported from src.model.")
-    except Exception as e:
-        print(f"Error importing from src.model: {e}")
-        return
+    from src.utils import load_config, setup_logging, set_deterministic_seed, load_parquet
+    from src.model import ModelTrainer
     
     # Load configuration
     config = load_config("config/settings.yaml")
     
-    print("Configuration loaded successfully.")
     # Setup logging
     logger = setup_logging(config)
-    print("Logging setup complete.")
+    
     # Set deterministic seed
     set_deterministic_seed(config.app["seed"])
-    print("Seed set.")
     
     # Load sample data and run backtest
-    print("Entering try block to load data and run backtest.")
     try:
         gold_dir = f"{config.paths['data']}/gold"
         gold_files = list(Path(gold_dir).glob("*.parquet"))
@@ -610,36 +587,31 @@ def main():
         if gold_files:
             logger.info(f"Found {len(gold_files)} gold files. Loading {gold_files[0]}.")
             df = load_parquet(str(gold_files[0]))
-            print(f"Data loaded from {gold_files[0]}.")
             
             # Train a model first
-            from src.model import ModelTrainer
             trainer = ModelTrainer(config)
             label_columns = [col for col in df.columns if col.startswith('label_')]
             logger.info(f"Found {len(label_columns)} label columns: {label_columns}")
             
-            print(f"Found labels: {label_columns}")
             if label_columns:
                 selected_label = label_columns[0]
                 logger.info(f"Training model for label: {selected_label}")
                 results = trainer.train_single_model(df, selected_label, "classification")
                 
-                print("Model training finished.")
                 if 'model' in results and results['model'] is not None:
                     model = results['model']
                     logger.info("Model training successful. Running backtest.")
                     
                     # Run backtest
-                    print("Preparing to run backtest with trained model.")
                     backtester = Backtester(config)
                     backtest_results = backtester.run_backtest_with_model(df, model, selected_label)
                     
-                    print("Backtest Results:")
-                    print(f"Total Return: {backtest_results['performance'].get('total_return', 0):.2%}")
-                    print(f"Sharpe Ratio: {backtest_results['performance'].get('sharpe_ratio', 0):.2f}")
-                    print(f"Max Drawdown: {backtest_results['performance'].get('max_drawdown', 0):.2%}")
-                    print(f"Hit Rate: {backtest_results['performance'].get('hit_rate', 0):.2%}")
-                    print(f"Total Trades: {backtest_results['performance'].get('total_trades', 0)}")
+                    logger.info("Backtest Results:")
+                    logger.info(f"Total Return: {backtest_results['performance'].get('total_return', 0):.2%}")
+                    logger.info(f"Sharpe Ratio: {backtest_results['performance'].get('sharpe_ratio', 0):.2f}")
+                    logger.info(f"Max Drawdown: {backtest_results['performance'].get('max_drawdown', 0):.2%}")
+                    logger.info(f"Hit Rate: {backtest_results['performance'].get('hit_rate', 0):.2%}")
+                    logger.info(f"Total Trades: {backtest_results['performance'].get('total_trades', 0)}")
                 else:
                     logger.error("Model training failed. No model was returned.")
             else:
@@ -647,11 +619,9 @@ def main():
                 
         else:
             logger.error("No gold data files found")
-            print("No gold data files found.")
             
     except Exception as e:
-        logger.error(f"Error in backtesting: {e}")
-        print(f"An exception occurred: {e}")
+        logger.error(f"Error in backtesting: {e}", exc_info=True)
 
 
 if __name__ == "__main__":

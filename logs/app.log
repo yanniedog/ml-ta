@@ -11761,3 +11761,115 @@ You can set ``predict_disable_shape_check=true`` to discard this error, but plea
 2025-07-30 21:27:59,875 - src.features - INFO - Final feature matrix shape: (4995, 163)
 2025-07-30 21:27:59,945 - src.model - INFO - Data split: Train size=3996, Test size=999
 2025-07-30 21:27:59,960 - root - ERROR - Error in backtesting: Unknown label type: continuous. Maybe you are trying to fit a classifier, which expects discrete classes on a regression target with continuous values.
+2025-07-30 21:28:28,749 - root - INFO - Found 1 gold files. Loading data\gold\SOLUSDT_1m_gold.parquet.
+2025-07-30 21:28:28,806 - root - INFO - Found 6 label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-30 21:28:28,806 - root - INFO - Training model for label: label_class_1
+2025-07-30 21:28:28,806 - src.model - INFO - Starting single model training for 'label_class_1' (Task: classification).
+2025-07-30 21:28:28,806 - src.features - INFO - Building feature matrix
+2025-07-30 21:28:28,806 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:28:28,806 - src.features - INFO - Adding regime flags
+2025-07-30 21:28:28,806 - src.features - INFO - Adding regime flags
+2025-07-30 21:28:28,828 - src.features - INFO - Added 0 regime flags
+2025-07-30 21:28:28,829 - src.features - INFO - Adding lagged features
+2025-07-30 21:28:28,829 - src.features - INFO - Adding lagged features
+2025-07-30 21:28:28,842 - src.features - INFO - Added 12 lagged features
+2025-07-30 21:28:28,843 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:28:28,843 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:28:28,856 - src.features - INFO - Added 0 rolling z-scores
+2025-07-30 21:28:28,857 - src.features - INFO - Adding feature interactions
+2025-07-30 21:28:28,857 - src.features - INFO - Adding feature interactions
+2025-07-30 21:28:28,865 - src.features - INFO - Added 2 feature interactions
+2025-07-30 21:28:28,865 - src.features - INFO - Stored 163 feature columns in pipeline
+2025-07-30 21:28:28,869 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'close_zscore_20': 1623, 'close_zscore_50': 1613, 'close_zscore_100': 1613, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2877, 'rsi_zscore_50': 2632, 'rsi_zscore_100': 2497, 'macd_macd_zscore_20': 1619, 'macd_macd_zscore_50': 1612, 'macd_macd_zscore_100': 1612, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5}
+2025-07-30 21:28:28,906 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:28:28,927 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 21:28:28,938 - src.features - INFO - Fitted scaler on 163 features
+2025-07-30 21:28:28,938 - src.features - INFO - Transforming features
+2025-07-30 21:28:28,947 - src.features - INFO - Transformed 163 features
+2025-07-30 21:28:28,947 - src.features - INFO - Final feature matrix shape: (4995, 163)
+2025-07-30 21:28:29,005 - src.model - INFO - Data split: Train size=3996, Test size=999
+2025-07-30 21:28:29,023 - root - ERROR - Error in backtesting: Unknown label type: continuous. Maybe you are trying to fit a classifier, which expects discrete classes on a regression target with continuous values.
+2025-07-30 21:29:16,667 - root - INFO - Found 1 gold files. Loading data\gold\SOLUSDT_1m_gold.parquet.
+2025-07-30 21:29:16,737 - root - INFO - Found 6 label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-30 21:29:16,737 - root - INFO - Training model for label: label_class_1
+2025-07-30 21:29:16,738 - src.model - INFO - Starting single model training for 'label_class_1' (Task: classification).
+2025-07-30 21:29:16,739 - src.features - INFO - Building feature matrix
+2025-07-30 21:29:16,749 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:29:16,749 - src.features - INFO - Adding regime flags
+2025-07-30 21:29:16,749 - src.features - INFO - Adding regime flags
+2025-07-30 21:29:16,760 - src.features - INFO - Added 0 regime flags
+2025-07-30 21:29:16,761 - src.features - INFO - Adding lagged features
+2025-07-30 21:29:16,761 - src.features - INFO - Adding lagged features
+2025-07-30 21:29:16,776 - src.features - INFO - Added 12 lagged features
+2025-07-30 21:29:16,777 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:29:16,777 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:29:16,795 - src.features - INFO - Added 0 rolling z-scores
+2025-07-30 21:29:16,797 - src.features - INFO - Adding feature interactions
+2025-07-30 21:29:16,798 - src.features - INFO - Adding feature interactions
+2025-07-30 21:29:16,806 - src.features - INFO - Added 2 feature interactions
+2025-07-30 21:29:16,808 - src.features - INFO - Stored 163 feature columns in pipeline
+2025-07-30 21:29:16,810 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'close_zscore_20': 1623, 'close_zscore_50': 1613, 'close_zscore_100': 1613, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2877, 'rsi_zscore_50': 2632, 'rsi_zscore_100': 2497, 'macd_macd_zscore_20': 1619, 'macd_macd_zscore_50': 1612, 'macd_macd_zscore_100': 1612, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5}
+2025-07-30 21:29:16,864 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:29:16,866 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 21:29:16,884 - src.features - INFO - Fitted scaler on 163 features
+2025-07-30 21:29:16,885 - src.features - INFO - Transforming features
+2025-07-30 21:29:16,897 - src.features - INFO - Transformed 163 features
+2025-07-30 21:29:16,898 - src.features - INFO - Final feature matrix shape: (4995, 163)
+2025-07-30 21:29:16,962 - src.model - INFO - Data split: Train size=3996, Test size=999
+2025-07-30 21:29:16,975 - root - ERROR - Error in backtesting: Unknown label type: continuous. Maybe you are trying to fit a classifier, which expects discrete classes on a regression target with continuous values.
+2025-07-30 21:30:10,273 - root - INFO - Found 1 gold files. Loading data\gold\SOLUSDT_1m_gold.parquet.
+2025-07-30 21:30:10,331 - root - INFO - Found 6 label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-30 21:30:10,331 - root - INFO - Training model for label: label_class_1
+2025-07-30 21:30:10,332 - src.model - INFO - Starting single model training for 'label_class_1' (Task: classification).
+2025-07-30 21:30:10,332 - src.features - INFO - Building feature matrix
+2025-07-30 21:30:10,340 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:30:10,341 - src.features - INFO - Adding regime flags
+2025-07-30 21:30:10,341 - src.features - INFO - Adding regime flags
+2025-07-30 21:30:10,351 - src.features - INFO - Added 0 regime flags
+2025-07-30 21:30:10,352 - src.features - INFO - Adding lagged features
+2025-07-30 21:30:10,352 - src.features - INFO - Adding lagged features
+2025-07-30 21:30:10,364 - src.features - INFO - Added 12 lagged features
+2025-07-30 21:30:10,365 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:30:10,365 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:30:10,378 - src.features - INFO - Added 0 rolling z-scores
+2025-07-30 21:30:10,380 - src.features - INFO - Adding feature interactions
+2025-07-30 21:30:10,381 - src.features - INFO - Adding feature interactions
+2025-07-30 21:30:10,389 - src.features - INFO - Added 2 feature interactions
+2025-07-30 21:30:10,390 - src.features - INFO - Stored 163 feature columns in pipeline
+2025-07-30 21:30:10,393 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'close_zscore_20': 1623, 'close_zscore_50': 1613, 'close_zscore_100': 1613, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2877, 'rsi_zscore_50': 2632, 'rsi_zscore_100': 2497, 'macd_macd_zscore_20': 1619, 'macd_macd_zscore_50': 1612, 'macd_macd_zscore_100': 1612, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5}
+2025-07-30 21:30:10,437 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:30:10,448 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 21:30:10,456 - src.features - INFO - Fitted scaler on 163 features
+2025-07-30 21:30:10,456 - src.features - INFO - Transforming features
+2025-07-30 21:30:10,471 - src.features - INFO - Transformed 163 features
+2025-07-30 21:30:10,473 - src.features - INFO - Final feature matrix shape: (4995, 163)
+2025-07-30 21:30:10,565 - src.model - INFO - Data split: Train size=3996, Test size=999
+2025-07-30 21:30:10,585 - root - ERROR - Error in backtesting: Unknown label type: continuous. Maybe you are trying to fit a classifier, which expects discrete classes on a regression target with continuous values.
+2025-07-30 21:31:08,644 - root - INFO - Found 1 gold files. Loading data\gold\SOLUSDT_1m_gold.parquet.
+2025-07-30 21:31:08,708 - root - INFO - Found 6 label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-30 21:31:08,708 - root - INFO - Training model for label: label_class_1
+2025-07-30 21:31:08,708 - src.model - INFO - Starting single model training for 'label_class_1' (Task: classification).
+2025-07-30 21:31:08,708 - src.features - INFO - Building feature matrix
+2025-07-30 21:31:08,720 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:31:08,720 - src.features - INFO - Adding regime flags
+2025-07-30 21:31:08,720 - src.features - INFO - Adding regime flags
+2025-07-30 21:31:08,738 - src.features - INFO - Added 0 regime flags
+2025-07-30 21:31:08,738 - src.features - INFO - Adding lagged features
+2025-07-30 21:31:08,740 - src.features - INFO - Adding lagged features
+2025-07-30 21:31:08,755 - src.features - INFO - Added 12 lagged features
+2025-07-30 21:31:08,755 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:31:08,755 - src.features - INFO - Adding rolling z-scores
+2025-07-30 21:31:08,768 - src.features - INFO - Added 0 rolling z-scores
+2025-07-30 21:31:08,768 - src.features - INFO - Adding feature interactions
+2025-07-30 21:31:08,775 - src.features - INFO - Adding feature interactions
+2025-07-30 21:31:08,782 - src.features - INFO - Added 2 feature interactions
+2025-07-30 21:31:08,784 - src.features - INFO - Stored 163 feature columns in pipeline
+2025-07-30 21:31:08,787 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'close_zscore_20': 1623, 'close_zscore_50': 1613, 'close_zscore_100': 1613, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2877, 'rsi_zscore_50': 2632, 'rsi_zscore_100': 2497, 'macd_macd_zscore_20': 1619, 'macd_macd_zscore_50': 1612, 'macd_macd_zscore_100': 1612, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5}
+2025-07-30 21:31:08,833 - src.features - INFO - Remaining rows: 4995
+2025-07-30 21:31:08,839 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 21:31:08,850 - src.features - INFO - Fitted scaler on 163 features
+2025-07-30 21:31:08,852 - src.features - INFO - Transforming features
+2025-07-30 21:31:08,866 - src.features - INFO - Transformed 163 features
+2025-07-30 21:31:08,866 - src.features - INFO - Final feature matrix shape: (4995, 163)
+2025-07-30 21:31:08,925 - src.model - INFO - Data split: Train size=3996, Test size=999
+2025-07-30 21:31:08,941 - root - ERROR - Error in backtesting: Unknown label type: continuous. Maybe you are trying to fit a classifier, which expects discrete classes on a regression target with continuous values.

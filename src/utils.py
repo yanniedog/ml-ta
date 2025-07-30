@@ -247,6 +247,11 @@ def cache_results(max_size: int = 128):
     return decorator
 
 
+# try:
+#     from numba import jit
+# except ImportError:
+#     pass
+
 @jit(nopython=True)
 def fast_rolling_mean(arr: np.ndarray, window: int) -> np.ndarray:
     """Fast rolling mean using Numba."""
