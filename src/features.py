@@ -386,8 +386,12 @@ class FeatureEngineer:
             feature_df = pd.DataFrame(scaled_features, columns=self.feature_columns, index=feature_df.index)
             self.logger.info(f"Transformed {len(self.feature_columns)} features")
         
-        self.logger.info(f"Final feature matrix shape: {feature_df.shape}")
-        return feature_df
+        # Combine scaled features with original non-feature columns
+        result_df = df_with_indicators.drop(columns=self.feature_columns)
+        result_df = pd.concat([result_df, feature_df], axis=1)
+
+        self.logger.info(f"Final feature matrix shape: {result_df.shape}")
+        return result_df
     
     def _handle_nan_values(self, df: pd.DataFrame) -> pd.DataFrame:
         """Handle NaN values in the dataframe."""
@@ -542,24 +546,24 @@ class FeatureEngineer:
             
             # Exclude label and return columns from NaN check
             check_columns = [col for col in feature_columns if col not in label_columns + return_columns]
-            
+
             if check_columns:
                 # Calculate percentage of NaN values per row
                 nan_percentage = df[check_columns].isnull().sum(axis=1) / len(check_columns)
-                
+
                 # Keep rows where less than 50% of features are NaN
                 df_clean = df[nan_percentage < 0.5]
-                
+
                 # Fill remaining NaN values with 0 for numeric columns
                 numeric_columns = df_clean.select_dtypes(include=[np.number]).columns
                 df_clean[numeric_columns] = df_clean[numeric_columns].fillna(0)
-                
+
                 dropped_rows = initial_rows - len(df_clean)
                 dropped_percentage = (dropped_rows / initial_rows) * 100 if initial_rows > 0 else 0
-                
+
                 self.logger.info(f"Dropped {dropped_rows} rows with excessive NaN values ({dropped_percentage:.1f}%)")
                 self.logger.info(f"Remaining rows: {len(df_clean)}")
-                
+
                 return df_clean
             else:
                 # No feature columns to check, return original
@@ -567,49 +571,49 @@ class FeatureEngineer:
         else:
             # No NaN values found
             return df
-    
+
     def ensure_consistent_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """Ensure DataFrame has consistent features with training data."""
         if not self.is_pipeline_fitted:
             raise ValueError("Pipeline not fitted yet")
-        
+
         if self.feature_pipeline.feature_columns is None:
             raise ValueError("Feature columns not set")
-        
+
         # Add missing columns with zeros
         for col in self.feature_pipeline.feature_columns:
             if col not in df.columns:
                 df[col] = 0
-        
+
         # Remove extra columns
         columns_to_keep = self.feature_pipeline.feature_columns + ['timestamp']
         label_columns = [col for col in df.columns if col.startswith('label_')]
         return_columns = [col for col in df.columns if col.startswith('return_')]
         columns_to_keep.extend(label_columns)
         columns_to_keep.extend(return_columns)
-        
+
         return df[columns_to_keep]
-    
+
     def save_silver_data(self, df: pd.DataFrame, symbol: str, interval: str) -> str:
         """Save processed data to silver layer."""
         filename = f"{symbol}_{interval}_silver.parquet"
         filepath = f"{self.config.paths['data']}/silver/{filename}"
-        
+
         save_parquet(df, filepath)
         self.logger.info(f"Saved silver data: {filepath}")
         return filepath
-    
+
     def process_all_data(self) -> None:
         """Process all data in the bronze layer."""
         from pathlib import Path
         import sys
         sys.path.append(str(Path(__file__).parent.parent))
-        
+
         from src.utils import load_config, setup_logging
-        
+
         bronze_path = f"{self.config.paths['data']}/bronze"
         bronze_files = list(Path(bronze_path).glob("*.parquet"))
-        
+
         for file_path in bronze_files:
             try:
                 # Extract symbol and interval from filename
@@ -617,16 +621,16 @@ class FeatureEngineer:
                 parts = filename.split('_')
                 symbol = parts[0]
                 interval = parts[1]
-                
+
                 # Load bronze data
                 df = pd.read_parquet(file_path)
-                
+
                 # Process data
                 processed_df = self.build_feature_matrix(df, fit_scaler=True)
-                
+
                 # Save to silver layer
                 self.save_silver_data(processed_df, symbol, interval)
-                
+
             except Exception as e:
                 self.logger.error(f"Error processing {file_path}: {e}")
 
@@ -636,16 +640,16 @@ def main():
     from pathlib import Path
     import sys
     sys.path.append(str(Path(__file__).parent.parent))
-    
+
     from src.utils import load_config, setup_logging
-    
+
     # Load configuration
     config = load_config("config/settings.yaml")
     setup_logging(config)
-    
+
     # Create feature engineer
     feature_engineer = FeatureEngineer(config)
-    
+
     # Process all data
     feature_engineer.process_all_data()
 

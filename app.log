@@ -1,0 +1,58 @@
+2025-07-30 22:41:04,145 - root - INFO - Logging configured with both file and console handlers.
+2025-07-30 22:41:04,194 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 22:41:04,207 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 22:41:04,986 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 22:41:04,995 - src.features - INFO - Building feature matrix
+2025-07-30 22:41:05,003 - src.features - INFO - Remaining rows: 5000
+2025-07-30 22:41:05,003 - src.features - INFO - Adding regime flags
+2025-07-30 22:41:05,003 - src.features - INFO - Adding regime flags
+2025-07-30 22:41:05,012 - src.features - INFO - Added 19 regime flags
+2025-07-30 22:41:05,013 - src.features - INFO - Adding lagged features
+2025-07-30 22:41:05,013 - src.features - INFO - Adding lagged features
+2025-07-30 22:41:05,022 - src.features - INFO - Added 44 lagged features
+2025-07-30 22:41:05,023 - src.features - INFO - Adding rolling z-scores
+2025-07-30 22:41:05,023 - src.features - INFO - Adding rolling z-scores
+2025-07-30 22:41:05,038 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 22:41:05,039 - src.features - INFO - Adding feature interactions
+2025-07-30 22:41:05,039 - src.features - INFO - Adding feature interactions
+2025-07-30 22:41:05,047 - src.features - INFO - Added 6 feature interactions
+2025-07-30 22:41:05,047 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 22:41:05,050 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 22:41:05,081 - src.features - INFO - Remaining rows: 5000
+2025-07-30 22:41:05,086 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 22:41:05,096 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 22:41:05,096 - src.features - INFO - Transforming features
+2025-07-30 22:41:05,099 - src.features - INFO - Transformed 134 features
+2025-07-30 22:41:05,107 - src.features - INFO - Final feature matrix shape: (5000, 140)
+2025-07-30 22:41:05,116 - src.labels - INFO - Constructing all labels
+2025-07-30 22:41:05,123 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 22:41:05,135 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 22:41:05,136 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 22:41:05,145 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 22:41:05,146 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 22:41:05,157 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 22:41:05,159 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 22:41:05,168 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 22:41:05,169 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 22:41:05,180 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 22:41:05,180 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 22:41:05,188 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 22:41:05,194 - src.labels - INFO - Final labeled dataset shape: (4995, 149)
+2025-07-30 22:41:05,205 - src.model - INFO - Starting single model training for 'label_class_1' (Task: classification).
+2025-07-30 22:41:05,206 - src.features - INFO - Building feature matrix
+2025-07-30 22:41:05,206 - src.features - INFO - Remaining rows: 0
+2025-07-30 22:41:05,209 - src.features - INFO - Adding regime flags
+2025-07-30 22:41:05,209 - src.features - INFO - Adding regime flags
+2025-07-30 22:41:05,214 - src.features - INFO - Added 0 regime flags
+2025-07-30 22:41:05,214 - src.features - INFO - Adding lagged features
+2025-07-30 22:41:05,215 - src.features - INFO - Adding lagged features
+2025-07-30 22:41:05,219 - src.features - INFO - Added 0 lagged features
+2025-07-30 22:41:05,219 - src.features - INFO - Adding rolling z-scores
+2025-07-30 22:41:05,219 - src.features - INFO - Adding rolling z-scores
+2025-07-30 22:41:05,223 - src.features - INFO - Added 0 rolling z-scores
+2025-07-30 22:41:05,223 - src.features - INFO - Adding feature interactions
+2025-07-30 22:41:05,223 - src.features - INFO - Adding feature interactions
+2025-07-30 22:41:05,224 - src.features - INFO - Added 0 feature interactions
+2025-07-30 22:41:05,224 - src.features - INFO - Stored 143 feature columns in pipeline
+2025-07-30 22:41:05,239 - src.features - INFO - Remaining rows: 0
+2025-07-30 22:41:05,244 - src.features - INFO - Fitting feature pipeline on training data

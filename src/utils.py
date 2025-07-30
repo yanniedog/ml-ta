@@ -33,34 +33,38 @@ class Config(BaseModel):
     paths: Dict[str, str]
     logging: Dict[str, str]
     shap: Dict[str, Any]
+    risk: Dict[str, Any]
 
 
 def setup_logging(config: Config) -> logging.Logger:
-    """Setup logging configuration."""
-    log_dir = Path(config.paths["logs"])
-    log_dir.mkdir(exist_ok=True)
-    
-    # Get the root logger
-    logger = logging.getLogger()
-    logger.setLevel(getattr(logging, config.logging["level"].upper()))
+    """Set up logging for the application, ensuring console output for tests."""
+    log_config = config.logging
+    log_level = log_config.get("level", "INFO").upper()
+    log_file = log_config.get("file", "logs/app.log")
+    log_format = log_config.get("format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-    # Clear existing handlers
+    Path(log_file).parent.mkdir(exist_ok=True, parents=True)
+
+    logger = logging.getLogger()
+    logger.setLevel(log_level)
+
     if logger.hasHandlers():
         logger.handlers.clear()
 
-    # Create formatter
-    formatter = logging.Formatter(config.logging["format"])
-
-    # Create file handler
-    file_handler = logging.FileHandler(log_dir / config.logging["file"])
+    # Always add a file handler
+    file_handler = logging.FileHandler(log_file, mode='w')
+    file_handler.setLevel(log_level)
+    formatter = logging.Formatter(log_format)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    # Create stream handler
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
+    # Always add a console handler to ensure test visibility
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO) # Ensure INFO level for console
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
+    logger.info("Logging configured with both file and console handlers.")
     return logger
 
 
@@ -221,30 +225,8 @@ def performance_monitor(func: Callable) -> Callable:
 
 
 def cache_results(max_size: int = 128):
-    """Decorator to cache function results."""
-    def decorator(func: Callable) -> Callable:
-        cache = {}
-        
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            # Create cache key from function name and arguments
-            key = (func.__name__, str(args), str(sorted(kwargs.items())))
-            
-            if key in cache:
-                return cache[key]
-            
-            result = func(*args, **kwargs)
-            
-            # Simple LRU cache implementation
-            if len(cache) >= max_size:
-                # Remove oldest item (simple implementation)
-                cache.pop(next(iter(cache)))
-            
-            cache[key] = result
-            return result
-        
-        return wrapper
-    return decorator
+    """Decorator to cache function results using functools.lru_cache."""
+    return functools.lru_cache(maxsize=max_size)
 
 
 # try:

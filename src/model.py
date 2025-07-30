@@ -9,11 +9,12 @@ import logging
 import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional, Tuple, Union
+from collections import deque
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import (accuracy_score, roc_auc_score, precision_score, recall_score, f1_score,
                              mean_squared_error, mean_absolute_error, r2_score)
-from sklearn.ensemble import (RandomForestClassifier, GradientBoostingClassifier, VotingClassifier,
-                              RandomForestRegressor, GradientBoostingRegressor, VotingRegressor)
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, VotingClassifier, VotingRegressor
+from optuna.integration import LightGBMPruningCallback
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
 import lightgbm as lgb
@@ -33,34 +34,51 @@ LightGBMModel = Union[lgb.LGBMClassifier, lgb.LGBMRegressor]
 
 
 class TimeSeriesValidator:
-    """Time series validation with configurable splits and test size."""
+    """Advanced time series validation with expanding/sliding windows, gap, and purging."""
 
     def __init__(self, config: Config):
         self.n_splits = config.model.get('cv_folds', 5)
         self.test_size = config.model.get('cv_test_size', 0.2)
+        self.validation_strategy = config.model.get('cv_strategy', 'expanding') # 'expanding' or 'sliding'
+        self.gap_size = config.model.get('cv_gap_size', 0) # Number of samples to leave between train and test
         self.logger = logging.getLogger(__name__)
 
     def split(self, X: pd.DataFrame, y: pd.Series = None, groups=None):
-        """Generate indices for expanding window time series cross-validation."""
-        self.logger.info(f"Generating {self.n_splits} splits for time series cross-validation with test size {self.test_size}.")
-        total_rows = len(X)
-        test_rows = int(total_rows * self.test_size)
+        """Generate indices for time series cross-validation."""
+        self.logger.info(f"Using '{self.validation_strategy}' window CV with {self.n_splits} splits, test_size={self.test_size}, gap={self.gap_size}.")
+        
+        total_samples = len(X)
+        indices = np.arange(total_samples)
+        
+        test_size_samples = int(total_samples * self.test_size)
+        if self.validation_strategy == 'expanding':
+            train_size_samples = (total_samples - test_size_samples * self.n_splits) // self.n_splits
+        else: # sliding
+            train_size_samples = (total_samples - test_size_samples * self.n_splits - self.gap_size * (self.n_splits -1)) // self.n_splits
 
         for i in range(self.n_splits):
-            test_start = total_rows - (self.n_splits - i) * test_rows
-            test_end = test_start + test_rows
-            train_end = test_start
+            if self.validation_strategy == 'expanding':
+                train_end = i * (train_size_samples + test_size_samples)
+                test_start = train_end + self.gap_size
+            else: # sliding
+                train_start = i * (train_size_samples + test_size_samples + self.gap_size)
+                train_end = train_start + train_size_samples
+                test_start = train_end + self.gap_size
 
-            test_start, test_end = max(0, test_start), min(total_rows, test_end)
+            test_end = test_start + test_size_samples
 
-            if test_start >= test_end or train_end <= 0:
+            if test_end > total_samples:
                 continue
 
-            train_indices = np.arange(0, train_end)
-            test_indices = np.arange(test_start, test_end)
+            if self.validation_strategy == 'expanding':
+                 train_indices = indices[:train_end]
+            else: # sliding
+                 train_indices = indices[train_start:train_end]
+
+            test_indices = indices[test_start:test_end]
 
             if len(train_indices) > 0 and len(test_indices) > 0:
-                self.logger.info(f"Split {i+1}: Train size={len(train_indices)}, Test size={len(test_indices)}")
+                self.logger.debug(f"Split {i+1}: Train {len(train_indices)} samples, Test {len(test_indices)} samples")
                 yield train_indices, test_indices
 
     def get_n_splits(self, X=None, y=None, groups=None) -> int:
@@ -118,6 +136,58 @@ class ModelTrainer:
             'shap_values': shap_values
         }
         self.results[label_column] = result
+        return result
+
+    def train_ensemble_model(self, df: pd.DataFrame, label_column: str, task_type: str, 
+                             optimize_hyperparams: bool = False, ensemble_method: str = 'voting') -> Dict:
+        """Train an ensemble of models with optional hyperparameter tuning."""
+        self.logger.info(f"Starting ensemble model training for '{label_column}' (Task: {task_type}).")
+
+        feature_engineer = FeatureEngineer(self.config)
+        X, y = self._prepare_features(df, feature_engineer, label_column)
+        self.feature_engineers[label_column] = feature_engineer
+
+        X_train, X_test, y_train, y_test = self._time_series_split(X, y)
+
+        scaler = StandardScaler()
+        X_train_scaled = pd.DataFrame(scaler.fit_transform(X_train), columns=X_train.columns, index=X_train.index)
+        X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_test.columns, index=X_test.index)
+        self.scalers[label_column] = scaler
+
+        lgbm_params = self.config.model.get('lgbm_params', {})
+        rf_params = {'n_estimators': 100, 'random_state': self.config.app['seed']}
+
+        if optimize_hyperparams:
+            self.logger.info("Optimizing hyperparameters for ensemble...")
+            best_params = self._optimize_ensemble_hyperparameters(X_train_scaled, y_train, X_test_scaled, y_test, task_type)
+            lgbm_params.update(best_params['lgbm'])
+            rf_params.update(best_params['rf'])
+
+        # Define base models
+        if task_type == 'classification':
+            estimators = [
+                ('lgbm', lgb.LGBMClassifier(**lgbm_params)),
+                ('rf', RandomForestClassifier(**rf_params))
+            ]
+            ensemble_model = VotingClassifier(estimators, voting='soft')
+        else:
+            estimators = [
+                ('lgbm', lgb.LGBMRegressor(**lgbm_params)),
+                ('rf', RandomForestRegressor(**rf_params))
+            ]
+            ensemble_model = VotingRegressor(estimators)
+
+        self.logger.info("Fitting ensemble model...")
+        ensemble_model.fit(X_train_scaled, y_train)
+
+        metrics = self._evaluate_model(ensemble_model, X_test_scaled, y_test, task_type)
+        self.logger.info(f"Ensemble test metrics for '{label_column}': {metrics}")
+
+        result = {
+            'model': ensemble_model,
+            'test_metrics': metrics,
+        }
+        self.results[f"{label_column}_ensemble"] = result
         return result
 
     def _prepare_features(self, df: pd.DataFrame, feature_engineer: FeatureEngineer, label_column: str) -> Tuple[pd.DataFrame, pd.Series]:
@@ -205,85 +275,101 @@ class ModelTrainer:
         
         self.models[label_column] = results
         self.feature_engineers[label_column] = feature_engineer
-        
-        self.logger.info(f"Model training completed. Test accuracy: {test_metrics.get('accuracy', 0):.4f}")
-        
-        return results
-    
-    def hyperparameter_tuning(self, df: pd.DataFrame, label_column: str,
-                            task_type: str = "classification", n_trials: int = 50) -> Dict:
-        """Hyperparameter tuning with Optuna."""
-        self.logger.info("Starting hyperparameter tuning")
-        
-        # Prepare features and labels
-        feature_engineer = FeatureEngineer(self.config)
-        X = feature_engineer.build_feature_matrix(df, fit_pipeline=True)
-        y = df[label_column]
-        
-        # Align data
-        common_idx = X.index.intersection(y.index)
-        X = X.loc[common_idx]
-        y = y.loc[common_idx]
-        
-        # Clean data
-        X_clean = X.copy()
-        X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
-        X_clean = X_clean.fillna(X_clean.median())
-        
-        # Clip extreme values
-        for col in X_clean.columns:
-            if X_clean[col].dtype in ['float64', 'float32']:
-                Q1 = X_clean[col].quantile(0.001)
-                Q3 = X_clean[col].quantile(0.999)
-                X_clean[col] = X_clean[col].clip(Q1, Q3)
-        
         def objective(trial):
+            params = {
+                'objective': 'binary' if task_type == 'classification' else 'regression_l1',
+                'metric': 'auc' if task_type == 'classification' else 'rmse',
+                'n_estimators': trial.suggest_int('n_estimators', 200, 2000, step=100),
+                'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2, log=True),
+                'num_leaves': trial.suggest_int('num_leaves', 20, 100),
+                'max_depth': trial.suggest_int('max_depth', 5, 15),
+                'subsample': trial.suggest_float('subsample', 0.6, 1.0),
+                'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
+                'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
+                'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
+                'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
+                'verbose': -1,
+                'random_state': self.config.app['seed']
+            }
+
+            model = self._train_lgbm(X_train, y_train, X_val, y_val, task_type, params)
+            metrics = self._evaluate_model(model, X_val, y_val, task_type)
+            
+            return metrics.get('roc_auc' if task_type == 'classification' else 'rmse', 0)
+
+        study = optuna.create_study(direction='maximize' if task_type == 'classification' else 'minimize')
+        study.optimize(objective, n_trials=self.config.model.get('optuna_trials', 50))
+
+        self.logger.info(f"Best trial score: {study.best_trial.value}")
+        self.logger.info(f"Best params: {study.best_params}")
+
+        return study.best_params
+
+    def _optimize_ensemble_hyperparameters(self, X_train, y_train, X_val, y_val, task_type):
+        """Optimize hyperparameters for ensemble models using Optuna."""
+        def objective(trial):
+            # LightGBM parameters
+            lgbm_params = {
+                'objective': 'binary' if task_type == 'classification' else 'regression_l1',
+                'metric': 'auc' if task_type == 'classification' else 'rmse',
+                'n_estimators': trial.suggest_int('lgbm_n_estimators', 200, 1000, step=100),
+                'learning_rate': trial.suggest_float('lgbm_learning_rate', 0.01, 0.1, log=True),
+                'num_leaves': trial.suggest_int('lgbm_num_leaves', 20, 50),
+                'verbose': -1,
+                'random_state': self.config.app['seed']
+            }
+
+            # RandomForest parameters
+            rf_params = {
+                'n_estimators': trial.suggest_int('rf_n_estimators', 100, 500, step=50),
+                'max_depth': trial.suggest_int('rf_max_depth', 5, 15),
+                'min_samples_split': trial.suggest_int('rf_min_samples_split', 2, 10),
+                'random_state': self.config.app['seed']
+            }
+
+            if task_type == 'classification':
+                estimators = [
+                    ('lgbm', lgb.LGBMClassifier(**lgbm_params)),
+                    ('rf', RandomForestClassifier(**rf_params))
+                ]
+                ensemble = VotingClassifier(estimators, voting='soft')
+            else:
+                estimators = [
+                    ('lgbm', lgb.LGBMRegressor(**lgbm_params)),
+                    ('rf', RandomForestRegressor(**rf_params))
+                ]
+                ensemble = VotingRegressor(estimators)
+
+            pruning_callback = LightGBMPruningCallback(trial, 'auc' if task_type == 'classification' else 'rmse')
+            fit_params = {
+                'lgbm__eval_set': [(X_val, y_val)],
+                'lgbm__callbacks': [pruning_callback]
+            }
+
             try:
-                # LightGBM parameters
-                lgb_params = {
-                    'objective': 'binary',
-                    'metric': 'binary_logloss',
-                    'boosting_type': 'gbdt',
-                    'num_leaves': trial.suggest_int('num_leaves', 20, 100),
-                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
-                    'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
-                    'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
-                    'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
-                    'min_child_samples': trial.suggest_int('min_child_samples', 5, 50),
-                    'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
-                    'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
-                    'n_estimators': 100,
-                    'verbose': -1,
-                    'random_state': 42
-                }
-                
-                # Use TimeSeriesSplit for validation
-                tscv = TimeSeriesSplit(n_splits=3)
-                lgb_scores = cross_val_score(
-                    lgb.LGBMClassifier(**lgb_params), X_clean, y, cv=tscv, scoring='roc_auc'
-                )
-                
-                # Check for valid scores
-                if np.isnan(lgb_scores).any() or np.isinf(lgb_scores).any():
-                    return 0.5  # Return default score for failed trials
-                
-                return lgb_scores.mean()
-                
+                ensemble.fit(X_train, y_train, **fit_params)
+            except optuna.exceptions.TrialPruned:
+                raise
             except Exception as e:
-                self.logger.warning(f"Trial failed: {e}")
-                return 0.5  # Return default score for failed trials
+                # Catch other exceptions during fitting, e.g., from RandomForest
+                self.logger.warning(f"Trial failed with exception: {e}")
+                # Return a poor score to let Optuna continue with other trials
+                return float('inf') if task_type == 'regression' else 0.0
+
+            metrics = self._evaluate_model(ensemble, X_val, y_val, task_type)
+            return metrics.get('roc_auc' if task_type == 'classification' else 'rmse', 0)
+
+        study = optuna.create_study(direction='maximize' if task_type == 'classification' else 'minimize')
+        study.optimize(objective, n_trials=self.config.model.get('optuna_trials_ensemble', 20))
+
+        self.logger.info(f"Best ensemble trial score: {study.best_trial.value}")
+        best_params = study.best_params
         
-        study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=n_trials)
+        # Separate params for each model
+        lgbm_best_params = {k.replace('lgbm_', ''): v for k, v in best_params.items() if k.startswith('lgbm_')}
+        rf_best_params = {k.replace('rf_', ''): v for k, v in best_params.items() if k.startswith('rf_')}
         
-        self.logger.info(f"Best hyperparameters found: {study.best_params}")
-        self.logger.info(f"Best CV score: {study.best_value:.4f}")
-        
-        return {
-            'best_params': study.best_params,
-            'best_score': study.best_value,
-            'n_trials': n_trials
-        }
+        return {'lgbm': lgbm_best_params, 'rf': rf_best_params}
     
     def train_all_models(self, df: pd.DataFrame) -> Dict:
         """Train models for all label columns."""
@@ -343,97 +429,133 @@ class ModelTrainer:
 
 
 class RealTimePredictor:
-    """Real-time predictor for a single model."""
-    
-    def __init__(self, config, model, feature_engineer):
+    """Real-time predictor for a single model with history tracking."""
+
+    def __init__(self, config: Config, model: object, feature_engineer: FeatureEngineer, history_size: int = 1000):
         self.config = config
         self.model = model
         self.feature_engineer = feature_engineer
         self.logger = logging.getLogger(__name__)
-        self.prediction_history = []
-    
-    def prepare_live_features(self, data):
-        """Prepare features for live prediction."""
-        # This should handle a single data point or a small batch
-        return self.feature_engineer.build_live_feature_matrix(data)
-    
-    def predict(self, data: pd.DataFrame) -> Dict:
-        """Make real-time prediction with confidence score."""
+        self.prediction_history = deque(maxlen=history_size)
+
+    def predict(self, data: pd.DataFrame, y_true: Optional[pd.Series] = None) -> Dict:
+        """Make real-time prediction, store it, and return the result."""
         try:
-            # Prepare features
-            X = self.prepare_live_features(data)
+            X = self.feature_engineer.build_live_feature_matrix(data)
             
-            # Make prediction
-            prediction_proba = self.model.predict_proba(X)
-            prediction = self.model.predict(X)
+            # Ensure columns match training columns
+            if hasattr(self.model, 'feature_name_'):
+                model_cols = self.model.feature_name_()
+                X = X.reindex(columns=model_cols, fill_value=0)
+
+            is_classification = hasattr(self.model, 'predict_proba')
             
-            # Handle single prediction case
-            if len(prediction) == 1:
-                pred_value = int(prediction[0])
-                if len(prediction_proba.shape) > 1:
-                    confidence = float(np.max(prediction_proba, axis=1)[0])
-                    prob_value = float(prediction_proba[0, 1])  # Positive class probability
-                else:
-                    confidence = float(abs(prediction_proba[0] - 0.5) * 2)
-                    prob_value = float(prediction_proba[0])
-            else:
-                # Handle multiple predictions - take the last one for real-time
-                pred_value = int(prediction[-1])
-                if len(prediction_proba.shape) > 1:
-                    confidence = float(np.max(prediction_proba, axis=1)[-1])
-                    prob_value = float(prediction_proba[-1, 1])
-                else:
-                    confidence = float(abs(prediction_proba[-1] - 0.5) * 2)
-                    prob_value = float(prediction_proba[-1])
-            
-            return {
-                'prediction': pred_value,
+            if is_classification:
+                prediction_proba = self.model.predict_proba(X)
+                prediction = self.model.predict(X)
+                last_pred = int(prediction[-1])
+                last_proba = prediction_proba[-1]
+                confidence = float(np.max(last_proba))
+                prob_value = float(last_proba[1]) if len(last_proba) > 1 else float(last_proba[0])
+            else: # Regression
+                prediction = self.model.predict(X)
+                last_pred = float(prediction[-1])
+                confidence = 1.0 # Confidence is less applicable for regression
+                prob_value = last_pred
+
+            result = {
+                'prediction': last_pred,
                 'confidence': confidence,
                 'probability': prob_value
             }
-            
+
+            # Store history
+            history_item = result.copy()
+            if y_true is not None and not y_true.empty:
+                history_item['actual'] = y_true.iloc[-1]
+            self.prediction_history.append(history_item)
+
+            return result
+
         except Exception as e:
-            self.logger.error(f"Error in real-time prediction: {e}")
-            return {
-                'prediction': None,
-                'confidence': 0.0,
-                'error': str(e)
-            }
-    
-    def get_prediction_summary(self, window: int = 100) -> Dict:
-        """Get summary of recent predictions."""
-        # This would need to be implemented with actual prediction history
+            self.logger.error(f"Error in real-time prediction: {e}", exc_info=True)
+            return {'prediction': None, 'confidence': 0.0, 'error': str(e)}
+
+    def get_prediction_summary(self) -> Dict:
+        """Get summary of recent predictions from history."""
+        if not self.prediction_history:
+            return {'total_predictions': 0, 'accuracy': 0.0, 'avg_confidence': 0.0}
+
+        history = list(self.prediction_history)
+        total_predictions = len(history)
+        avg_confidence = np.mean([p['confidence'] for p in history])
+        
+        correct_predictions = 0
+        actuals_available = 0
+        for p in history:
+            if 'actual' in p:
+                actuals_available += 1
+                if p['prediction'] == p['actual']:
+                    correct_predictions += 1
+        
+        accuracy = (correct_predictions / actuals_available) if actuals_available > 0 else 0.0
+
         return {
-            'total_predictions': 0,
-            'accuracy': 0.0,
-            'avg_confidence': 0.0
+            'total_predictions': total_predictions,
+            'accuracy': accuracy,
+            'avg_confidence': avg_confidence,
+            'predictions_with_actuals': actuals_available
         }
 
 
 class RealTimeEnsemblePredictor:
-    """Real-time ensemble predictor."""
-    
-    def __init__(self, config, trained_models):
+    """Real-time ensemble predictor that aggregates predictions from multiple models."""
+
+    def __init__(self, config: Config, trained_models: Dict[str, Dict]):
         self.config = config
-        self.trained_models = trained_models
         self.logger = logging.getLogger(__name__)
-    
-    def prepare_live_features(self, data, feature_engineer):
-        """Prepare features for ensemble prediction."""
-        return feature_engineer.build_live_feature_matrix(data)
-    
-    def predict(self, data, label_name='label_class_1'):
-        """Make ensemble prediction."""
-        if label_name not in self.trained_models:
-            self.logger.error(f"Model for {label_name} not found")
-            return None
-        
-        model_result = self.trained_models[label_name]
-        predictor = RealTimePredictor(
-            self.config, 
-            model_result['model'], 
-            model_result['feature_engineer']
-        )
-        
-        return predictor.predict(data)
+        self.predictors: Dict[str, RealTimePredictor] = {}
+
+        for label, model_data in trained_models.items():
+            if 'ensemble' not in label:
+                self.predictors[label] = RealTimePredictor(
+                    config,
+                    model_data['model'],
+                    model_data['feature_engineer']
+                )
+
+    def predict(self, data: pd.DataFrame, y_true: Optional[pd.Series] = None) -> Dict:
+        """Make an aggregated real-time prediction from all base models."""
+        all_predictions = []
+        all_probas = []
+
+        for label, predictor in self.predictors.items():
+            result = predictor.predict(data, y_true)
+            if result and result['prediction'] is not None:
+                all_predictions.append(result['prediction'])
+                all_probas.append(result['probability'])
+
+        if not all_predictions:
+            return {'prediction': None, 'confidence': 0.0, 'error': 'No valid predictions from base models.'}
+
+        # Simple averaging for ensemble prediction
+        final_prediction = np.mean(all_predictions)
+        final_confidence = np.mean([p['confidence'] for p in self.get_all_histories()])
+
+        # For classification, you might want to vote
+        if self.config.model.get('task_type', 'classification') == 'classification':
+            final_prediction = int(round(final_prediction))
+
+        return {
+            'prediction': final_prediction,
+            'confidence': final_confidence,
+            'individual_predictions': all_predictions
+        }
+
+    def get_all_histories(self) -> List[Dict]:
+        """Retrieve prediction histories from all predictors."""
+        histories = []
+        for predictor in self.predictors.values():
+            histories.extend(predictor.prediction_history)
+        return histories
 
