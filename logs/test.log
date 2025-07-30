@@ -1,0 +1,1083 @@
+2025-07-29 19:33:42,045 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:33:42,045 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,045 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:33:42,045 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,045 - __main__ - INFO - Testing data loading...
+2025-07-29 19:33:42,067 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,068 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:33:42,068 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,069 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:33:42,080 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,080 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 19:33:42,080 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,080 - __main__ - INFO - Testing feature engineering...
+2025-07-29 19:33:42,080 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,080 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 19:33:42,080 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,080 - __main__ - INFO - Testing cross-validation...
+2025-07-29 19:33:42,103 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,103 - __main__ - INFO - Running test: Model Training
+2025-07-29 19:33:42,103 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,104 - __main__ - INFO - Testing model training...
+2025-07-29 19:33:42,112 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,112 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 19:33:42,113 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,113 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 19:33:42,123 - __main__ - INFO - 
+==================================================
+2025-07-29 19:33:42,123 - __main__ - INFO - TEST SUMMARY
+2025-07-29 19:33:42,123 - __main__ - INFO - ==================================================
+2025-07-29 19:33:42,135 - __main__ - INFO - 
+Overall: 0/6 tests passed
+2025-07-29 19:35:04,675 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:35:04,675 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:04,675 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:35:04,675 - __main__ - INFO - ==================================================
+2025-07-29 19:35:04,675 - __main__ - INFO - Testing data loading...
+2025-07-29 19:35:04,780 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:35:04,780 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:04,780 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:35:04,781 - __main__ - INFO - ==================================================
+2025-07-29 19:35:04,781 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:35:04,796 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:35:04,954 - __main__ - INFO - Technical Indicators: FAILED
+2025-07-29 19:35:04,954 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:04,955 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 19:35:04,955 - __main__ - INFO - ==================================================
+2025-07-29 19:35:04,956 - __main__ - INFO - Testing feature engineering...
+2025-07-29 19:35:04,963 - src.features - INFO - Building feature matrix
+2025-07-29 19:35:04,963 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:35:05,115 - __main__ - INFO - Feature Engineering: FAILED
+2025-07-29 19:35:05,115 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:05,116 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 19:35:05,118 - __main__ - INFO - ==================================================
+2025-07-29 19:35:05,119 - __main__ - INFO - Testing cross-validation...
+2025-07-29 19:35:05,133 - src.features - INFO - Building feature matrix
+2025-07-29 19:35:05,133 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:35:05,231 - __main__ - INFO - Cross-Validation: FAILED
+2025-07-29 19:35:05,232 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:05,233 - __main__ - INFO - Running test: Model Training
+2025-07-29 19:35:05,233 - __main__ - INFO - ==================================================
+2025-07-29 19:35:05,234 - __main__ - INFO - Testing model training...
+2025-07-29 19:35:05,246 - src.features - INFO - Building feature matrix
+2025-07-29 19:35:05,246 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:35:05,370 - __main__ - INFO - Model Training: FAILED
+2025-07-29 19:35:05,370 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:05,370 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 19:35:05,370 - __main__ - INFO - ==================================================
+2025-07-29 19:35:05,370 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 19:35:05,380 - src.features - INFO - Building feature matrix
+2025-07-29 19:35:05,380 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:35:05,499 - __main__ - INFO - Real-Time Prediction: FAILED
+2025-07-29 19:35:05,500 - __main__ - INFO - 
+==================================================
+2025-07-29 19:35:05,501 - __main__ - INFO - TEST SUMMARY
+2025-07-29 19:35:05,503 - __main__ - INFO - ==================================================
+2025-07-29 19:35:05,503 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:35:05,503 - __main__ - INFO - Technical Indicators: FAILED
+2025-07-29 19:35:05,503 - __main__ - INFO - Feature Engineering: FAILED
+2025-07-29 19:35:05,504 - __main__ - INFO - Cross-Validation: FAILED
+2025-07-29 19:35:05,504 - __main__ - INFO - Model Training: FAILED
+2025-07-29 19:35:05,504 - __main__ - INFO - Real-Time Prediction: FAILED
+2025-07-29 19:35:05,504 - __main__ - INFO - 
+Overall: 1/6 tests passed
+2025-07-29 19:35:05,506 - __main__ - ERROR - 5 tests failed
+2025-07-29 19:36:32,560 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:36:32,561 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:32,562 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:36:32,563 - __main__ - INFO - ==================================================
+2025-07-29 19:36:32,563 - __main__ - INFO - Testing data loading...
+2025-07-29 19:36:32,658 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:36:32,658 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:32,658 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:36:32,658 - __main__ - INFO - ==================================================
+2025-07-29 19:36:32,658 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:36:32,678 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:36:32,891 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:36:32,891 - __main__ - INFO - Indicators calculation successful: (1000, 58)
+2025-07-29 19:36:32,891 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:36:32,891 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:32,891 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 19:36:32,891 - __main__ - INFO - ==================================================
+2025-07-29 19:36:32,891 - __main__ - INFO - Testing feature engineering...
+2025-07-29 19:36:32,900 - src.features - INFO - Building feature matrix
+2025-07-29 19:36:32,900 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:36:33,113 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:36:33,113 - src.features - INFO - Adding regime flags
+2025-07-29 19:36:33,126 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:36:33,127 - src.features - INFO - Adding lagged features
+2025-07-29 19:36:33,138 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:36:33,139 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:36:33,162 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:36:33,163 - src.features - INFO - Adding feature interactions
+2025-07-29 19:36:33,166 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:36:33,200 - src.features - INFO - Scaling features
+2025-07-29 19:36:33,209 - src.features - INFO - Found 145 features to scale
+2025-07-29 19:36:33,209 - src.features - INFO - DataFrame shape: (1000, 145)
+2025-07-29 19:36:33,209 - src.features - INFO - Numeric columns: 145
+2025-07-29 19:36:33,243 - src.features - INFO - df_filled shape: (1000, 145)
+2025-07-29 19:36:33,243 - src.features - INFO - df_filled columns count: 145
+2025-07-29 19:36:33,243 - src.features - INFO - feature_columns count: 145
+2025-07-29 19:36:33,291 - src.features - INFO - Scaler fitted on training data
+2025-07-29 19:36:33,301 - src.features - INFO - Scaled features shape: (1000, 145)
+2025-07-29 19:36:33,301 - src.features - INFO - Feature columns length: 145
+2025-07-29 19:36:33,306 - src.features - INFO - Scaled 145 features
+2025-07-29 19:36:33,312 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:36:33,313 - src.features - INFO - Final feature matrix shape: (1000, 145)
+2025-07-29 19:36:33,313 - __main__ - INFO - Feature engineering successful: (1000, 145)
+2025-07-29 19:36:33,314 - __main__ - INFO - No duplicate columns found
+2025-07-29 19:36:33,314 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:36:33,314 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:33,316 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 19:36:33,316 - __main__ - INFO - ==================================================
+2025-07-29 19:36:33,316 - __main__ - INFO - Testing cross-validation...
+2025-07-29 19:36:33,324 - src.features - INFO - Building feature matrix
+2025-07-29 19:36:33,324 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:36:33,424 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:36:33,424 - src.features - INFO - Adding regime flags
+2025-07-29 19:36:33,447 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:36:33,447 - src.features - INFO - Adding lagged features
+2025-07-29 19:36:33,466 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:36:33,466 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:36:33,490 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:36:33,492 - src.features - INFO - Adding feature interactions
+2025-07-29 19:36:33,496 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:36:33,538 - src.features - INFO - Scaling features
+2025-07-29 19:36:33,543 - src.features - INFO - Found 145 features to scale
+2025-07-29 19:36:33,543 - src.features - INFO - DataFrame shape: (500, 146)
+2025-07-29 19:36:33,543 - src.features - INFO - Numeric columns: 146
+2025-07-29 19:36:33,584 - src.features - INFO - df_filled shape: (500, 146)
+2025-07-29 19:36:33,584 - src.features - INFO - df_filled columns count: 146
+2025-07-29 19:36:33,585 - src.features - INFO - feature_columns count: 145
+2025-07-29 19:36:33,635 - src.features - INFO - Scaler fitted on training data
+2025-07-29 19:36:33,657 - src.features - INFO - Scaled features shape: (500, 146)
+2025-07-29 19:36:33,657 - src.features - INFO - Feature columns length: 145
+2025-07-29 19:36:33,657 - src.features - INFO - Scaled 145 features
+2025-07-29 19:36:33,660 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:36:33,660 - src.features - INFO - Final feature matrix shape: (500, 146)
+2025-07-29 19:36:33,671 - src.model - INFO - Prepared 145 features for 500 samples
+2025-07-29 19:36:33,672 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 19:36:37,452 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.4461077844311377, 'std': 0.045274635617619775, 'scores': [0.38922155688622756, 0.4491017964071856, 0.5]}, 'cv_roc_auc': {'mean': 0.47266403537270135, 'std': 0.0317586808556422, 'scores': [0.43158347676419967, 0.47748135398737807, 0.5089272753665264]}, 'cv_precision': {'mean': 0.44274509803921563, 'std': 0.04566901971560074, 'scores': [0.38823529411764707, 0.44, 0.5]}, 'cv_recall': {'mean': 0.4497991967871486, 'std': 0.0738344430154628, 'scores': [0.39759036144578314, 0.39759036144578314, 0.5542168674698795]}, 'cv_f1': {'mean': 0.4454309825195901, 'std': 0.057669263211145474, 'scores': [0.39285714285714285, 0.4177215189873418, 0.5257142857142857]}}
+2025-07-29 19:36:37,452 - __main__ - INFO - Cross-validation successful
+2025-07-29 19:36:37,452 - __main__ - INFO - CV results: {'cv_accuracy': {'mean': 0.4461077844311377, 'std': 0.045274635617619775, 'scores': [0.38922155688622756, 0.4491017964071856, 0.5]}, 'cv_roc_auc': {'mean': 0.47266403537270135, 'std': 0.0317586808556422, 'scores': [0.43158347676419967, 0.47748135398737807, 0.5089272753665264]}, 'cv_precision': {'mean': 0.44274509803921563, 'std': 0.04566901971560074, 'scores': [0.38823529411764707, 0.44, 0.5]}, 'cv_recall': {'mean': 0.4497991967871486, 'std': 0.0738344430154628, 'scores': [0.39759036144578314, 0.39759036144578314, 0.5542168674698795]}, 'cv_f1': {'mean': 0.4454309825195901, 'std': 0.057669263211145474, 'scores': [0.39285714285714285, 0.4177215189873418, 0.5257142857142857]}}
+2025-07-29 19:36:37,452 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:36:37,454 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:37,455 - __main__ - INFO - Running test: Model Training
+2025-07-29 19:36:37,455 - __main__ - INFO - ==================================================
+2025-07-29 19:36:37,455 - __main__ - INFO - Testing model training...
+2025-07-29 19:36:37,474 - src.features - INFO - Building feature matrix
+2025-07-29 19:36:37,474 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:36:37,742 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:36:37,742 - src.features - INFO - Adding regime flags
+2025-07-29 19:36:37,742 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:36:37,742 - src.features - INFO - Adding lagged features
+2025-07-29 19:36:37,773 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:36:37,774 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:36:37,777 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:36:37,777 - src.features - INFO - Adding feature interactions
+2025-07-29 19:36:37,794 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:36:37,816 - src.features - INFO - Scaling features
+2025-07-29 19:36:37,820 - src.features - INFO - Found 145 features to scale
+2025-07-29 19:36:37,820 - src.features - INFO - DataFrame shape: (1000, 147)
+2025-07-29 19:36:37,820 - src.features - INFO - Numeric columns: 147
+2025-07-29 19:36:37,858 - src.features - INFO - df_filled shape: (1000, 147)
+2025-07-29 19:36:37,859 - src.features - INFO - df_filled columns count: 147
+2025-07-29 19:36:37,860 - src.features - INFO - feature_columns count: 145
+2025-07-29 19:36:37,897 - src.features - INFO - Scaler fitted on training data
+2025-07-29 19:36:37,941 - src.features - INFO - Scaled features shape: (1000, 147)
+2025-07-29 19:36:37,941 - src.features - INFO - Feature columns length: 145
+2025-07-29 19:36:37,942 - src.features - INFO - Scaled 145 features
+2025-07-29 19:36:37,954 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:36:37,956 - src.features - INFO - Final feature matrix shape: (1000, 147)
+2025-07-29 19:36:37,958 - src.model - INFO - Training model for label_class_1 (classification)
+2025-07-29 19:36:37,961 - src.model - INFO - Prepared 145 features for 1000 samples
+2025-07-29 19:36:37,971 - src.model - INFO - Training classification model
+2025-07-29 19:36:38,321 - src.model - INFO - Model training completed
+2025-07-29 19:36:38,352 - src.model - INFO - Model evaluation completed: {'accuracy': 0.52, 'classification_report': {'0': {'precision': 0.5098039215686274, 'recall': 0.5306122448979592, 'f1-score': 0.52, 'support': 49.0}, '1': {'precision': 0.5306122448979592, 'recall': 0.5098039215686274, 'f1-score': 0.52, 'support': 51.0}, 'accuracy': 0.52, 'macro avg': {'precision': 0.5202080832332934, 'recall': 0.5202080832332934, 'f1-score': 0.52, 'support': 100.0}, 'weighted avg': {'precision': 0.5204161664665866, 'recall': 0.52, 'f1-score': 0.52, 'support': 100.0}}, 'roc_auc': 0.548219287715086, 'positive_probability_mean': 0.4984313403135862, 'positive_probability_std': 0.04339546248719535, 'precision_per_class': [0.5098039215686274, 0.5306122448979592], 'recall_per_class': [0.5306122448979592, 0.5098039215686274], 'f1_per_class': [0.52, 0.52], 'support_per_class': [49, 51]}
+2025-07-29 19:36:38,383 - src.model - INFO - Model evaluation completed: {'accuracy': 0.55, 'classification_report': {'0': {'precision': 0.5531914893617021, 'recall': 0.52, 'f1-score': 0.5360824742268041, 'support': 50.0}, '1': {'precision': 0.5471698113207547, 'recall': 0.58, 'f1-score': 0.5631067961165048, 'support': 50.0}, 'accuracy': 0.55, 'macro avg': {'precision': 0.5501806503412284, 'recall': 0.55, 'f1-score': 0.5495946351716545, 'support': 100.0}, 'weighted avg': {'precision': 0.5501806503412284, 'recall': 0.55, 'f1-score': 0.5495946351716544, 'support': 100.0}}, 'roc_auc': 0.548, 'positive_probability_mean': 0.5089755065788808, 'positive_probability_std': 0.04432634353465434, 'precision_per_class': [0.5531914893617021, 0.5471698113207547], 'recall_per_class': [0.52, 0.58], 'f1_per_class': [0.5360824742268041, 0.5631067961165048], 'support_per_class': [50, 50]}
+2025-07-29 19:36:38,383 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 19:36:43,968 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.5179760598922275, 'std': 0.021643195820049397, 'scores': [0.5419161676646707, 0.5225225225225225, 0.4894894894894895]}, 'cv_roc_auc': {'mean': 0.5231946029788431, 'std': 0.02312452795708234, 'scores': [0.5557109557109556, 0.5039147063068264, 0.5099581469187473]}, 'cv_precision': {'mean': 0.5236537696908635, 'std': 0.02028192628478523, 'scores': [0.5459770114942529, 0.5280898876404494, 0.4968944099378882]}, 'cv_recall': {'mean': 0.5305719921104536, 'std': 0.040518024820856285, 'scores': [0.5621301775147929, 0.5562130177514792, 0.47337278106508873]}, 'cv_f1': {'mean': 0.5268570294742146, 'std': 0.03011576137030257, 'scores': [0.5539358600583091, 0.5417867435158501, 0.48484848484848486]}}
+2025-07-29 19:36:43,969 - src.model - INFO - Computing SHAP values
+2025-07-29 19:36:44,012 - src.model - INFO - SHAP analysis completed. Top features: ['volume_lag_2', 'rsi_zscore_50', 'bb_percent_b', 'adx_plus_di', 'eom_emv', 'nvi', 'close_std', 'close_zscore_50', 'keltner_lower', 'open_lag_5']
+2025-07-29 19:36:44,017 - src.model - INFO - Model training completed for label_class_1
+2025-07-29 19:36:44,018 - __main__ - INFO - Model training successful
+2025-07-29 19:36:44,018 - __main__ - INFO - Test accuracy: N/A
+2025-07-29 19:36:44,019 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:36:44,020 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:44,020 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 19:36:44,020 - __main__ - INFO - ==================================================
+2025-07-29 19:36:44,021 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 19:36:44,042 - src.features - INFO - Building feature matrix
+2025-07-29 19:36:44,042 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:36:44,385 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:36:44,385 - src.features - INFO - Adding regime flags
+2025-07-29 19:36:44,399 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:36:44,399 - src.features - INFO - Adding lagged features
+2025-07-29 19:36:44,427 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:36:44,428 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:36:44,432 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:36:44,432 - src.features - INFO - Adding feature interactions
+2025-07-29 19:36:44,446 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:36:44,472 - src.features - INFO - Scaling features
+2025-07-29 19:36:44,479 - src.features - INFO - Found 145 features to scale
+2025-07-29 19:36:44,479 - src.features - INFO - DataFrame shape: (1000, 146)
+2025-07-29 19:36:44,480 - src.features - INFO - Numeric columns: 146
+2025-07-29 19:36:44,512 - src.features - INFO - df_filled shape: (1000, 146)
+2025-07-29 19:36:44,512 - src.features - INFO - df_filled columns count: 146
+2025-07-29 19:36:44,512 - src.features - INFO - feature_columns count: 145
+2025-07-29 19:36:44,541 - src.features - INFO - Scaler fitted on training data
+2025-07-29 19:36:44,588 - src.features - INFO - Scaled features shape: (1000, 146)
+2025-07-29 19:36:44,588 - src.features - INFO - Feature columns length: 145
+2025-07-29 19:36:44,588 - src.features - INFO - Scaled 145 features
+2025-07-29 19:36:44,600 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:36:44,601 - src.features - INFO - Final feature matrix shape: (1000, 146)
+2025-07-29 19:36:44,602 - src.model - INFO - Training model for label_class_1 (classification)
+2025-07-29 19:36:44,602 - src.model - INFO - Prepared 145 features for 1000 samples
+2025-07-29 19:36:44,611 - src.model - INFO - Training classification model
+2025-07-29 19:36:45,046 - src.model - INFO - Model training completed
+2025-07-29 19:36:45,079 - src.model - INFO - Model evaluation completed: {'accuracy': 0.6, 'classification_report': {'0': {'precision': 0.6111111111111112, 'recall': 0.6346153846153846, 'f1-score': 0.6226415094339622, 'support': 52.0}, '1': {'precision': 0.5869565217391305, 'recall': 0.5625, 'f1-score': 0.574468085106383, 'support': 48.0}, 'accuracy': 0.6, 'macro avg': {'precision': 0.5990338164251208, 'recall': 0.5985576923076923, 'f1-score': 0.5985547972701726, 'support': 100.0}, 'weighted avg': {'precision': 0.5995169082125604, 'recall': 0.6, 'f1-score': 0.5995182657567243, 'support': 100.0}}, 'roc_auc': 0.6378205128205128, 'positive_probability_mean': 0.4973834907525706, 'positive_probability_std': 0.11225144663814303, 'precision_per_class': [0.6111111111111112, 0.5869565217391305], 'recall_per_class': [0.6346153846153846, 0.5625], 'f1_per_class': [0.6226415094339622, 0.574468085106383], 'support_per_class': [52, 48]}
+2025-07-29 19:36:45,110 - src.model - INFO - Model evaluation completed: {'accuracy': 0.47, 'classification_report': {'0': {'precision': 0.5, 'recall': 0.5283018867924528, 'f1-score': 0.5137614678899083, 'support': 53.0}, '1': {'precision': 0.4318181818181818, 'recall': 0.40425531914893614, 'f1-score': 0.4175824175824176, 'support': 47.0}, 'accuracy': 0.47, 'macro avg': {'precision': 0.46590909090909094, 'recall': 0.46627860297069446, 'f1-score': 0.46567194273616297, 'support': 100.0}, 'weighted avg': {'precision': 0.46795454545454546, 'recall': 0.47, 'f1-score': 0.46855731424538766, 'support': 100.0}}, 'roc_auc': 0.49658771577679645, 'positive_probability_mean': 0.48276560699921545, 'positive_probability_std': 0.10823614148909746, 'precision_per_class': [0.5, 0.4318181818181818], 'recall_per_class': [0.5283018867924528, 0.40425531914893614], 'f1_per_class': [0.5137614678899083, 0.4175824175824176], 'support_per_class': [53, 47]}
+2025-07-29 19:36:45,111 - src.model - INFO - Model training completed for label_class_1
+2025-07-29 19:36:45,115 - src.model - WARNING - Insufficient data for real-time prediction. Need at least 200 rows, got 10
+2025-07-29 19:36:45,124 - src.model - INFO - Real-time prediction: {'timestamp': Timestamp('2023-01-02 00:09:00'), 'prediction': 1, 'probability': array([0.45997284, 0.54002716]), 'confidence': 0.5400271606341822}
+2025-07-29 19:36:45,124 - __main__ - INFO - Real-time prediction successful
+2025-07-29 19:36:45,124 - __main__ - INFO - Prediction: {'timestamp': Timestamp('2023-01-02 00:09:00'), 'prediction': 1, 'probability': array([0.45997284, 0.54002716]), 'confidence': 0.5400271606341822}
+2025-07-29 19:36:45,124 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:36:45,124 - __main__ - INFO - 
+==================================================
+2025-07-29 19:36:45,126 - __main__ - INFO - TEST SUMMARY
+2025-07-29 19:36:45,126 - __main__ - INFO - ==================================================
+2025-07-29 19:36:45,126 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:36:45,126 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:36:45,126 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:36:45,126 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:36:45,127 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:36:45,127 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:36:45,127 - __main__ - INFO - 
+Overall: 6/6 tests passed
+2025-07-29 19:36:45,127 - __main__ - INFO - All tests passed!
+2025-07-29 19:39:11,435 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:39:11,435 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:11,435 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:39:11,435 - __main__ - INFO - ==================================================
+2025-07-29 19:39:11,435 - __main__ - INFO - Testing data loading...
+2025-07-29 19:39:11,569 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 19:39:11,571 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:39:11,571 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:11,571 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:39:11,571 - __main__ - INFO - ==================================================
+2025-07-29 19:39:11,571 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:39:11,592 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:39:12,083 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:39:12,084 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 19:39:12,085 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:39:12,085 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:12,086 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 19:39:12,086 - __main__ - INFO - ==================================================
+2025-07-29 19:39:12,086 - __main__ - INFO - Testing feature engineering...
+2025-07-29 19:39:12,107 - src.features - INFO - Building feature matrix
+2025-07-29 19:39:12,108 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:39:12,274 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 19:39:12,274 - src.features - INFO - Adding regime flags
+2025-07-29 19:39:12,289 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:39:12,289 - src.features - INFO - Adding lagged features
+2025-07-29 19:39:12,308 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:39:12,308 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:39:12,334 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:39:12,334 - src.features - INFO - Adding feature interactions
+2025-07-29 19:39:12,334 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:39:12,373 - src.features - INFO - Scaling features
+2025-07-29 19:39:12,385 - src.features - INFO - Found 146 features to scale
+2025-07-29 19:39:12,454 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 19:39:12,470 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 19:39:12,472 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:39:12,472 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 19:39:12,472 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 19:39:12,472 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 19:39:12,472 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:39:12,481 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:12,481 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 19:39:12,481 - __main__ - INFO - ==================================================
+2025-07-29 19:39:12,482 - __main__ - INFO - Testing cross-validation...
+2025-07-29 19:39:12,494 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 19:39:14,806 - src.model - INFO - CV accuracy: mean=0.5020, std=0.0270
+2025-07-29 19:39:15,417 - src.model - INFO - CV roc_auc: mean=0.5097, std=0.0245
+2025-07-29 19:39:15,840 - src.model - INFO - CV precision: mean=0.5226, std=0.0225
+2025-07-29 19:39:16,189 - src.model - INFO - CV recall: mean=0.5714, std=0.0492
+2025-07-29 19:39:16,630 - src.model - INFO - CV f1: mean=0.5457, std=0.0346
+2025-07-29 19:39:16,632 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.5019720319121517, 'std': 0.027005239913719864, 'scores': [0.5299401197604791, 0.5105105105105106, 0.46546546546546547]}, 'cv_roc_auc': {'mean': 0.5097386847422672, 'std': 0.02445930307555351, 'scores': [0.5381491464510333, 0.5126220614828209, 0.4784448462929476]}, 'cv_precision': {'mean': 0.522615369998762, 'std': 0.02248439279922683, 'scores': [0.5445544554455446, 0.531578947368421, 0.49171270718232046]}, 'cv_recall': {'mean': 0.5714285714285715, 'std': 0.049156144383100724, 'scores': [0.6285714285714286, 0.5771428571428572, 0.5085714285714286]}, 'cv_f1': {'mean': 0.5456596780640238, 'std': 0.03455000862806603, 'scores': [0.583554376657825, 0.5534246575342465, 0.5]}}
+2025-07-29 19:39:16,632 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 19:39:16,632 - __main__ - INFO -   cv_accuracy: mean=0.5020, std=0.0270
+2025-07-29 19:39:16,632 - __main__ - INFO -   cv_roc_auc: mean=0.5097, std=0.0245
+2025-07-29 19:39:16,632 - __main__ - INFO -   cv_precision: mean=0.5226, std=0.0225
+2025-07-29 19:39:16,635 - __main__ - INFO -   cv_recall: mean=0.5714, std=0.0492
+2025-07-29 19:39:16,635 - __main__ - INFO -   cv_f1: mean=0.5457, std=0.0346
+2025-07-29 19:39:16,635 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:39:16,635 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:16,635 - __main__ - INFO - Running test: Model Training
+2025-07-29 19:39:16,637 - __main__ - INFO - ==================================================
+2025-07-29 19:39:16,637 - __main__ - INFO - Testing model training...
+2025-07-29 19:39:16,657 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 19:39:16,659 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 19:39:16,668 - src.model - INFO - Training classification model
+2025-07-29 19:39:17,629 - src.model - INFO - Model training completed
+2025-07-29 19:39:17,654 - src.model - INFO - Model evaluation completed: {'accuracy': 0.57, 'classification_report': {'0': {'precision': 0.5573770491803278, 'recall': 0.68, 'f1-score': 0.6126126126126126, 'support': 50.0}, '1': {'precision': 0.5897435897435898, 'recall': 0.46, 'f1-score': 0.5168539325842697, 'support': 50.0}, 'accuracy': 0.57, 'macro avg': {'precision': 0.5735603194619587, 'recall': 0.5700000000000001, 'f1-score': 0.5647332725984411, 'support': 100.0}, 'weighted avg': {'precision': 0.5735603194619588, 'recall': 0.57, 'f1-score': 0.5647332725984411, 'support': 100.0}}, 'roc_auc': 0.6204000000000001, 'positive_probability_mean': 0.4660487277534589, 'positive_probability_std': 0.11700562870230426, 'precision_per_class': [0.5573770491803278, 0.5897435897435898], 'recall_per_class': [0.68, 0.46], 'f1_per_class': [0.6126126126126126, 0.5168539325842697], 'support_per_class': [50, 50]}
+2025-07-29 19:39:17,679 - src.model - INFO - Model evaluation completed: {'accuracy': 0.62, 'classification_report': {'0': {'precision': 0.6140350877192983, 'recall': 0.6862745098039216, 'f1-score': 0.6481481481481481, 'support': 51.0}, '1': {'precision': 0.627906976744186, 'recall': 0.5510204081632653, 'f1-score': 0.5869565217391305, 'support': 49.0}, 'accuracy': 0.62, 'macro avg': {'precision': 0.6209710322317421, 'recall': 0.6186474589835934, 'f1-score': 0.6175523349436394, 'support': 100.0}, 'weighted avg': {'precision': 0.6208323133414934, 'recall': 0.62, 'f1-score': 0.6181642512077294, 'support': 100.0}}, 'roc_auc': 0.5838335334133653, 'positive_probability_mean': 0.49129941043800995, 'positive_probability_std': 0.12306332956486993, 'precision_per_class': [0.6140350877192983, 0.627906976744186], 'recall_per_class': [0.6862745098039216, 0.5510204081632653], 'f1_per_class': [0.6481481481481481, 0.5869565217391305], 'support_per_class': [51, 49]}
+2025-07-29 19:39:17,681 - src.model - INFO - Model training completed for label_binary
+2025-07-29 19:39:17,684 - __main__ - INFO - PASSED: Model training successful
+2025-07-29 19:39:17,684 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:39:17,684 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:17,684 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 19:39:17,684 - __main__ - INFO - ==================================================
+2025-07-29 19:39:17,685 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 19:39:17,704 - src.features - INFO - Building feature matrix
+2025-07-29 19:39:17,704 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:39:17,884 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 19:39:17,884 - src.features - INFO - Adding regime flags
+2025-07-29 19:39:17,905 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:39:17,906 - src.features - INFO - Adding lagged features
+2025-07-29 19:39:17,930 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:39:17,935 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:39:17,971 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:39:17,971 - src.features - INFO - Adding feature interactions
+2025-07-29 19:39:17,983 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:39:18,022 - src.features - INFO - Scaling features
+2025-07-29 19:39:18,022 - src.features - INFO - Found 146 features to scale
+2025-07-29 19:39:18,084 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 19:39:18,125 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 19:39:18,136 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:39:18,137 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 19:39:18,139 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 19:39:18,141 - src.model - INFO - Training classification model
+2025-07-29 19:39:18,960 - src.model - INFO - Model training completed
+2025-07-29 19:39:18,962 - src.features - INFO - Building live feature matrix
+2025-07-29 19:39:18,962 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:39:19,150 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:39:19,150 - src.features - INFO - Adding regime flags
+2025-07-29 19:39:19,166 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:39:19,166 - src.features - INFO - Adding lagged features
+2025-07-29 19:39:19,213 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:39:19,213 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:39:19,252 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:39:19,252 - src.features - INFO - Adding feature interactions
+2025-07-29 19:39:19,252 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:39:19,252 - src.features - INFO - Scaling features
+2025-07-29 19:39:19,252 - src.features - INFO - Found 145 features to scale
+2025-07-29 19:39:19,320 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 19:39:19,339 - src.features - ERROR - Error in scaling features: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- sma_20
+
+2025-07-29 19:39:19,389 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 19:39:19,401 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 19:39:19,425 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 0, 'probability': array([0.77712258, 0.22287742]), 'confidence': 0.7771225754306219}
+2025-07-29 19:39:19,427 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 0, 'probability': array([0.77712258, 0.22287742]), 'confidence': 0.7771225754306219}
+2025-07-29 19:39:19,427 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:39:19,427 - __main__ - INFO - 
+==================================================
+2025-07-29 19:39:19,427 - __main__ - INFO - TEST SUMMARY
+2025-07-29 19:39:19,429 - __main__ - INFO - ==================================================
+2025-07-29 19:39:19,429 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:39:19,429 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:39:19,429 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:39:19,429 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:39:19,431 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:39:19,431 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:39:19,431 - __main__ - INFO - 
+Overall: 6/6 tests passed
+2025-07-29 19:39:19,431 - __main__ - INFO - ALL TESTS PASSED!
+2025-07-29 19:57:20,247 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:57:20,249 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:20,249 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:57:20,249 - __main__ - INFO - ==================================================
+2025-07-29 19:57:20,249 - __main__ - INFO - Testing data loading...
+2025-07-29 19:57:20,335 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 19:57:20,336 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:57:20,336 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:20,336 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:57:20,336 - __main__ - INFO - ==================================================
+2025-07-29 19:57:20,337 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:57:20,345 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:57:25,645 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 19:57:25,645 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:25,645 - __main__ - INFO - Running test: Data Loading
+2025-07-29 19:57:25,647 - __main__ - INFO - ==================================================
+2025-07-29 19:57:25,647 - __main__ - INFO - Testing data loading...
+2025-07-29 19:57:25,709 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 19:57:25,710 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:57:25,711 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:25,712 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 19:57:25,712 - __main__ - INFO - ==================================================
+2025-07-29 19:57:25,712 - __main__ - INFO - Testing technical indicators...
+2025-07-29 19:57:25,721 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:57:25,881 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:57:25,881 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 19:57:25,881 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:57:25,881 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:25,881 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 19:57:25,881 - __main__ - INFO - ==================================================
+2025-07-29 19:57:25,881 - __main__ - INFO - Testing feature engineering...
+2025-07-29 19:57:25,899 - src.features - INFO - Building feature matrix
+2025-07-29 19:57:25,900 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:57:26,021 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 19:57:26,021 - src.features - INFO - Adding regime flags
+2025-07-29 19:57:26,027 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:57:26,027 - src.features - INFO - Adding lagged features
+2025-07-29 19:57:26,036 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:57:26,036 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:57:26,055 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:57:26,055 - src.features - INFO - Adding feature interactions
+2025-07-29 19:57:26,058 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:57:26,081 - src.features - INFO - Scaling features
+2025-07-29 19:57:26,085 - src.features - INFO - Found 146 features to scale
+2025-07-29 19:57:26,121 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 19:57:26,138 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 19:57:26,140 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:57:26,140 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 19:57:26,140 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 19:57:26,140 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 19:57:26,144 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:57:26,144 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:26,146 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 19:57:26,146 - __main__ - INFO - ==================================================
+2025-07-29 19:57:26,147 - __main__ - INFO - Testing cross-validation...
+2025-07-29 19:57:26,156 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 19:57:27,887 - src.model - INFO - CV accuracy: mean=0.5040, std=0.0155
+2025-07-29 19:57:28,144 - src.model - INFO - CV roc_auc: mean=0.5128, std=0.0253
+2025-07-29 19:57:28,481 - src.model - INFO - CV precision: mean=0.5137, std=0.0138
+2025-07-29 19:57:28,753 - src.model - INFO - CV recall: mean=0.5402, std=0.0257
+2025-07-29 19:57:28,995 - src.model - INFO - CV f1: mean=0.5265, std=0.0192
+2025-07-29 19:57:28,998 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.504007001012989, 'std': 0.015522233740715726, 'scores': [0.49700598802395207, 0.5255255255255256, 0.4894894894894895]}, 'cv_roc_auc': {'mean': 0.512806124135874, 'std': 0.025265556465490425, 'scores': [0.5179564453054928, 0.5408516780945507, 0.47961024900757854]}, 'cv_precision': {'mean': 0.5137267080745341, 'std': 0.013802522428898824, 'scores': [0.5085714285714286, 0.532608695652174, 0.5]}, 'cv_recall': {'mean': 0.5401559454191033, 'std': 0.025708730985114864, 'scores': [0.52046783625731, 0.5764705882352941, 0.5235294117647059]}, 'cv_f1': {'mean': 0.5265391454365891, 'std': 0.019223980096110784, 'scores': [0.5144508670520231, 0.5536723163841808, 0.5114942528735632]}}
+2025-07-29 19:57:29,001 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 19:57:29,003 - __main__ - INFO -   cv_accuracy: mean=0.5040, std=0.0155
+2025-07-29 19:57:29,006 - __main__ - INFO -   cv_roc_auc: mean=0.5128, std=0.0253
+2025-07-29 19:57:29,007 - __main__ - INFO -   cv_precision: mean=0.5137, std=0.0138
+2025-07-29 19:57:29,008 - __main__ - INFO -   cv_recall: mean=0.5402, std=0.0257
+2025-07-29 19:57:29,008 - __main__ - INFO -   cv_f1: mean=0.5265, std=0.0192
+2025-07-29 19:57:29,009 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:57:29,010 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:29,013 - __main__ - INFO - Running test: Model Training
+2025-07-29 19:57:29,017 - __main__ - INFO - ==================================================
+2025-07-29 19:57:29,020 - __main__ - INFO - Testing model training...
+2025-07-29 19:57:29,042 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 19:57:29,050 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 19:57:29,060 - src.model - INFO - Training classification model
+2025-07-29 19:57:29,431 - src.model - INFO - Model training completed
+2025-07-29 19:57:29,458 - src.model - INFO - Model evaluation completed: {'accuracy': 0.53, 'classification_report': {'0': {'precision': 0.5208333333333334, 'recall': 0.5102040816326531, 'f1-score': 0.5154639175257731, 'support': 49.0}, '1': {'precision': 0.5384615384615384, 'recall': 0.5490196078431373, 'f1-score': 0.5436893203883495, 'support': 51.0}, 'accuracy': 0.53, 'macro avg': {'precision': 0.5296474358974359, 'recall': 0.5296118447378952, 'f1-score': 0.5295766189570613, 'support': 100.0}, 'weighted avg': {'precision': 0.529823717948718, 'recall': 0.53, 'f1-score': 0.529858872985687, 'support': 100.0}}, 'roc_auc': 0.5608243297318928, 'positive_probability_mean': 0.5039055884431282, 'positive_probability_std': 0.043185944644399975, 'precision_per_class': [0.5208333333333334, 0.5384615384615384], 'recall_per_class': [0.5102040816326531, 0.5490196078431373], 'f1_per_class': [0.5154639175257731, 0.5436893203883495], 'support_per_class': [49, 51]}
+2025-07-29 19:57:29,480 - src.model - INFO - Model evaluation completed: {'accuracy': 0.52, 'classification_report': {'0': {'precision': 0.5192307692307693, 'recall': 0.54, 'f1-score': 0.5294117647058824, 'support': 50.0}, '1': {'precision': 0.5208333333333334, 'recall': 0.5, 'f1-score': 0.5102040816326531, 'support': 50.0}, 'accuracy': 0.52, 'macro avg': {'precision': 0.5200320512820513, 'recall': 0.52, 'f1-score': 0.5198079231692677, 'support': 100.0}, 'weighted avg': {'precision': 0.5200320512820513, 'recall': 0.52, 'f1-score': 0.5198079231692677, 'support': 100.0}}, 'roc_auc': 0.5102, 'positive_probability_mean': 0.49838263212464734, 'positive_probability_std': 0.04202262416397201, 'precision_per_class': [0.5192307692307693, 0.5208333333333334], 'recall_per_class': [0.54, 0.5], 'f1_per_class': [0.5294117647058824, 0.5102040816326531], 'support_per_class': [50, 50]}
+2025-07-29 19:57:29,482 - src.model - INFO - Model training completed for label_binary
+2025-07-29 19:57:29,483 - __main__ - INFO - PASSED: Model training successful
+2025-07-29 19:57:29,483 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:57:29,483 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:29,483 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 19:57:29,485 - __main__ - INFO - ==================================================
+2025-07-29 19:57:29,485 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 19:57:29,501 - src.features - INFO - Building feature matrix
+2025-07-29 19:57:29,501 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:57:29,660 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 19:57:29,660 - src.features - INFO - Adding regime flags
+2025-07-29 19:57:29,676 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:57:29,676 - src.features - INFO - Adding lagged features
+2025-07-29 19:57:29,696 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:57:29,697 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:57:29,707 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:57:29,707 - src.features - INFO - Adding feature interactions
+2025-07-29 19:57:29,718 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:57:29,737 - src.features - INFO - Scaling features
+2025-07-29 19:57:29,740 - src.features - INFO - Found 146 features to scale
+2025-07-29 19:57:29,772 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 19:57:29,788 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 19:57:29,802 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:57:29,803 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 19:57:29,803 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 19:57:29,803 - src.model - INFO - Training classification model
+2025-07-29 19:57:30,053 - src.model - INFO - Model training completed
+2025-07-29 19:57:30,059 - src.features - INFO - Building live feature matrix
+2025-07-29 19:57:30,059 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 19:57:30,161 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 19:57:30,177 - src.features - INFO - Adding regime flags
+2025-07-29 19:57:30,177 - src.features - INFO - Added 19 regime flags
+2025-07-29 19:57:30,177 - src.features - INFO - Adding lagged features
+2025-07-29 19:57:30,203 - src.features - INFO - Added 44 lagged features
+2025-07-29 19:57:30,203 - src.features - INFO - Adding rolling z-scores
+2025-07-29 19:57:30,221 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 19:57:30,221 - src.features - INFO - Adding feature interactions
+2025-07-29 19:57:30,226 - src.features - INFO - Added 6 feature interactions
+2025-07-29 19:57:30,226 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 19:57:30,232 - src.features - INFO - Scaling features
+2025-07-29 19:57:30,235 - src.features - INFO - Found 146 features to scale
+2025-07-29 19:57:30,296 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 19:57:30,302 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 19:57:30,302 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 19:57:30,306 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 19:57:30,317 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 0, 'probability': array([0.83251078, 0.16748922]), 'confidence': 0.8325107782214722}
+2025-07-29 19:57:30,317 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 0, 'probability': array([0.83251078, 0.16748922]), 'confidence': 0.8325107782214722}
+2025-07-29 19:57:30,319 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:57:30,320 - __main__ - INFO - 
+==================================================
+2025-07-29 19:57:30,320 - __main__ - INFO - TEST SUMMARY
+2025-07-29 19:57:30,320 - __main__ - INFO - ==================================================
+2025-07-29 19:57:30,320 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 19:57:30,321 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 19:57:30,321 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 19:57:30,321 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 19:57:30,321 - __main__ - INFO - Model Training: PASSED
+2025-07-29 19:57:30,322 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 19:57:30,322 - __main__ - INFO - 
+Overall: 6/6 tests passed
+2025-07-29 19:57:30,322 - __main__ - INFO - ALL TESTS PASSED!
+2025-07-29 20:11:14,528 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 20:11:14,528 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:14,528 - __main__ - INFO - Running test: Data Loading
+2025-07-29 20:11:14,528 - __main__ - INFO - ==================================================
+2025-07-29 20:11:14,528 - __main__ - INFO - Testing data loading...
+2025-07-29 20:11:14,607 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 20:11:14,607 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:11:14,607 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:14,607 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 20:11:14,607 - __main__ - INFO - ==================================================
+2025-07-29 20:11:14,607 - __main__ - INFO - Testing technical indicators...
+2025-07-29 20:11:14,628 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:14,807 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:11:14,807 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 20:11:14,808 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:11:14,808 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:14,808 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 20:11:14,809 - __main__ - INFO - ==================================================
+2025-07-29 20:11:14,809 - __main__ - INFO - Testing feature engineering...
+2025-07-29 20:11:14,817 - src.features - INFO - Building feature matrix
+2025-07-29 20:11:14,817 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:14,901 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:11:14,901 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:14,919 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:14,919 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:14,931 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:14,931 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:14,940 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:14,940 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:14,948 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:14,959 - src.features - INFO - Scaling features
+2025-07-29 20:11:14,959 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:14,991 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:11:15,004 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:15,017 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:15,017 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 20:11:15,018 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 20:11:15,018 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 20:11:15,019 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:11:15,020 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:15,021 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 20:11:15,021 - __main__ - INFO - ==================================================
+2025-07-29 20:11:15,021 - __main__ - INFO - Testing cross-validation...
+2025-07-29 20:11:15,027 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 20:11:16,644 - src.model - INFO - CV accuracy: mean=0.5020, std=0.0381
+2025-07-29 20:11:17,400 - src.model - INFO - CV roc_auc: mean=0.4963, std=0.0374
+2025-07-29 20:11:18,865 - src.model - INFO - CV precision: mean=0.4990, std=0.0373
+2025-07-29 20:11:19,609 - src.model - INFO - CV recall: mean=0.4951, std=0.0435
+2025-07-29 20:11:20,125 - src.model - INFO - CV f1: mean=0.4968, std=0.0393
+2025-07-29 20:11:20,125 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.5020319720918524, 'std': 0.03808523526199689, 'scores': [0.47005988023952094, 0.5555555555555556, 0.4804804804804805]}, 'cv_roc_auc': {'mean': 0.4963421897490507, 'std': 0.03744339099595523, 'scores': [0.46568416523235806, 0.549062049062049, 0.4742803549527451]}, 'cv_precision': {'mean': 0.4990475329464701, 'std': 0.037290303361921226, 'scores': [0.4682080924855491, 0.5515151515151515, 0.4774193548387097]}, 'cv_recall': {'mean': 0.49508336375806256, 'std': 0.04345848044251781, 'scores': [0.4879518072289157, 0.5515151515151515, 0.4457831325301205]}, 'cv_f1': {'mean': 0.49681681591366483, 'std': 0.03928216818093178, 'scores': [0.4778761061946903, 0.5515151515151515, 0.46105919003115264]}}
+2025-07-29 20:11:20,125 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 20:11:20,125 - __main__ - INFO -   cv_accuracy: mean=0.5020, std=0.0381
+2025-07-29 20:11:20,126 - __main__ - INFO -   cv_roc_auc: mean=0.4963, std=0.0374
+2025-07-29 20:11:20,126 - __main__ - INFO -   cv_precision: mean=0.4990, std=0.0373
+2025-07-29 20:11:20,126 - __main__ - INFO -   cv_recall: mean=0.4951, std=0.0435
+2025-07-29 20:11:20,126 - __main__ - INFO -   cv_f1: mean=0.4968, std=0.0393
+2025-07-29 20:11:20,126 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:11:20,126 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:20,126 - __main__ - INFO - Running test: Model Training
+2025-07-29 20:11:20,126 - __main__ - INFO - ==================================================
+2025-07-29 20:11:20,128 - __main__ - INFO - Testing model training...
+2025-07-29 20:11:20,142 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 20:11:20,144 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 20:11:20,144 - __main__ - ERROR - FAILED: Model training test failed: name 'train_test_split' is not defined
+2025-07-29 20:11:20,145 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:11:20,145 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:20,145 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 20:11:20,145 - __main__ - INFO - ==================================================
+2025-07-29 20:11:20,145 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 20:11:20,165 - src.features - INFO - Building feature matrix
+2025-07-29 20:11:20,165 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:20,339 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:11:20,339 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:20,342 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:20,342 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:20,357 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:20,357 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:20,380 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:20,380 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:20,385 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:20,410 - src.features - INFO - Scaling features
+2025-07-29 20:11:20,410 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:20,461 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:11:20,487 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:20,487 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:20,487 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 20:11:20,487 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 20:11:20,499 - src.model - INFO - Training classification model
+2025-07-29 20:11:20,865 - src.model - INFO - Model training completed
+2025-07-29 20:11:20,867 - src.features - INFO - Building live feature matrix
+2025-07-29 20:11:20,867 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:21,007 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:11:21,008 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:21,015 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:21,016 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:21,032 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:21,033 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:21,048 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:21,048 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:21,051 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:21,052 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 20:11:21,056 - src.features - INFO - Scaling features
+2025-07-29 20:11:21,059 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:21,098 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:21,101 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:21,102 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 20:11:21,103 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:11:21,115 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 0, 'probability': array([0.88736693, 0.11263307]), 'confidence': 0.8873669259417003}
+2025-07-29 20:11:21,115 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 0, 'probability': array([0.88736693, 0.11263307]), 'confidence': 0.8873669259417003}
+2025-07-29 20:11:21,115 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:21,117 - __main__ - INFO - TEST SUMMARY
+2025-07-29 20:11:21,117 - __main__ - INFO - ==================================================
+2025-07-29 20:11:21,117 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:11:21,117 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:11:21,117 - __main__ - INFO - 
+Overall: 5/6 tests passed
+2025-07-29 20:11:21,117 - __main__ - ERROR - 1 tests failed
+2025-07-29 20:11:35,541 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 20:11:35,541 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:35,541 - __main__ - INFO - Running test: Data Loading
+2025-07-29 20:11:35,541 - __main__ - INFO - ==================================================
+2025-07-29 20:11:35,541 - __main__ - INFO - Testing data loading...
+2025-07-29 20:11:35,601 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 20:11:35,601 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:11:35,601 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:35,601 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 20:11:35,601 - __main__ - INFO - ==================================================
+2025-07-29 20:11:35,601 - __main__ - INFO - Testing technical indicators...
+2025-07-29 20:11:35,612 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:35,758 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:11:35,758 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 20:11:35,758 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:11:35,758 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:35,758 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 20:11:35,758 - __main__ - INFO - ==================================================
+2025-07-29 20:11:35,758 - __main__ - INFO - Testing feature engineering...
+2025-07-29 20:11:35,778 - src.features - INFO - Building feature matrix
+2025-07-29 20:11:35,778 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:35,859 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:11:35,859 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:35,871 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:35,872 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:35,884 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:35,884 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:35,899 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:35,900 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:35,903 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:35,919 - src.features - INFO - Scaling features
+2025-07-29 20:11:35,921 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:35,943 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:11:35,960 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:35,970 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:35,971 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 20:11:35,971 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 20:11:35,971 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 20:11:35,972 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:11:35,972 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:35,973 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 20:11:35,973 - __main__ - INFO - ==================================================
+2025-07-29 20:11:35,973 - __main__ - INFO - Testing cross-validation...
+2025-07-29 20:11:35,976 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 20:11:37,585 - src.model - INFO - CV accuracy: mean=0.5040, std=0.0154
+2025-07-29 20:11:37,755 - src.model - INFO - CV roc_auc: mean=0.5015, std=0.0212
+2025-07-29 20:11:37,931 - src.model - INFO - CV precision: mean=0.4890, std=0.0165
+2025-07-29 20:11:38,096 - src.model - INFO - CV recall: mean=0.4640, std=0.0195
+2025-07-29 20:11:38,266 - src.model - INFO - CV f1: mean=0.4756, std=0.0079
+2025-07-29 20:11:38,268 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.5039800279321237, 'std': 0.015395351904946673, 'scores': [0.5239520958083832, 0.5015015015015015, 0.4864864864864865]}, 'cv_roc_auc': {'mean': 0.5015261522209129, 'std': 0.021164254799141333, 'scores': [0.531258972150445, 0.48368348855678295, 0.48963599595551066]}, 'cv_precision': {'mean': 0.4890231364369296, 'std': 0.016471458944470767, 'scores': [0.5103448275862069, 0.4864864864864865, 0.47023809523809523]}, 'cv_recall': {'mean': 0.4639725992382997, 'std': 0.01954818468757276, 'scores': [0.4567901234567901, 0.4444444444444444, 0.4906832298136646]}, 'cv_f1': {'mean': 0.475614660226743, 'std': 0.007883774632910586, 'scores': [0.4820846905537459, 0.4645161290322581, 0.48024316109422494]}}
+2025-07-29 20:11:38,268 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 20:11:38,268 - __main__ - INFO -   cv_accuracy: mean=0.5040, std=0.0154
+2025-07-29 20:11:38,268 - __main__ - INFO -   cv_roc_auc: mean=0.5015, std=0.0212
+2025-07-29 20:11:38,268 - __main__ - INFO -   cv_precision: mean=0.4890, std=0.0165
+2025-07-29 20:11:38,268 - __main__ - INFO -   cv_recall: mean=0.4640, std=0.0195
+2025-07-29 20:11:38,268 - __main__ - INFO -   cv_f1: mean=0.4756, std=0.0079
+2025-07-29 20:11:38,268 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:11:38,268 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:38,270 - __main__ - INFO - Running test: Model Training
+2025-07-29 20:11:38,270 - __main__ - INFO - ==================================================
+2025-07-29 20:11:38,270 - __main__ - INFO - Testing model training...
+2025-07-29 20:11:38,282 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 20:11:38,282 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 20:11:38,282 - __main__ - ERROR - FAILED: Model training test failed: name 'train_test_split' is not defined
+2025-07-29 20:11:38,282 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:11:38,282 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:38,282 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 20:11:38,282 - __main__ - INFO - ==================================================
+2025-07-29 20:11:38,282 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 20:11:38,296 - src.features - INFO - Building feature matrix
+2025-07-29 20:11:38,296 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:38,414 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:11:38,414 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:38,414 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:38,414 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:38,430 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:38,430 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:38,439 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:38,440 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:38,444 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:38,463 - src.features - INFO - Scaling features
+2025-07-29 20:11:38,466 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:38,498 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:11:38,512 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:38,516 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:38,516 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 20:11:38,516 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 20:11:38,516 - src.model - INFO - Training classification model
+2025-07-29 20:11:38,915 - src.model - INFO - Model training completed
+2025-07-29 20:11:38,917 - src.features - INFO - Building live feature matrix
+2025-07-29 20:11:38,917 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:11:39,030 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:11:39,030 - src.features - INFO - Adding regime flags
+2025-07-29 20:11:39,047 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:11:39,047 - src.features - INFO - Adding lagged features
+2025-07-29 20:11:39,048 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:11:39,048 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:11:39,062 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:11:39,062 - src.features - INFO - Adding feature interactions
+2025-07-29 20:11:39,070 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:11:39,071 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 20:11:39,073 - src.features - INFO - Scaling features
+2025-07-29 20:11:39,074 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:11:39,108 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:11:39,113 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:11:39,113 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 20:11:39,115 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:11:39,121 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 0, 'probability': array([0.68537961, 0.31462039]), 'confidence': 0.6853796146512913}
+2025-07-29 20:11:39,122 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 0, 'probability': array([0.68537961, 0.31462039]), 'confidence': 0.6853796146512913}
+2025-07-29 20:11:39,123 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:11:39,123 - __main__ - INFO - 
+==================================================
+2025-07-29 20:11:39,123 - __main__ - INFO - TEST SUMMARY
+2025-07-29 20:11:39,123 - __main__ - INFO - ==================================================
+2025-07-29 20:11:39,123 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:11:39,123 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:11:39,123 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:11:39,123 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:11:39,123 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:11:39,124 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:11:39,124 - __main__ - INFO - 
+Overall: 5/6 tests passed
+2025-07-29 20:11:39,125 - __main__ - ERROR - 1 tests failed
+2025-07-29 20:12:47,343 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 20:12:47,343 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:47,343 - __main__ - INFO - Running test: Data Loading
+2025-07-29 20:12:47,343 - __main__ - INFO - ==================================================
+2025-07-29 20:12:47,343 - __main__ - INFO - Testing data loading...
+2025-07-29 20:12:47,413 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 20:12:47,413 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:12:47,413 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:47,413 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 20:12:47,413 - __main__ - INFO - ==================================================
+2025-07-29 20:12:47,413 - __main__ - INFO - Testing technical indicators...
+2025-07-29 20:12:47,432 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:12:47,595 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:12:47,595 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 20:12:47,595 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:12:47,595 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:47,595 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 20:12:47,595 - __main__ - INFO - ==================================================
+2025-07-29 20:12:47,611 - __main__ - INFO - Testing feature engineering...
+2025-07-29 20:12:47,611 - src.features - INFO - Building feature matrix
+2025-07-29 20:12:47,611 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:12:47,710 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:12:47,710 - src.features - INFO - Adding regime flags
+2025-07-29 20:12:47,730 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:12:47,731 - src.features - INFO - Adding lagged features
+2025-07-29 20:12:47,733 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:12:47,733 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:12:47,755 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:12:47,755 - src.features - INFO - Adding feature interactions
+2025-07-29 20:12:47,755 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:12:47,802 - src.features - INFO - Scaling features
+2025-07-29 20:12:47,802 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:12:47,904 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:12:47,934 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:12:47,940 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:12:47,940 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 20:12:47,942 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 20:12:47,942 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 20:12:47,944 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:12:47,945 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:47,947 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 20:12:47,948 - __main__ - INFO - ==================================================
+2025-07-29 20:12:47,948 - __main__ - INFO - Testing cross-validation...
+2025-07-29 20:12:47,961 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 20:12:49,579 - src.model - INFO - CV accuracy: mean=0.4570, std=0.0318
+2025-07-29 20:12:49,727 - src.model - INFO - CV roc_auc: mean=0.4450, std=0.0269
+2025-07-29 20:12:49,884 - src.model - INFO - CV precision: mean=0.4450, std=0.0381
+2025-07-29 20:12:50,042 - src.model - INFO - CV recall: mean=0.4263, std=0.0823
+2025-07-29 20:12:50,216 - src.model - INFO - CV f1: mean=0.4341, std=0.0611
+2025-07-29 20:12:50,218 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.45701689713665766, 'std': 0.03175668762754384, 'scores': [0.44011976047904194, 0.5015015015015015, 0.4294294294294294]}, 'cv_roc_auc': {'mean': 0.4449954603800757, 'std': 0.026898328505528802, 'scores': [0.43743948359332974, 0.48106060606060597, 0.41648629148629146]}, 'cv_precision': {'mean': 0.44498743182859607, 'std': 0.03807536259521856, 'scores': [0.43037974683544306, 0.4971751412429379, 0.4074074074074074]}, 'cv_recall': {'mean': 0.4262626262626263, 'std': 0.0822596891777872, 'scores': [0.4121212121212121, 0.5333333333333333, 0.3333333333333333]}, 'cv_f1': {'mean': 0.4341130604288499, 'std': 0.06110357141870045, 'scores': [0.42105263157894735, 0.5146198830409356, 0.36666666666666664]}}
+2025-07-29 20:12:50,218 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 20:12:50,218 - __main__ - INFO -   cv_accuracy: mean=0.4570, std=0.0318
+2025-07-29 20:12:50,218 - __main__ - INFO -   cv_roc_auc: mean=0.4450, std=0.0269
+2025-07-29 20:12:50,218 - __main__ - INFO -   cv_precision: mean=0.4450, std=0.0381
+2025-07-29 20:12:50,218 - __main__ - INFO -   cv_recall: mean=0.4263, std=0.0823
+2025-07-29 20:12:50,218 - __main__ - INFO -   cv_f1: mean=0.4341, std=0.0611
+2025-07-29 20:12:50,218 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:12:50,218 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:50,221 - __main__ - INFO - Running test: Model Training
+2025-07-29 20:12:50,221 - __main__ - INFO - ==================================================
+2025-07-29 20:12:50,221 - __main__ - INFO - Testing model training...
+2025-07-29 20:12:50,236 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 20:12:50,236 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 20:12:50,242 - src.model - INFO - Training classification model
+2025-07-29 20:12:50,458 - src.model - INFO - Model training completed
+2025-07-29 20:12:50,473 - __main__ - ERROR - FAILED: Model training test failed: name 'precision_recall_fscore_support' is not defined
+2025-07-29 20:12:50,473 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:12:50,474 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:50,474 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 20:12:50,474 - __main__ - INFO - ==================================================
+2025-07-29 20:12:50,474 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 20:12:50,487 - src.features - INFO - Building feature matrix
+2025-07-29 20:12:50,487 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:12:50,610 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:12:50,611 - src.features - INFO - Adding regime flags
+2025-07-29 20:12:50,621 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:12:50,622 - src.features - INFO - Adding lagged features
+2025-07-29 20:12:50,633 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:12:50,634 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:12:50,641 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:12:50,641 - src.features - INFO - Adding feature interactions
+2025-07-29 20:12:50,647 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:12:50,660 - src.features - INFO - Scaling features
+2025-07-29 20:12:50,664 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:12:50,696 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:12:50,718 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:12:50,723 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:12:50,723 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 20:12:50,723 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 20:12:50,727 - src.model - INFO - Training classification model
+2025-07-29 20:12:51,027 - src.model - INFO - Model training completed
+2025-07-29 20:12:51,027 - src.features - INFO - Building live feature matrix
+2025-07-29 20:12:51,027 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:12:51,136 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:12:51,136 - src.features - INFO - Adding regime flags
+2025-07-29 20:12:51,152 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:12:51,152 - src.features - INFO - Adding lagged features
+2025-07-29 20:12:51,166 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:12:51,166 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:12:51,170 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:12:51,170 - src.features - INFO - Adding feature interactions
+2025-07-29 20:12:51,180 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:12:51,182 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 20:12:51,184 - src.features - INFO - Scaling features
+2025-07-29 20:12:51,184 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:12:51,211 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:12:51,218 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:12:51,218 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 20:12:51,220 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:12:51,226 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 1, 'probability': array([0.04449355, 0.95550645]), 'confidence': 0.9555064521620827}
+2025-07-29 20:12:51,227 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 1, 'probability': array([0.04449355, 0.95550645]), 'confidence': 0.9555064521620827}
+2025-07-29 20:12:51,228 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:12:51,228 - __main__ - INFO - 
+==================================================
+2025-07-29 20:12:51,229 - __main__ - INFO - TEST SUMMARY
+2025-07-29 20:12:51,230 - __main__ - INFO - ==================================================
+2025-07-29 20:12:51,231 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:12:51,231 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:12:51,231 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:12:51,231 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:12:51,232 - __main__ - INFO - Model Training: FAILED
+2025-07-29 20:12:51,232 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:12:51,232 - __main__ - INFO - 
+Overall: 5/6 tests passed
+2025-07-29 20:12:51,232 - __main__ - ERROR - 1 tests failed
+2025-07-29 20:15:56,111 - __main__ - INFO - Starting comprehensive tests...
+2025-07-29 20:15:56,111 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:56,111 - __main__ - INFO - Running test: Data Loading
+2025-07-29 20:15:56,111 - __main__ - INFO - ==================================================
+2025-07-29 20:15:56,111 - __main__ - INFO - Testing data loading...
+2025-07-29 20:15:56,172 - __main__ - INFO - PASSED: Data loading successful: (5000, 6)
+2025-07-29 20:15:56,172 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:15:56,172 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:56,172 - __main__ - INFO - Running test: Technical Indicators
+2025-07-29 20:15:56,172 - __main__ - INFO - ==================================================
+2025-07-29 20:15:56,172 - __main__ - INFO - Testing technical indicators...
+2025-07-29 20:15:56,181 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:15:56,445 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:15:56,456 - __main__ - INFO - PASSED: Technical indicators calculated successfully: (1000, 59)
+2025-07-29 20:15:56,456 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:15:56,456 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:56,456 - __main__ - INFO - Running test: Feature Engineering
+2025-07-29 20:15:56,456 - __main__ - INFO - ==================================================
+2025-07-29 20:15:56,456 - __main__ - INFO - Testing feature engineering...
+2025-07-29 20:15:56,466 - src.features - INFO - Building feature matrix
+2025-07-29 20:15:56,467 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:15:56,547 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:15:56,547 - src.features - INFO - Adding regime flags
+2025-07-29 20:15:56,556 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:15:56,556 - src.features - INFO - Adding lagged features
+2025-07-29 20:15:56,565 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:15:56,566 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:15:56,573 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:15:56,573 - src.features - INFO - Adding feature interactions
+2025-07-29 20:15:56,580 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:15:56,599 - src.features - INFO - Scaling features
+2025-07-29 20:15:56,601 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:15:56,633 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:15:56,648 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:15:56,652 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:15:56,653 - src.features - INFO - Final feature matrix shape: (500, 147)
+2025-07-29 20:15:56,654 - __main__ - INFO - PASSED: Feature engineering successful: (500, 147)
+2025-07-29 20:15:56,654 - __main__ - INFO - Scaler info: {'is_fitted': True, 'feature_columns_count': 146, 'feature_columns': ['open', 'high', 'low', 'close', 'volume', 'sma_20', 'rsi', 'sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200', 'macd_macd', 'macd_signal', 'macd_histogram', 'stoch_k_percent', 'stoch_d_percent', 'bb_upper', 'bb_middle', 'bb_lower', 'bb_bandwidth', 'bb_percent_b', 'parabolic_sar', 'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b', 'ichimoku_chikou_span', 'atr', 'cci', 'roc', 'williams_r', 'keltner_upper', 'keltner_middle', 'keltner_lower', 'keltner_width', 'supertrend_supertrend', 'supertrend_direction', 'dpo', 'trix_trix', 'trix_signal', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di', 'obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator', 'eom_emv', 'eom_emv_sma', 'force_index', 'volume_roc', 'nvi', 'mfv', 'close_std', 'adx_strong_trend', 'adx_weak_trend', 'atr_high_vol', 'atr_low_vol', 'bb_squeeze', 'bb_expansion', 'rsi_oversold', 'rsi_overbought', 'rsi_neutral', 'macd_bullish', 'macd_bearish', 'stoch_oversold', 'stoch_overbought', 'volume_high', 'volume_low', 'price_above_sma50', 'price_above_sma200', 'golden_cross', 'death_cross', 'close_lag_1', 'close_lag_2', 'close_lag_3', 'close_lag_5', 'volume_lag_1', 'volume_lag_2', 'volume_lag_3', 'volume_lag_5', 'high_lag_1', 'high_lag_2', 'high_lag_3', 'high_lag_5', 'low_lag_1', 'low_lag_2', 'low_lag_3', 'low_lag_5', 'open_lag_1', 'open_lag_2', 'open_lag_3', 'open_lag_5', 'rsi_lag_1', 'rsi_lag_2', 'rsi_lag_3', 'rsi_lag_5', 'macd_macd_lag_1', 'macd_macd_lag_2', 'macd_macd_lag_3', 'macd_macd_lag_5', 'stoch_k_percent_lag_1', 'stoch_k_percent_lag_2', 'stoch_k_percent_lag_3', 'stoch_k_percent_lag_5', 'williams_r_lag_1', 'williams_r_lag_2', 'williams_r_lag_3', 'williams_r_lag_5', 'cci_lag_1', 'cci_lag_2', 'cci_lag_3', 'cci_lag_5', 'roc_lag_1', 'roc_lag_2', 'roc_lag_3', 'roc_lag_5', 'close_zscore_20', 'close_zscore_50', 'close_zscore_100', 'volume_zscore_20', 'volume_zscore_50', 'volume_zscore_100', 'rsi_zscore_20', 'rsi_zscore_50', 'rsi_zscore_100', 'macd_macd_zscore_20', 'macd_macd_zscore_50', 'macd_macd_zscore_100', 'cci_zscore_20', 'cci_zscore_50', 'cci_zscore_100', 'roc_zscore_20', 'roc_zscore_50', 'roc_zscore_100', 'price_volume', 'price_volume_ratio', 'rsi_macd', 'bb_position', 'atr_volume', 'stoch_rsi']}
+2025-07-29 20:15:56,656 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:15:56,656 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:56,656 - __main__ - INFO - Running test: Cross-Validation
+2025-07-29 20:15:56,656 - __main__ - INFO - ==================================================
+2025-07-29 20:15:56,656 - __main__ - INFO - Testing cross-validation...
+2025-07-29 20:15:56,663 - src.model - INFO - Performing 3-fold cross-validation
+2025-07-29 20:15:58,228 - src.model - INFO - CV accuracy: mean=0.5200, std=0.0031
+2025-07-29 20:15:58,423 - src.model - INFO - CV roc_auc: mean=0.5232, std=0.0090
+2025-07-29 20:15:58,623 - src.model - INFO - CV precision: mean=0.5139, std=0.0048
+2025-07-29 20:15:58,820 - src.model - INFO - CV recall: mean=0.4991, std=0.0288
+2025-07-29 20:15:59,035 - src.model - INFO - CV f1: mean=0.5058, std=0.0125
+2025-07-29 20:15:59,035 - src.model - INFO - Cross-validation completed: {'cv_accuracy': {'mean': 0.5199960439481398, 'std': 0.0030542065526868575, 'scores': [0.5239520958083832, 0.5165165165165165, 0.5195195195195195]}, 'cv_roc_auc': {'mean': 0.5232222644980619, 'std': 0.008965651188289831, 'scores': [0.533225748610364, 0.5114735171020349, 0.5249675277817867]}, 'cv_precision': {'mean': 0.5138663394498618, 'std': 0.004812012778722215, 'scores': [0.5202702702702703, 0.5086705202312138, 0.5126582278481012]}, 'cv_recall': {'mean': 0.4990514905149052, 'std': 0.028775460291010066, 'scores': [0.4666666666666667, 0.5365853658536586, 0.49390243902439024]}, 'cv_f1': {'mean': 0.5057911874977219, 'std': 0.012491602943019141, 'scores': [0.49201277955271566, 0.5222551928783383, 0.5031055900621118]}}
+2025-07-29 20:15:59,035 - __main__ - INFO - PASSED: Cross-validation successful: 5 metrics
+2025-07-29 20:15:59,035 - __main__ - INFO -   cv_accuracy: mean=0.5200, std=0.0031
+2025-07-29 20:15:59,035 - __main__ - INFO -   cv_roc_auc: mean=0.5232, std=0.0090
+2025-07-29 20:15:59,035 - __main__ - INFO -   cv_precision: mean=0.5139, std=0.0048
+2025-07-29 20:15:59,035 - __main__ - INFO -   cv_recall: mean=0.4991, std=0.0288
+2025-07-29 20:15:59,037 - __main__ - INFO -   cv_f1: mean=0.5058, std=0.0125
+2025-07-29 20:15:59,037 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:15:59,037 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:59,037 - __main__ - INFO - Running test: Model Training
+2025-07-29 20:15:59,037 - __main__ - INFO - ==================================================
+2025-07-29 20:15:59,037 - __main__ - INFO - Testing model training...
+2025-07-29 20:15:59,052 - src.model - INFO - Training model for label_binary (classification)
+2025-07-29 20:15:59,053 - src.model - INFO - Prepared 7 features for 1000 samples
+2025-07-29 20:15:59,057 - src.model - INFO - Training classification model
+2025-07-29 20:15:59,168 - src.model - INFO - Model training completed
+2025-07-29 20:15:59,185 - src.model - INFO - Model evaluation completed: {'accuracy': 0.58, 'classification_report': {'0': {'precision': 0.5740740740740741, 'recall': 0.62, 'f1-score': 0.5961538461538461, 'support': 50.0}, '1': {'precision': 0.5869565217391305, 'recall': 0.54, 'f1-score': 0.5625, 'support': 50.0}, 'accuracy': 0.58, 'macro avg': {'precision': 0.5805152979066023, 'recall': 0.5800000000000001, 'f1-score': 0.5793269230769231, 'support': 100.0}, 'weighted avg': {'precision': 0.5805152979066023, 'recall': 0.58, 'f1-score': 0.579326923076923, 'support': 100.0}}, 'roc_auc': 0.6156, 'positive_probability_mean': 0.4817302879715075, 'positive_probability_std': 0.12023421868394425, 'precision_per_class': [0.5740740740740741, 0.5869565217391305], 'recall_per_class': [0.62, 0.54], 'f1_per_class': [0.5961538461538461, 0.5625], 'support_per_class': [50, 50]}
+2025-07-29 20:15:59,206 - src.model - INFO - Model evaluation completed: {'accuracy': 0.55, 'classification_report': {'0': {'precision': 0.543859649122807, 'recall': 0.62, 'f1-score': 0.5794392523364486, 'support': 50.0}, '1': {'precision': 0.5581395348837209, 'recall': 0.48, 'f1-score': 0.5161290322580645, 'support': 50.0}, 'accuracy': 0.55, 'macro avg': {'precision': 0.550999592003264, 'recall': 0.55, 'f1-score': 0.5477841422972565, 'support': 100.0}, 'weighted avg': {'precision': 0.550999592003264, 'recall': 0.55, 'f1-score': 0.5477841422972566, 'support': 100.0}}, 'roc_auc': 0.6008, 'positive_probability_mean': 0.48187937938376124, 'positive_probability_std': 0.11593174908940286, 'precision_per_class': [0.543859649122807, 0.5581395348837209], 'recall_per_class': [0.62, 0.48], 'f1_per_class': [0.5794392523364486, 0.5161290322580645], 'support_per_class': [50, 50]}
+2025-07-29 20:15:59,208 - src.model - INFO - Model training completed for label_binary
+2025-07-29 20:15:59,208 - __main__ - INFO - PASSED: Model training successful
+2025-07-29 20:15:59,209 - __main__ - INFO - Model Training: PASSED
+2025-07-29 20:15:59,209 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:59,209 - __main__ - INFO - Running test: Real-Time Prediction
+2025-07-29 20:15:59,209 - __main__ - INFO - ==================================================
+2025-07-29 20:15:59,209 - __main__ - INFO - Testing real-time prediction...
+2025-07-29 20:15:59,225 - src.features - INFO - Building feature matrix
+2025-07-29 20:15:59,225 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:15:59,359 - src.indicators - INFO - Calculated 52 technical indicators
+2025-07-29 20:15:59,359 - src.features - INFO - Adding regime flags
+2025-07-29 20:15:59,369 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:15:59,369 - src.features - INFO - Adding lagged features
+2025-07-29 20:15:59,381 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:15:59,382 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:15:59,390 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:15:59,390 - src.features - INFO - Adding feature interactions
+2025-07-29 20:15:59,396 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:15:59,414 - src.features - INFO - Scaling features
+2025-07-29 20:15:59,417 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:15:59,448 - src.features - INFO - Scaler fitted on 146 features
+2025-07-29 20:15:59,463 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:15:59,465 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:15:59,465 - src.features - INFO - Final feature matrix shape: (500, 148)
+2025-07-29 20:15:59,470 - src.model - INFO - Prepared 146 features for 500 samples
+2025-07-29 20:15:59,471 - src.model - INFO - Training classification model
+2025-07-29 20:15:59,642 - src.model - INFO - Model training completed
+2025-07-29 20:15:59,646 - src.features - INFO - Building live feature matrix
+2025-07-29 20:15:59,647 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:15:59,779 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:15:59,779 - src.features - INFO - Adding regime flags
+2025-07-29 20:15:59,802 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:15:59,802 - src.features - INFO - Adding lagged features
+2025-07-29 20:15:59,821 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:15:59,828 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:15:59,855 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:15:59,856 - src.features - INFO - Adding feature interactions
+2025-07-29 20:15:59,861 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:15:59,864 - src.features - WARNING - Removing extra features: ['timestamp']
+2025-07-29 20:15:59,868 - src.features - INFO - Scaling features
+2025-07-29 20:15:59,870 - src.features - INFO - Found 146 features to scale
+2025-07-29 20:15:59,919 - src.features - INFO - Scaled 146 features successfully
+2025-07-29 20:15:59,924 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:15:59,926 - src.features - INFO - Live feature matrix shape: (300, 146)
+2025-07-29 20:15:59,928 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:15:59,938 - src.model - INFO - Real-time prediction: {'timestamp': 299, 'prediction': 1, 'probability': array([0.15310671, 0.84689329]), 'confidence': 0.8468932875197454}
+2025-07-29 20:15:59,939 - __main__ - INFO - PASSED: Real-time prediction successful: {'timestamp': 299, 'prediction': 1, 'probability': array([0.15310671, 0.84689329]), 'confidence': 0.8468932875197454}
+2025-07-29 20:15:59,940 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:15:59,940 - __main__ - INFO - 
+==================================================
+2025-07-29 20:15:59,940 - __main__ - INFO - TEST SUMMARY
+2025-07-29 20:15:59,941 - __main__ - INFO - ==================================================
+2025-07-29 20:15:59,941 - __main__ - INFO - Data Loading: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - Technical Indicators: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - Feature Engineering: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - Cross-Validation: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - Model Training: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - Real-Time Prediction: PASSED
+2025-07-29 20:15:59,941 - __main__ - INFO - 
+Overall: 6/6 tests passed
+2025-07-29 20:15:59,942 - __main__ - INFO - ALL TESTS PASSED!

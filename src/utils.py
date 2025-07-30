@@ -40,16 +40,28 @@ def setup_logging(config: Config) -> logging.Logger:
     log_dir = Path(config.paths["logs"])
     log_dir.mkdir(exist_ok=True)
     
-    logging.basicConfig(
-        level=getattr(logging, config.logging["level"]),
-        format=config.logging["format"],
-        handlers=[
-            logging.FileHandler(config.logging["file"]),
-            logging.StreamHandler()
-        ]
-    )
-    
-    return logging.getLogger(__name__)
+    # Get the root logger
+    logger = logging.getLogger()
+    logger.setLevel(getattr(logging, config.logging["level"].upper()))
+
+    # Clear existing handlers
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    # Create formatter
+    formatter = logging.Formatter(config.logging["format"])
+
+    # Create file handler
+    file_handler = logging.FileHandler(log_dir / config.logging["file"])
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    # Create stream handler
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    return logger
 
 
 def set_deterministic_seed(seed: int) -> None:

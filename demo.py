@@ -19,7 +19,7 @@ from src.data import BinanceDataFetcher
 from src.indicators import TechnicalIndicators
 from src.features import FeatureEngineer
 from src.labels import LabelConstructor
-from src.model import LightGBMModel, ModelTrainer, RealTimePredictor
+from src.model import LightGBMModel, AdvancedModelTrainer, RealTimePredictor
 from src.backtest import Backtester
 from src.report import ReportGenerator
 
@@ -30,7 +30,7 @@ def setup_logging():
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler('logs/demo.log'),
+            logging.FileHandler('run_output.log'),
             logging.StreamHandler()
         ]
     )
@@ -194,7 +194,7 @@ def demo_model_training(df_with_features, df_with_labels, original_df):
     
     try:
         config = load_config("config/settings.yaml")
-        trainer = ModelTrainer(config)
+        model_trainer = AdvancedModelTrainer(config)
         
         # Ensure both DataFrames have the same index and length
         # Get the common index between features and labels
@@ -233,29 +233,31 @@ def demo_model_training(df_with_features, df_with_labels, original_df):
         
         logger.info(f"Final combined dataset shape: {df_combined.shape}")
         
-        # Train a single model
-        results = trainer.train_single_model(
-            df_combined, 
-            'label_class_1', 
-            task_type="classification",
-            perform_cv=True,
-            compute_shap=False  # Skip SHAP for faster demo
+        # Train an ensemble model
+        X = df_features_aligned
+        y = df_labels_aligned['label_class_1']
+
+        results = model_trainer.train_ensemble_model(
+            X, 
+            y, 
+            'label_class_1',
+            task_type="classification"
         )
         
-        if results and 'model' in results:
-            logger.info("Model training successful!")
-            logger.info(f"Test accuracy: {results.get('test_accuracy', 'N/A')}")
-            logger.info(f"Test ROC AUC: {results.get('test_roc_auc', 'N/A')}")
-            
-            # Show cross-validation results
-            cv_results = results.get('cv_results', {})
-            if cv_results:
-                logger.info("Cross-validation results:")
-                for metric, result in cv_results.items():
-                    if isinstance(result, dict) and 'mean' in result:
-                        logger.info(f"  {metric}: {result['mean']:.4f} (+/- {result['std']:.4f})")
-            
+        if results and 'models' in results:
+            logger.info("Ensemble model training successful!")
+            ensemble_scores = results.get('scores', {}).get('ensemble', {})
+            if ensemble_scores:
+                logger.info(f"Ensemble ROC AUC: {ensemble_scores.get('roc_auc', 'N/A'):.4f}")
+                logger.info(f"Ensemble Accuracy: {ensemble_scores.get('accuracy', 'N/A'):.4f}")
+
+            # Save the trained models
+            model_path = Path(config.paths['artefacts']) / 'ensemble_model.joblib'
+            model_trainer.save_models(model_path)
+            logger.info(f"Ensemble model saved to {model_path}")
+
             return results
+
         else:
             logger.error("Model training failed")
             return None
@@ -276,7 +278,7 @@ def demo_real_time_prediction(df_with_features, feature_engineer, trained_result
         config = load_config("config/settings.yaml")
         
         # Create real-time predictor
-        predictor = RealTimePredictor(config, trained_results['model'], feature_engineer)
+        predictor = RealTimePredictor(config, trained_results['models']['ensemble'], feature_engineer)
         
         # Create live data for prediction
         live_dates = pd.date_range('2023-02-01', periods=500, freq='1min')
@@ -344,8 +346,8 @@ def demo_backtesting(df_with_features, df_with_labels, training_results):
         logger.info(f"Backtest dataset shape: {df_combined.shape}")
         
         # Get the trained model from training results
-        if training_results and 'model' in training_results:
-            model = training_results['model']
+        if training_results and 'models' in training_results and 'ensemble' in training_results['models']:
+            model = training_results['models']['ensemble']
             
             # Run backtest with model
             backtest_results = backtester.run_backtest_with_model(
@@ -376,6 +378,7 @@ def demo_backtesting(df_with_features, df_with_labels, training_results):
 def main():
     """Run the comprehensive demo."""
     logger = setup_logging()
+    print("--- SCRIPT EXECUTION STARTED ---")
     logger.info("Starting comprehensive technical analysis demo...")
     
     # Step 1: Data Loading
@@ -394,23 +397,31 @@ def main():
     logger.info("============================================================")
     logger.info("DEMO: Feature Engineering")
     logger.info("============================================================")
-    
+
     try:
+        # Initialize feature engineer
         config = load_config("config/settings.yaml")
         feature_engineer = FeatureEngineer(config)
-        feature_matrix, feature_engineer = demo_feature_engineering(df_with_indicators)
         
-        logger.info(f"Original data shape: {df_with_indicators.shape}")
-        logger.info(f"Feature matrix shape: {feature_matrix.shape}")
+        # Build feature matrix
+        df_features = feature_engineer.build_feature_matrix(df_with_indicators)
+        
+        logger.info("Original data shape: %s", df_with_indicators.shape)
+        if df_features is not None:
+            logger.info("Feature matrix shape: %s", df_features.shape)
+            feature_names = feature_engineer.get_feature_names()
+            if feature_names:
+                logger.info("Number of features: %d", len(feature_names))
+                logger.info("Sample features: %s", feature_names[:5])
         
         # Analyze feature types
-        price_features = [col for col in feature_matrix.columns if any(x in col for x in ['open', 'high', 'low', 'close', 'volume'])]
-        volume_features = [col for col in feature_matrix.columns if 'volume' in col]
-        technical_features = [col for col in feature_matrix.columns if col not in price_features + volume_features]
-        regime_features = [col for col in feature_matrix.columns if 'regime' in col]
-        lagged_features = [col for col in feature_matrix.columns if 'lag' in col]
-        zscore_features = [col for col in feature_matrix.columns if 'zscore' in col]
-        interaction_features = [col for col in feature_matrix.columns if 'interaction' in col]
+        price_features = [col for col in df_features.columns if any(x in col for x in ['open', 'high', 'low', 'close', 'volume'])]
+        volume_features = [col for col in df_features.columns if 'volume' in col]
+        technical_features = [col for col in df_features.columns if col not in price_features + volume_features]
+        regime_features = [col for col in df_features.columns if 'regime' in col]
+        lagged_features = [col for col in df_features.columns if 'lag' in col]
+        zscore_features = [col for col in df_features.columns if 'zscore' in col]
+        interaction_features = [col for col in df_features.columns if 'interaction' in col]
         
         logger.info(f"Price Features: {len(price_features)} features")
         logger.info(f"Volume Features: {len(volume_features)} features")

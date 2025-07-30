@@ -1,0 +1,57 @@
+2025-07-30 18:22:27,554 - __main__ - INFO - Starting small technical analysis demo...
+2025-07-30 18:22:27,554 - __main__ - INFO - ============================================================
+2025-07-30 18:22:27,570 - __main__ - INFO - Created sample data: (1000, 6)
+2025-07-30 18:22:27,570 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-01 16:39:00
+2025-07-30 18:22:27,570 - __main__ - INFO - ============================================================
+2025-07-30 18:22:27,570 - __main__ - INFO - DEMO: Technical Indicators
+2025-07-30 18:22:27,570 - __main__ - INFO - ============================================================
+2025-07-30 18:22:27,579 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:22:27,781 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 18:22:27,793 - __main__ - INFO - Original data shape: (1000, 6)
+2025-07-30 18:22:27,793 - __main__ - INFO - Data with indicators shape: (1000, 59)
+2025-07-30 18:22:27,793 - __main__ - INFO - ============================================================
+2025-07-30 18:22:27,793 - __main__ - INFO - DEMO: Feature Engineering
+2025-07-30 18:22:27,793 - __main__ - INFO - ============================================================
+2025-07-30 18:22:27,793 - src.features - INFO - Building feature matrix
+2025-07-30 18:22:27,793 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:22:27,989 - src.indicators - ERROR - Error calculating indicators: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2025-07-30 18:22:27,989 - __main__ - ERROR - Demo failed: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2025-07-30 18:23:16,756 - __main__ - INFO - Starting small technical analysis demo...
+2025-07-30 18:23:16,756 - __main__ - INFO - ============================================================
+2025-07-30 18:23:16,769 - __main__ - INFO - Created sample data: (1000, 6)
+2025-07-30 18:23:16,769 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-01 16:39:00
+2025-07-30 18:23:16,769 - __main__ - INFO - ============================================================
+2025-07-30 18:23:16,769 - __main__ - INFO - DEMO: Technical Indicators
+2025-07-30 18:23:16,769 - __main__ - INFO - ============================================================
+2025-07-30 18:23:16,771 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:23:17,023 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 18:23:17,023 - __main__ - INFO - Original data shape: (1000, 6)
+2025-07-30 18:23:17,024 - __main__ - INFO - Data with indicators shape: (1000, 59)
+2025-07-30 18:23:17,024 - __main__ - INFO - ============================================================
+2025-07-30 18:23:17,025 - __main__ - INFO - DEMO: Feature Engineering
+2025-07-30 18:23:17,025 - __main__ - INFO - ============================================================
+2025-07-30 18:23:17,027 - src.features - INFO - Building feature matrix
+2025-07-30 18:23:17,027 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:23:17,215 - src.indicators - ERROR - Error calculating indicators: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2025-07-30 18:23:17,215 - __main__ - ERROR - Demo failed: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2025-07-30 18:24:03,014 - __main__ - INFO - Starting small technical analysis demo...
+2025-07-30 18:24:03,014 - __main__ - INFO - ============================================================
+2025-07-30 18:24:03,014 - __main__ - INFO - Created sample data: (1000, 6)
+2025-07-30 18:24:03,014 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-01 16:39:00
+2025-07-30 18:24:03,014 - __main__ - INFO - ============================================================
+2025-07-30 18:24:03,014 - __main__ - INFO - DEMO: Technical Indicators
+2025-07-30 18:24:03,014 - __main__ - INFO - ============================================================
+2025-07-30 18:24:03,033 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:24:03,282 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 18:24:03,282 - __main__ - INFO - Original data shape: (1000, 6)
+2025-07-30 18:24:03,282 - __main__ - INFO - Data with indicators shape: (1000, 59)
+2025-07-30 18:24:03,282 - __main__ - INFO - ============================================================
+2025-07-30 18:24:03,283 - __main__ - INFO - DEMO: Feature Engineering
+2025-07-30 18:24:03,283 - __main__ - INFO - ============================================================
+2025-07-30 18:24:03,284 - src.features - INFO - Building feature matrix
+2025-07-30 18:24:03,284 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 18:24:03,571 - src.indicators - INFO - Calculated 81 technical indicators
+2025-07-30 18:24:03,580 - src.features - INFO - Remaining rows: 1000
+2025-07-30 18:24:03,581 - src.features - INFO - Adding regime flags
+2025-07-30 18:24:03,581 - src.features - INFO - Adding regime flags
+2025-07-30 18:24:03,582 - __main__ - ERROR - Demo failed: Cannot set a DataFrame with multiple columns to the single column adx_strong_trend

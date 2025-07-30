@@ -114,7 +114,7 @@ paths:
 logging:
   level: "INFO"
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: "logs/app.log"
+  file: "app.log"
 
 shap:
   sample_size: 1000

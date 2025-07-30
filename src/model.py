@@ -69,7 +69,7 @@ class TimeSeriesValidator:
 
 class AdvancedModelTrainer:
     """Advanced model trainer with ensemble methods and hyperparameter optimization."""
-    
+
     def __init__(self, config):
         self.config = config
         self.models = {}
@@ -78,53 +78,45 @@ class AdvancedModelTrainer:
         self.ensemble_model = None
         self.validator = TimeSeriesValidator(n_splits=5)
         self.feature_engineers = {}  # Store fitted feature engineers
-        
 
-    
     def train_ensemble_model(self, X, y, label_name, task_type='classification', feature_engineer=None):
         """Train an ensemble model with multiple algorithms using proper validation."""
         logger.info(f"Training ensemble model for {label_name}")
-        
-        # Store the feature engineer if provided
+
         if feature_engineer is not None:
             self.feature_engineers[label_name] = feature_engineer
-        
-        # Clean data - handle infinity and extreme values more aggressively
+
         X_clean = X.copy()
         X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
         X_clean = X_clean.fillna(X_clean.median())
-        
-        # More aggressive clipping for extreme values
+
         for col in X_clean.columns:
             if X_clean[col].dtype in ['float64', 'float32']:
-                Q1 = X_clean[col].quantile(0.001)  # More aggressive
-                Q3 = X_clean[col].quantile(0.999)  # More aggressive
+                Q1 = X_clean[col].quantile(0.001)
+                Q3 = X_clean[col].quantile(0.999)
                 X_clean[col] = X_clean[col].clip(Q1, Q3)
-                
-                # Additional check for very large values
                 if X_clean[col].abs().max() > 1e6:
                     X_clean[col] = X_clean[col].clip(-1e6, 1e6)
-        
+
         logger.info(f"Data cleaned: {X_clean.shape}")
-        logger.info(f"Infinity values removed: {(X == np.inf).sum().sum()}")
-        
-        # Use TimeSeriesSplit for proper validation
+
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X_clean)
+        self.scalers[label_name] = scaler
+        X_scaled = pd.DataFrame(X_scaled, columns=X_clean.columns, index=X_clean.index)
+
         tscv = TimeSeriesSplit(n_splits=3)
-        
-        # Train individual models
+
         models = {}
         scores = {}
-        
+
         # LightGBM
         logger.info("Training lgb model...")
         lgb_model_wrapper = LightGBMModel(self.config)
         lgb_params = lgb_model_wrapper.optimize_hyperparameters(X_clean, y, task_type=task_type, n_trials=20)
         lgb_model = lgb.LGBMClassifier(**lgb_params, random_state=42)
-        
-        # Cross-validate with TimeSeriesSplit
         lgb_scores = cross_val_score(lgb_model, X_clean, y, cv=tscv, scoring='roc_auc')
         lgb_model.fit(X_clean, y)
-        
         models['lgb'] = lgb_model
         scores['lgb'] = {
             'roc_auc': lgb_scores.mean(),
@@ -134,13 +126,12 @@ class AdvancedModelTrainer:
             'recall': recall_score(y, lgb_model.predict(X_clean)),
             'f1': f1_score(y, lgb_model.predict(X_clean))
         }
-        
+
         # Random Forest
         logger.info("Training rf model...")
         rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
         rf_scores = cross_val_score(rf_model, X_clean, y, cv=tscv, scoring='roc_auc')
         rf_model.fit(X_clean, y)
-        
         models['rf'] = rf_model
         scores['rf'] = {
             'roc_auc': rf_scores.mean(),
@@ -150,13 +141,12 @@ class AdvancedModelTrainer:
             'recall': recall_score(y, rf_model.predict(X_clean)),
             'f1': f1_score(y, rf_model.predict(X_clean))
         }
-        
+
         # Gradient Boosting
         logger.info("Training gb model...")
         gb_model = GradientBoostingClassifier(n_estimators=100, random_state=42)
         gb_scores = cross_val_score(gb_model, X_clean, y, cv=tscv, scoring='roc_auc')
         gb_model.fit(X_clean, y)
-        
         models['gb'] = gb_model
         scores['gb'] = {
             'roc_auc': gb_scores.mean(),
@@ -166,95 +156,104 @@ class AdvancedModelTrainer:
             'recall': recall_score(y, gb_model.predict(X_clean)),
             'f1': f1_score(y, gb_model.predict(X_clean))
         }
-        
+
+        # Logistic Regression
+        logger.info("Training lr model...")
+        lr_model = LogisticRegression(random_state=42, solver='liblinear', C=1.0)
+        lr_scores = cross_val_score(lr_model, X_scaled, y, cv=tscv, scoring='roc_auc')
+        lr_model.fit(X_scaled, y)
+        models['lr'] = lr_model
+        scores['lr'] = {
+            'roc_auc': lr_scores.mean(),
+            'roc_auc_std': lr_scores.std(),
+            'accuracy': accuracy_score(y, lr_model.predict(X_scaled)),
+            'precision': precision_score(y, lr_model.predict(X_scaled)),
+            'recall': recall_score(y, lr_model.predict(X_scaled)),
+            'f1': f1_score(y, lr_model.predict(X_scaled))
+        }
+
         # Create ensemble
         logger.info("Training ensemble model...")
         ensemble_model = VotingClassifier(
             estimators=[
                 ('lgb', models['lgb']),
                 ('rf', models['rf']),
-                ('gb', models['gb'])
+                ('gb', models['gb']),
+                ('lr', models['lr'])
             ],
             voting='soft'
         )
-        
-        ensemble_scores = cross_val_score(ensemble_model, X_clean, y, cv=tscv, scoring='roc_auc')
-        ensemble_model.fit(X_clean, y)
-        
+
+        ensemble_scores = cross_val_score(ensemble_model, X_scaled, y, cv=tscv, scoring='roc_auc')
+        ensemble_model.fit(X_scaled, y)
+
         models['ensemble'] = ensemble_model
         scores['ensemble'] = {
             'roc_auc': ensemble_scores.mean(),
             'roc_auc_std': ensemble_scores.std(),
-            'accuracy': accuracy_score(y, ensemble_model.predict(X_clean)),
-            'precision': precision_score(y, ensemble_model.predict(X_clean)),
-            'recall': recall_score(y, ensemble_model.predict(X_clean)),
-            'f1': f1_score(y, ensemble_model.predict(X_clean))
+            'accuracy': accuracy_score(y, ensemble_model.predict(X_scaled)),
+            'precision': precision_score(y, ensemble_model.predict(X_scaled)),
+            'recall': recall_score(y, ensemble_model.predict(X_scaled)),
+            'f1': f1_score(y, ensemble_model.predict(X_scaled))
         }
-        
-        # Store results
-        self.models = models
+
+        self.models[label_name] = models
         self.ensemble_model = ensemble_model
-        
-        # Calculate feature importance for LightGBM
+
         if hasattr(lgb_model, 'feature_importances_'):
             feature_importance = pd.DataFrame({
                 'feature': X_clean.columns,
                 'importance': lgb_model.feature_importances_
             }).sort_values('importance', ascending=False)
-            self.feature_importance = feature_importance
-        
+            self.feature_importance[label_name] = feature_importance
+
         return {
             'models': models,
             'scores': scores,
-            'feature_importance': self.feature_importance
+            'feature_importance': self.feature_importance.get(label_name)
         }
-    
+
     def cross_validate_ensemble(self, X, y, n_splits=5):
         """Cross-validate ensemble model with TimeSeriesSplit."""
         tscv = TimeSeriesSplit(n_splits=n_splits)
-        
-        cv_scores = {
-            'accuracy': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='accuracy'),
-            'roc_auc': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='roc_auc'),
-            'precision': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='precision'),
-            'recall': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='recall'),
-            'f1': cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='f1')
+        scores = cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='roc_auc')
+
+        return {
+            'roc_auc_mean': scores.mean(),
+            'roc_auc_std': scores.std(),
+            'roc_auc_scores': scores.tolist()
         }
-        
-        return cv_scores
-    
-    def get_feature_importance(self, X, label_name):
+
+    def get_feature_importance(self, label_name):
         """Get feature importance from trained model."""
-        if self.feature_importance is not None:
-            return self.feature_importance
-        else:
-            logger.warning("No feature importance available")
-            return pd.DataFrame()
-    
+        return self.feature_importance.get(label_name)
+
     def predict_ensemble(self, X):
         """Make ensemble predictions."""
-        if self.ensemble_model is None:
-            raise ValueError("No ensemble model trained")
-        
-        return self.ensemble_model.predict(X)
-    
+        if self.ensemble_model:
+            return self.ensemble_model.predict(X)
+        return None
+
     def save_models(self, filepath):
-        """Save trained models."""
-        model_data = {
-            'models': self.models,
-            'ensemble_model': self.ensemble_model,
-            'feature_importance': self.feature_importance
-        }
-        joblib.dump(model_data, filepath)
-        logger.info(f"Models saved to {filepath}")
-    
+        """Save trained models and scalers."""
+        with open(filepath, 'wb') as f:
+            joblib.dump({
+                'models': self.models,
+                'ensemble_model': self.ensemble_model,
+                'feature_importance': self.feature_importance,
+                'scalers': self.scalers,
+                'feature_engineers': self.feature_engineers
+            }, f)
+
     def load_models(self, filepath):
-        """Load trained models."""
-        model_data = joblib.load(filepath)
-        self.models = model_data['models']
-        self.ensemble_model = model_data['ensemble_model']
-        self.feature_importance = model_data['feature_importance']
-        logger.info(f"Models loaded from {filepath}")
+        """Load trained models and scalers."""
+        with open(filepath, 'rb') as f:
+            data = joblib.load(f)
+            self.models = data.get('models', {})
+            self.ensemble_model = data.get('ensemble_model')
+            self.feature_importance = data.get('feature_importance', {})
+            self.scalers = data.get('scalers', {})
+            self.feature_engineers = data.get('feature_engineers', {})
 
 
 class HyperparameterOptimizer:
@@ -924,17 +923,16 @@ def main():
     label_constructor = LabelConstructor(config)
     df_with_labels = label_constructor.construct_all_labels(df)
     
+    # Prepare data for training
+    label_column = "label_class_1"
+    X = df_with_labels.drop(columns=[c for c in df_with_labels.columns if 'label' in c])
+    y = df_with_labels[label_column]
+
     # Train model
-    trainer = ModelTrainer(config)
-    results = trainer.train_single_model(
-        df_with_labels, 
-        "label_class_1", 
-        "classification",
-        perform_cv=True,
-        compute_shap=True
-    )
-    
-    print(f"Training completed. Test accuracy: {results['test_metrics']['accuracy']:.4f}")
+    trainer = AdvancedModelTrainer(config)
+    trainer.train_ensemble_model(X, y, label_column, task_type='classification')
+
+    print(f"Ensemble model training completed for {label_column}.")
 
 
 if __name__ == "__main__":

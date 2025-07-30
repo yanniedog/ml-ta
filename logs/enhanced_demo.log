@@ -1,0 +1,791 @@
+2025-07-29 20:05:54,480 - __main__ - INFO - Starting enhanced technical analysis demo...
+2025-07-29 20:05:54,480 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,480 - __main__ - INFO - ENHANCED ML TRADING SYSTEM DEMO
+2025-07-29 20:05:54,480 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,480 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,480 - __main__ - INFO - ENHANCED DEMO: Advanced Data Loading
+2025-07-29 20:05:54,480 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,588 - __main__ - INFO - Loaded data: (5000, 6)
+2025-07-29 20:05:54,590 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-04 11:19:00
+2025-07-29 20:05:54,593 - __main__ - INFO - Memory usage: 0.23 MB
+2025-07-29 20:05:54,593 - __main__ - INFO - Performing data quality checks...
+2025-07-29 20:05:54,594 - __main__ - INFO - Missing values: 0
+2025-07-29 20:05:54,601 - __main__ - INFO - Duplicate rows: 0
+2025-07-29 20:05:54,605 - __main__ - INFO - Data types: float64           5
+datetime64[ns]    1
+Name: count, dtype: int64
+2025-07-29 20:05:54,606 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,606 - __main__ - INFO - ENHANCED DEMO: Advanced Technical Indicators
+2025-07-29 20:05:54,606 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:54,615 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:05:57,144 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:05:57,144 - __main__ - INFO - Original data shape: (5000, 6)
+2025-07-29 20:05:57,144 - __main__ - INFO - Data with indicators shape: (5000, 59)
+2025-07-29 20:05:57,144 - __main__ - INFO - Processing time: 2.53 seconds
+2025-07-29 20:05:57,146 - __main__ - INFO - Indicators per second: 20.96
+2025-07-29 20:05:57,146 - __main__ - INFO - Total indicators calculated: 53
+2025-07-29 20:05:57,296 - __main__ - INFO - Indicator statistics summary:
+2025-07-29 20:05:57,296 - __main__ - INFO - Mean values range: -97773966191559649611047770902134834201685103486866918370577232502989422242801459080153533099597018412613632.0000 to 7269369393529857856267934926577763347127680756326248274413932008943281440545475845593571702957328413312685715281240091674939994382181352487871009448934050657855293133999063454752722022431355384115483813804507136.0000
+2025-07-29 20:05:57,296 - __main__ - INFO - Standard deviation range: 0.1197 to inf
+2025-07-29 20:05:57,296 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:57,296 - __main__ - INFO - ENHANCED DEMO: Advanced Feature Engineering
+2025-07-29 20:05:57,296 - __main__ - INFO - ================================================================================
+2025-07-29 20:05:57,302 - src.features - INFO - Building feature matrix
+2025-07-29 20:05:57,302 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:05:59,291 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:05:59,293 - src.features - INFO - Adding regime flags
+2025-07-29 20:05:59,319 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:05:59,319 - src.features - INFO - Adding lagged features
+2025-07-29 20:05:59,347 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:05:59,347 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:05:59,389 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:05:59,389 - src.features - INFO - Adding feature interactions
+2025-07-29 20:05:59,402 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:05:59,472 - src.features - INFO - Scaling features
+2025-07-29 20:05:59,489 - src.features - INFO - Found 145 features to scale
+2025-07-29 20:05:59,638 - src.features - INFO - Scaler fitted on 145 features
+2025-07-29 20:05:59,704 - src.features - INFO - Scaled 145 features successfully
+2025-07-29 20:05:59,724 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:05:59,724 - src.features - INFO - Final feature matrix shape: (5000, 146)
+2025-07-29 20:05:59,728 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:05:59,728 - __main__ - INFO - Feature matrix shape: (5000, 146)
+2025-07-29 20:05:59,728 - __main__ - INFO - Processing time: 2.43 seconds
+2025-07-29 20:05:59,730 - __main__ - INFO - Features per second: 60.18
+2025-07-29 20:05:59,730 - __main__ - INFO - Price Features: 31 features
+2025-07-29 20:05:59,730 - __main__ - INFO - Volume Features: 14 features
+2025-07-29 20:05:59,732 - __main__ - INFO - Technical Indicators: 83 features
+2025-07-29 20:05:59,732 - __main__ - INFO - Lagged Features: 44 features
+2025-07-29 20:05:59,734 - __main__ - INFO - Z-Score Features: 18 features
+2025-07-29 20:05:59,734 - __main__ - INFO - Feature quality analysis:
+2025-07-29 20:05:59,736 - __main__ - ERROR - Enhanced feature engineering failed: 'DatetimeArray' with dtype datetime64[ns] does not support reduction 'var'
+2025-07-29 20:05:59,740 - __main__ - ERROR - Feature engineering failed, aborting demo
+2025-07-29 20:06:13,171 - __main__ - INFO - Starting enhanced technical analysis demo...
+2025-07-29 20:06:13,171 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,171 - __main__ - INFO - ENHANCED ML TRADING SYSTEM DEMO
+2025-07-29 20:06:13,171 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,171 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,171 - __main__ - INFO - ENHANCED DEMO: Advanced Data Loading
+2025-07-29 20:06:13,171 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,275 - __main__ - INFO - Loaded data: (5000, 6)
+2025-07-29 20:06:13,275 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-04 11:19:00
+2025-07-29 20:06:13,286 - __main__ - INFO - Memory usage: 0.23 MB
+2025-07-29 20:06:13,286 - __main__ - INFO - Performing data quality checks...
+2025-07-29 20:06:13,288 - __main__ - INFO - Missing values: 0
+2025-07-29 20:06:13,292 - __main__ - INFO - Duplicate rows: 0
+2025-07-29 20:06:13,294 - __main__ - INFO - Data types: float64           5
+datetime64[ns]    1
+Name: count, dtype: int64
+2025-07-29 20:06:13,294 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,295 - __main__ - INFO - ENHANCED DEMO: Advanced Technical Indicators
+2025-07-29 20:06:13,295 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:13,311 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:06:14,329 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:06:14,329 - __main__ - INFO - Original data shape: (5000, 6)
+2025-07-29 20:06:14,330 - __main__ - INFO - Data with indicators shape: (5000, 59)
+2025-07-29 20:06:14,330 - __main__ - INFO - Processing time: 1.02 seconds
+2025-07-29 20:06:14,331 - __main__ - INFO - Indicators per second: 52.06
+2025-07-29 20:06:14,331 - __main__ - INFO - Total indicators calculated: 53
+2025-07-29 20:06:14,488 - __main__ - INFO - Indicator statistics summary:
+2025-07-29 20:06:14,498 - __main__ - INFO - Mean values range: -97773966191559649611047770902134834201685103486866918370577232502989422242801459080153533099597018412613632.0000 to 7269369393529857856267934926577763347127680756326248274413932008943281440545475845593571702957328413312685715281240091674939994382181352487871009448934050657855293133999063454752722022431355384115483813804507136.0000
+2025-07-29 20:06:14,498 - __main__ - INFO - Standard deviation range: 0.1197 to inf
+2025-07-29 20:06:14,498 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:14,498 - __main__ - INFO - ENHANCED DEMO: Advanced Feature Engineering
+2025-07-29 20:06:14,498 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:14,512 - src.features - INFO - Building feature matrix
+2025-07-29 20:06:14,512 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:06:15,464 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:06:15,464 - src.features - INFO - Adding regime flags
+2025-07-29 20:06:15,480 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:06:15,480 - src.features - INFO - Adding lagged features
+2025-07-29 20:06:15,502 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:06:15,504 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:06:15,532 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:06:15,533 - src.features - INFO - Adding feature interactions
+2025-07-29 20:06:15,539 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:06:15,574 - src.features - INFO - Scaling features
+2025-07-29 20:06:15,587 - src.features - INFO - Found 145 features to scale
+2025-07-29 20:06:15,660 - src.features - INFO - Scaler fitted on 145 features
+2025-07-29 20:06:15,694 - src.features - INFO - Scaled 145 features successfully
+2025-07-29 20:06:15,710 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:06:15,711 - src.features - INFO - Final feature matrix shape: (5000, 146)
+2025-07-29 20:06:15,711 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:06:15,712 - __main__ - INFO - Feature matrix shape: (5000, 146)
+2025-07-29 20:06:15,713 - __main__ - INFO - Processing time: 1.20 seconds
+2025-07-29 20:06:15,713 - __main__ - INFO - Features per second: 121.74
+2025-07-29 20:06:15,713 - __main__ - INFO - Price Features: 31 features
+2025-07-29 20:06:15,713 - __main__ - INFO - Volume Features: 14 features
+2025-07-29 20:06:15,713 - __main__ - INFO - Technical Indicators: 83 features
+2025-07-29 20:06:15,713 - __main__ - INFO - Lagged Features: 44 features
+2025-07-29 20:06:15,716 - __main__ - INFO - Z-Score Features: 18 features
+2025-07-29 20:06:15,716 - __main__ - INFO - Feature quality analysis:
+2025-07-29 20:06:15,729 - __main__ - INFO - Features with zero variance: 3
+2025-07-29 20:06:15,958 - __main__ - INFO - Features with high correlation (>0.95): 1434
+2025-07-29 20:06:15,958 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:15,958 - __main__ - INFO - ENHANCED DEMO: Advanced Label Construction
+2025-07-29 20:06:15,958 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:15,965 - src.labels - INFO - Constructing all labels
+2025-07-29 20:06:15,972 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-29 20:06:15,980 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-29 20:06:15,982 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-29 20:06:15,983 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-29 20:06:15,983 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-29 20:06:15,995 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-29 20:06:15,995 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-29 20:06:16,002 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-29 20:06:16,004 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-29 20:06:16,009 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-29 20:06:16,010 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-29 20:06:16,014 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-29 20:06:16,019 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-29 20:06:16,021 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:06:16,022 - __main__ - INFO - Data with labels shape: (4995, 68)
+2025-07-29 20:06:16,022 - __main__ - INFO - Processing time: 0.06 seconds
+2025-07-29 20:06:16,023 - __main__ - INFO - Label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-29 20:06:16,024 - __main__ - INFO - label_class_1 distribution: {1: 4611, 0: 384}
+2025-07-29 20:06:16,025 - __main__ - INFO - label_class_1 class balance: 0.083
+2025-07-29 20:06:16,025 - __main__ - INFO - label_class_3 distribution: {1: 4773, 0: 222}
+2025-07-29 20:06:16,026 - __main__ - INFO - label_class_3 class balance: 0.047
+2025-07-29 20:06:16,028 - __main__ - INFO - label_class_5 distribution: {1: 4825, 0: 170}
+2025-07-29 20:06:16,029 - __main__ - INFO - label_class_5 class balance: 0.035
+2025-07-29 20:06:16,029 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:16,030 - __main__ - INFO - ENHANCED DEMO: Advanced Model Training with Ensemble Methods
+2025-07-29 20:06:16,030 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:16,042 - __main__ - INFO - Feature matrix shape after alignment: (4995, 146)
+2025-07-29 20:06:16,042 - __main__ - INFO - Label matrix shape after alignment: (4995, 68)
+2025-07-29 20:06:16,047 - __main__ - INFO - Final training data shape: (4995, 145)
+2025-07-29 20:06:16,048 - __main__ - INFO - Target distribution: {1: 4611, 0: 384}
+2025-07-29 20:06:16,048 - src.model - INFO - Training ensemble model for label_class_1
+2025-07-29 20:06:16,048 - src.model - INFO - Starting hyperparameter optimization...
+2025-07-29 20:06:17,795 - __main__ - ERROR - Enhanced model training failed: 
+All the 3 fits failed.
+It is very likely that your model is misconfigured.
+You can try to debug the error by setting error_score='raise'.
+
+Below are more details about the failures:
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "C:\code\.venv\Lib\site-packages\sklearn\model_selection\_validation.py", line 859, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "C:\code\.venv\Lib\site-packages\lightgbm\sklearn.py", line 1560, in fit
+    super().fit(
+  File "C:\code\.venv\Lib\site-packages\lightgbm\sklearn.py", line 1049, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "C:\code\.venv\Lib\site-packages\lightgbm\engine.py", line 332, in train
+    cb(
+  File "C:\code\.venv\Lib\site-packages\lightgbm\callback.py", line 404, in __call__
+    self._init(env)
+  File "C:\code\.venv\Lib\site-packages\lightgbm\callback.py", line 328, in _init
+    raise ValueError("For early stopping, at least one dataset and eval metric is required for evaluation")
+ValueError: For early stopping, at least one dataset and eval metric is required for evaluation
+
+2025-07-29 20:06:17,795 - __main__ - ERROR - Model training failed, aborting demo
+2025-07-29 20:06:50,519 - __main__ - INFO - Starting enhanced technical analysis demo...
+2025-07-29 20:06:50,519 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,519 - __main__ - INFO - ENHANCED ML TRADING SYSTEM DEMO
+2025-07-29 20:06:50,519 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,519 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,519 - __main__ - INFO - ENHANCED DEMO: Advanced Data Loading
+2025-07-29 20:06:50,519 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,606 - __main__ - INFO - Loaded data: (5000, 6)
+2025-07-29 20:06:50,606 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-04 11:19:00
+2025-07-29 20:06:50,613 - __main__ - INFO - Memory usage: 0.23 MB
+2025-07-29 20:06:50,614 - __main__ - INFO - Performing data quality checks...
+2025-07-29 20:06:50,616 - __main__ - INFO - Missing values: 0
+2025-07-29 20:06:50,618 - __main__ - INFO - Duplicate rows: 0
+2025-07-29 20:06:50,620 - __main__ - INFO - Data types: float64           5
+datetime64[ns]    1
+Name: count, dtype: int64
+2025-07-29 20:06:50,620 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,621 - __main__ - INFO - ENHANCED DEMO: Advanced Technical Indicators
+2025-07-29 20:06:50,621 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:50,636 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:06:51,819 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:06:51,819 - __main__ - INFO - Original data shape: (5000, 6)
+2025-07-29 20:06:51,821 - __main__ - INFO - Data with indicators shape: (5000, 59)
+2025-07-29 20:06:51,821 - __main__ - INFO - Processing time: 1.18 seconds
+2025-07-29 20:06:51,821 - __main__ - INFO - Indicators per second: 44.80
+2025-07-29 20:06:51,821 - __main__ - INFO - Total indicators calculated: 53
+2025-07-29 20:06:51,896 - __main__ - INFO - Indicator statistics summary:
+2025-07-29 20:06:51,896 - __main__ - INFO - Mean values range: -97773966191559649611047770902134834201685103486866918370577232502989422242801459080153533099597018412613632.0000 to 7269369393529857856267934926577763347127680756326248274413932008943281440545475845593571702957328413312685715281240091674939994382181352487871009448934050657855293133999063454752722022431355384115483813804507136.0000
+2025-07-29 20:06:51,896 - __main__ - INFO - Standard deviation range: 0.1197 to inf
+2025-07-29 20:06:51,896 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:51,896 - __main__ - INFO - ENHANCED DEMO: Advanced Feature Engineering
+2025-07-29 20:06:51,896 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:51,911 - src.features - INFO - Building feature matrix
+2025-07-29 20:06:51,912 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:06:52,711 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:06:52,711 - src.features - INFO - Adding regime flags
+2025-07-29 20:06:52,722 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:06:52,722 - src.features - INFO - Adding lagged features
+2025-07-29 20:06:52,743 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:06:52,743 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:06:52,757 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:06:52,764 - src.features - INFO - Adding feature interactions
+2025-07-29 20:06:52,768 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:06:52,797 - src.features - INFO - Scaling features
+2025-07-29 20:06:52,803 - src.features - INFO - Found 145 features to scale
+2025-07-29 20:06:52,871 - src.features - INFO - Scaler fitted on 145 features
+2025-07-29 20:06:52,900 - src.features - INFO - Scaled 145 features successfully
+2025-07-29 20:06:52,900 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:06:52,900 - src.features - INFO - Final feature matrix shape: (5000, 146)
+2025-07-29 20:06:52,900 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:06:52,913 - __main__ - INFO - Feature matrix shape: (5000, 146)
+2025-07-29 20:06:52,913 - __main__ - INFO - Processing time: 0.99 seconds
+2025-07-29 20:06:52,914 - __main__ - INFO - Features per second: 147.54
+2025-07-29 20:06:52,915 - __main__ - INFO - Price Features: 31 features
+2025-07-29 20:06:52,915 - __main__ - INFO - Volume Features: 14 features
+2025-07-29 20:06:52,915 - __main__ - INFO - Technical Indicators: 83 features
+2025-07-29 20:06:52,918 - __main__ - INFO - Lagged Features: 44 features
+2025-07-29 20:06:52,918 - __main__ - INFO - Z-Score Features: 18 features
+2025-07-29 20:06:52,918 - __main__ - INFO - Feature quality analysis:
+2025-07-29 20:06:52,922 - __main__ - INFO - Features with zero variance: 3
+2025-07-29 20:06:53,134 - __main__ - INFO - Features with high correlation (>0.95): 1434
+2025-07-29 20:06:53,134 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:53,134 - __main__ - INFO - ENHANCED DEMO: Advanced Label Construction
+2025-07-29 20:06:53,134 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:53,147 - src.labels - INFO - Constructing all labels
+2025-07-29 20:06:53,152 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-29 20:06:53,157 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-29 20:06:53,159 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-29 20:06:53,161 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-29 20:06:53,161 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-29 20:06:53,170 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-29 20:06:53,173 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-29 20:06:53,175 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-29 20:06:53,176 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-29 20:06:53,186 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-29 20:06:53,187 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-29 20:06:53,191 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-29 20:06:53,193 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-29 20:06:53,195 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:06:53,195 - __main__ - INFO - Data with labels shape: (4995, 68)
+2025-07-29 20:06:53,196 - __main__ - INFO - Processing time: 0.05 seconds
+2025-07-29 20:06:53,196 - __main__ - INFO - Label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-29 20:06:53,197 - __main__ - INFO - label_class_1 distribution: {1: 4611, 0: 384}
+2025-07-29 20:06:53,197 - __main__ - INFO - label_class_1 class balance: 0.083
+2025-07-29 20:06:53,197 - __main__ - INFO - label_class_3 distribution: {1: 4773, 0: 222}
+2025-07-29 20:06:53,198 - __main__ - INFO - label_class_3 class balance: 0.047
+2025-07-29 20:06:53,200 - __main__ - INFO - label_class_5 distribution: {1: 4825, 0: 170}
+2025-07-29 20:06:53,202 - __main__ - INFO - label_class_5 class balance: 0.035
+2025-07-29 20:06:53,202 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:53,202 - __main__ - INFO - ENHANCED DEMO: Advanced Model Training with Ensemble Methods
+2025-07-29 20:06:53,203 - __main__ - INFO - ================================================================================
+2025-07-29 20:06:53,216 - __main__ - INFO - Feature matrix shape after alignment: (4995, 146)
+2025-07-29 20:06:53,217 - __main__ - INFO - Label matrix shape after alignment: (4995, 68)
+2025-07-29 20:06:53,219 - __main__ - INFO - Final training data shape: (4995, 145)
+2025-07-29 20:06:53,223 - __main__ - INFO - Target distribution: {1: 4611, 0: 384}
+2025-07-29 20:06:53,224 - src.model - INFO - Training ensemble model for label_class_1
+2025-07-29 20:06:53,224 - src.model - INFO - Starting hyperparameter optimization...
+2025-07-29 20:08:01,253 - src.model - INFO - Best hyperparameters found: {'num_leaves': 85, 'learning_rate': 0.02167330833191252, 'feature_fraction': 0.42872945861137907, 'bagging_fraction': 0.5732618633198777, 'bagging_freq': 3, 'min_child_samples': 37, 'reg_alpha': 3.077601252083419, 'reg_lambda': 0.10493656145898982}
+2025-07-29 20:08:01,253 - src.model - INFO - Best CV score: 0.9056
+2025-07-29 20:08:01,255 - src.model - INFO - Training lgb model...
+2025-07-29 20:08:03,161 - src.model - INFO - lgb scores: {'accuracy': 0.9445445445445445, 'roc_auc': 0.9718940893154052, 'precision': 0.9462520593080724, 'recall': 0.9965300368683583, 'f1': 0.9707404668849688}
+2025-07-29 20:08:03,161 - src.model - INFO - Training rf model...
+2025-07-29 20:08:03,170 - __main__ - ERROR - Enhanced model training failed: Input X contains infinity or a value too large for dtype('float32').
+2025-07-29 20:08:03,177 - __main__ - ERROR - Model training failed, aborting demo
+2025-07-29 20:08:36,567 - __main__ - INFO - Starting enhanced technical analysis demo...
+2025-07-29 20:08:36,567 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,567 - __main__ - INFO - ENHANCED ML TRADING SYSTEM DEMO
+2025-07-29 20:08:36,567 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,567 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,567 - __main__ - INFO - ENHANCED DEMO: Advanced Data Loading
+2025-07-29 20:08:36,567 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,624 - __main__ - INFO - Loaded data: (5000, 6)
+2025-07-29 20:08:36,624 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-04 11:19:00
+2025-07-29 20:08:36,624 - __main__ - INFO - Memory usage: 0.23 MB
+2025-07-29 20:08:36,629 - __main__ - INFO - Performing data quality checks...
+2025-07-29 20:08:36,629 - __main__ - INFO - Missing values: 0
+2025-07-29 20:08:36,629 - __main__ - INFO - Duplicate rows: 0
+2025-07-29 20:08:36,629 - __main__ - INFO - Data types: float64           5
+datetime64[ns]    1
+Name: count, dtype: int64
+2025-07-29 20:08:36,629 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,629 - __main__ - INFO - ENHANCED DEMO: Advanced Technical Indicators
+2025-07-29 20:08:36,629 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:36,640 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:08:37,173 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:08:37,173 - __main__ - INFO - Original data shape: (5000, 6)
+2025-07-29 20:08:37,175 - __main__ - INFO - Data with indicators shape: (5000, 59)
+2025-07-29 20:08:37,175 - __main__ - INFO - Processing time: 0.53 seconds
+2025-07-29 20:08:37,176 - __main__ - INFO - Indicators per second: 99.54
+2025-07-29 20:08:37,177 - __main__ - INFO - Total indicators calculated: 53
+2025-07-29 20:08:37,246 - __main__ - INFO - Indicator statistics summary:
+2025-07-29 20:08:37,247 - __main__ - INFO - Mean values range: -97773966191559649611047770902134834201685103486866918370577232502989422242801459080153533099597018412613632.0000 to 7269369393529857856267934926577763347127680756326248274413932008943281440545475845593571702957328413312685715281240091674939994382181352487871009448934050657855293133999063454752722022431355384115483813804507136.0000
+2025-07-29 20:08:37,248 - __main__ - INFO - Standard deviation range: 0.1197 to inf
+2025-07-29 20:08:37,248 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:37,248 - __main__ - INFO - ENHANCED DEMO: Advanced Feature Engineering
+2025-07-29 20:08:37,248 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:37,254 - src.features - INFO - Building feature matrix
+2025-07-29 20:08:37,254 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:08:38,164 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:08:38,166 - src.features - INFO - Adding regime flags
+2025-07-29 20:08:38,185 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:08:38,189 - src.features - INFO - Adding lagged features
+2025-07-29 20:08:38,205 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:08:38,206 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:08:38,231 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:08:38,234 - src.features - INFO - Adding feature interactions
+2025-07-29 20:08:38,241 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:08:38,278 - src.features - INFO - Scaling features
+2025-07-29 20:08:38,292 - src.features - INFO - Found 145 features to scale
+2025-07-29 20:08:38,378 - src.features - INFO - Scaler fitted on 145 features
+2025-07-29 20:08:38,425 - src.features - INFO - Scaled 145 features successfully
+2025-07-29 20:08:38,439 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:08:38,439 - src.features - INFO - Final feature matrix shape: (5000, 146)
+2025-07-29 20:08:38,441 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:08:38,442 - __main__ - INFO - Feature matrix shape: (5000, 146)
+2025-07-29 20:08:38,442 - __main__ - INFO - Processing time: 1.19 seconds
+2025-07-29 20:08:38,442 - __main__ - INFO - Features per second: 123.02
+2025-07-29 20:08:38,443 - __main__ - INFO - Price Features: 31 features
+2025-07-29 20:08:38,443 - __main__ - INFO - Volume Features: 14 features
+2025-07-29 20:08:38,443 - __main__ - INFO - Technical Indicators: 83 features
+2025-07-29 20:08:38,444 - __main__ - INFO - Lagged Features: 44 features
+2025-07-29 20:08:38,444 - __main__ - INFO - Z-Score Features: 18 features
+2025-07-29 20:08:38,444 - __main__ - INFO - Feature quality analysis:
+2025-07-29 20:08:38,457 - __main__ - INFO - Features with zero variance: 3
+2025-07-29 20:08:38,792 - __main__ - INFO - Features with high correlation (>0.95): 1434
+2025-07-29 20:08:38,793 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:38,794 - __main__ - INFO - ENHANCED DEMO: Advanced Label Construction
+2025-07-29 20:08:38,794 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:38,803 - src.labels - INFO - Constructing all labels
+2025-07-29 20:08:38,805 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-29 20:08:38,811 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-29 20:08:38,813 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-29 20:08:38,819 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-29 20:08:38,820 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-29 20:08:38,826 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-29 20:08:38,827 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-29 20:08:38,834 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-29 20:08:38,835 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-29 20:08:38,841 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-29 20:08:38,842 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-29 20:08:38,847 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-29 20:08:38,852 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-29 20:08:38,852 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:08:38,853 - __main__ - INFO - Data with labels shape: (4995, 68)
+2025-07-29 20:08:38,853 - __main__ - INFO - Processing time: 0.05 seconds
+2025-07-29 20:08:38,853 - __main__ - INFO - Label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-29 20:08:38,854 - __main__ - INFO - label_class_1 distribution: {1: 4611, 0: 384}
+2025-07-29 20:08:38,855 - __main__ - INFO - label_class_1 class balance: 0.083
+2025-07-29 20:08:38,855 - __main__ - INFO - label_class_3 distribution: {1: 4773, 0: 222}
+2025-07-29 20:08:38,856 - __main__ - INFO - label_class_3 class balance: 0.047
+2025-07-29 20:08:38,856 - __main__ - INFO - label_class_5 distribution: {1: 4825, 0: 170}
+2025-07-29 20:08:38,857 - __main__ - INFO - label_class_5 class balance: 0.035
+2025-07-29 20:08:38,857 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:38,857 - __main__ - INFO - ENHANCED DEMO: Advanced Model Training with Ensemble Methods
+2025-07-29 20:08:38,857 - __main__ - INFO - ================================================================================
+2025-07-29 20:08:38,872 - __main__ - INFO - Feature matrix shape after alignment: (4995, 146)
+2025-07-29 20:08:38,872 - __main__ - INFO - Label matrix shape after alignment: (4995, 68)
+2025-07-29 20:08:38,874 - __main__ - INFO - Final training data shape: (4995, 145)
+2025-07-29 20:08:38,876 - __main__ - INFO - Target distribution: {1: 4611, 0: 384}
+2025-07-29 20:08:38,876 - src.model - INFO - Training ensemble model for label_class_1
+2025-07-29 20:08:39,539 - src.model - INFO - Data cleaned: (4995, 145)
+2025-07-29 20:08:39,555 - src.model - INFO - Infinity values removed: 0
+2025-07-29 20:08:39,561 - src.model - INFO - Starting hyperparameter optimization...
+2025-07-29 20:10:10,489 - src.model - INFO - Best hyperparameters found: {'num_leaves': 58, 'learning_rate': 0.011584953851262337, 'feature_fraction': 0.4450949060636428, 'bagging_fraction': 0.7966305964497685, 'bagging_freq': 6, 'min_child_samples': 26, 'reg_alpha': 2.9046000638770535e-06, 'reg_lambda': 2.0329499768307597}
+2025-07-29 20:10:10,489 - src.model - INFO - Best CV score: 0.9059
+2025-07-29 20:10:10,489 - src.model - INFO - Training lgb model...
+2025-07-29 20:10:11,100 - src.model - INFO - lgb scores: {'accuracy': 0.9459459459459459, 'roc_auc': 0.9882160187594881, 'precision': 0.9450481853598524, 'recall': 0.9995662546085448, 'f1': 0.9715430016863407}
+2025-07-29 20:10:11,100 - src.model - INFO - Training rf model...
+2025-07-29 20:10:11,110 - src.model - WARNING - Failed to train rf model: Input X contains infinity or a value too large for dtype('float32').
+2025-07-29 20:10:11,110 - src.model - INFO - Training gb model...
+2025-07-29 20:10:11,123 - src.model - WARNING - Failed to train gb model: Input X contains infinity or a value too large for dtype('float32').
+2025-07-29 20:10:11,123 - src.model - WARNING - Not enough successful models for ensemble, using best single model
+2025-07-29 20:10:11,173 - src.model - INFO - Ensemble scores: {'accuracy': 0.9459459459459459, 'roc_auc': 0.9882160187594881, 'precision': 0.9450481853598524, 'recall': 0.9995662546085448, 'f1': 0.9715430016863407}
+2025-07-29 20:10:11,173 - __main__ - INFO - Training completed in 92.30 seconds
+2025-07-29 20:10:11,184 - __main__ - INFO - ENSEMBLE MODEL PERFORMANCE:
+2025-07-29 20:10:11,184 - __main__ - INFO - Accuracy: 0.9459
+2025-07-29 20:10:11,184 - __main__ - INFO - ROC AUC: 0.9882
+2025-07-29 20:10:11,184 - __main__ - INFO - Precision: 0.9450
+2025-07-29 20:10:11,184 - __main__ - INFO - Recall: 0.9996
+2025-07-29 20:10:11,184 - __main__ - INFO - F1 Score: 0.9715
+2025-07-29 20:10:11,184 - __main__ - INFO - INDIVIDUAL MODEL PERFORMANCE:
+2025-07-29 20:10:11,184 - __main__ - INFO - LGB:
+2025-07-29 20:10:11,187 - __main__ - INFO -   Accuracy: 0.9459
+2025-07-29 20:10:11,187 - __main__ - INFO -   ROC AUC: 0.9882
+2025-07-29 20:10:11,187 - __main__ - INFO -   F1 Score: 0.9715
+2025-07-29 20:10:11,187 - __main__ - INFO - RF:
+2025-07-29 20:10:11,187 - __main__ - INFO -   Accuracy: 0.0000
+2025-07-29 20:10:11,187 - __main__ - INFO -   ROC AUC: 0.0000
+2025-07-29 20:10:11,187 - __main__ - INFO -   F1 Score: 0.0000
+2025-07-29 20:10:11,189 - __main__ - INFO - GB:
+2025-07-29 20:10:11,189 - __main__ - INFO -   Accuracy: 0.0000
+2025-07-29 20:10:11,189 - __main__ - INFO -   ROC AUC: 0.0000
+2025-07-29 20:10:11,189 - __main__ - INFO -   F1 Score: 0.0000
+2025-07-29 20:10:11,189 - src.model - INFO - Performing cross-validation on ensemble model...
+2025-07-29 20:10:26,783 - src.model - INFO - CV accuracy: mean=0.9221, std=0.0028
+2025-07-29 20:10:26,785 - src.model - INFO - CV roc_auc: mean=0.9052, std=0.0069
+2025-07-29 20:10:26,785 - src.model - INFO - CV precision: mean=0.9260, std=0.0024
+2025-07-29 20:10:26,785 - src.model - INFO - CV recall: mean=0.9952, std=0.0031
+2025-07-29 20:10:26,785 - src.model - INFO - CV f1: mean=0.9593, std=0.0015
+2025-07-29 20:10:26,785 - src.model - INFO - Calculating feature importance...
+2025-07-29 20:10:26,785 - src.model - INFO - Saving models to artefacts/enhanced_ensemble_models.pkl
+2025-07-29 20:10:26,801 - src.model - INFO - Models saved successfully
+2025-07-29 20:10:26,815 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:26,815 - __main__ - INFO - ENHANCED DEMO: Advanced Real-Time Prediction
+2025-07-29 20:10:26,816 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:26,828 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:26,830 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:27,703 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:27,703 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:27,703 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:27,703 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:27,727 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:27,728 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:27,742 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:27,742 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:27,746 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:27,746 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:27,751 - src.features - INFO - Dropped 4577 rows with NaN values (91.5%)
+2025-07-29 20:10:27,752 - src.features - INFO - Live feature matrix shape: (423, 146)
+2025-07-29 20:10:27,756 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:10:27,757 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:27,758 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:27,823 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:27,824 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:27,831 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:27,831 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:27,836 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:27,837 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:27,850 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:27,850 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:27,850 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:27,850 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:27,850 - src.features - INFO - Dropped 300 rows with NaN values (100.0%)
+2025-07-29 20:10:27,850 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:10:27,857 - src.model - WARNING - No features available for prediction
+2025-07-29 20:10:27,859 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:27,859 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:27,907 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:27,907 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:27,922 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:27,922 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:27,935 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:27,935 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:27,942 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:27,942 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:27,946 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:27,946 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:27,947 - src.features - INFO - Dropped 350 rows with NaN values (100.0%)
+2025-07-29 20:10:27,948 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:10:27,948 - src.model - WARNING - No features available for prediction
+2025-07-29 20:10:27,949 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:27,949 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:28,009 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:28,009 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:28,025 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:28,025 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:28,033 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:28,033 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:28,042 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:28,042 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:28,048 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:28,048 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:28,051 - src.features - INFO - Dropped 400 rows with NaN values (100.0%)
+2025-07-29 20:10:28,051 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:10:28,051 - src.model - WARNING - No features available for prediction
+2025-07-29 20:10:28,052 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:28,052 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:28,139 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:28,139 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:28,139 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:28,139 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:28,158 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:28,158 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:28,168 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:28,168 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:28,170 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:28,171 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:28,172 - src.features - INFO - Dropped 450 rows with NaN values (100.0%)
+2025-07-29 20:10:28,173 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:10:28,175 - src.model - WARNING - No features available for prediction
+2025-07-29 20:10:28,175 - src.features - INFO - Building live feature matrix
+2025-07-29 20:10:28,175 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:10:28,255 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:10:28,255 - src.features - INFO - Adding regime flags
+2025-07-29 20:10:28,255 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:10:28,255 - src.features - INFO - Adding lagged features
+2025-07-29 20:10:28,270 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:10:28,271 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:10:28,273 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:10:28,273 - src.features - INFO - Adding feature interactions
+2025-07-29 20:10:28,283 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:10:28,283 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:10:28,284 - src.features - INFO - Dropped 500 rows with NaN values (100.0%)
+2025-07-29 20:10:28,284 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:10:28,285 - src.model - WARNING - No features available for prediction
+2025-07-29 20:10:28,285 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:28,286 - __main__ - INFO - ENHANCED DEMO: Advanced Backtesting with Ensemble Models
+2025-07-29 20:10:28,286 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:28,290 - __main__ - INFO - Backtest dataset shape: (4995, 214)
+2025-07-29 20:10:28,290 - src.backtest - INFO - Running backtest with model for label_class_1
+2025-07-29 20:10:28,308 - __main__ - ERROR - Enhanced backtesting failed: The number of features in data (319) is not the same as it was in training data (145).
+You can set ``predict_disable_shape_check=true`` to discard this error, but please be aware what you are doing.
+2025-07-29 20:10:28,317 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:28,317 - __main__ - INFO - ENHANCED DEMO COMPLETED SUCCESSFULLY!
+2025-07-29 20:10:28,318 - __main__ - INFO - ================================================================================
+2025-07-29 20:10:28,318 - __main__ - INFO - All enhanced components are working correctly:
+2025-07-29 20:10:28,318 - __main__ - INFO - + Advanced data loading with quality checks
+2025-07-29 20:10:28,319 - __main__ - INFO - + Enhanced technical indicators with performance monitoring
+2025-07-29 20:10:28,319 - __main__ - INFO - + Advanced feature engineering with quality analysis
+2025-07-29 20:10:28,319 - __main__ - INFO - + Ensemble model training with hyperparameter optimization
+2025-07-29 20:10:28,319 - __main__ - INFO - + Real-time prediction with ensemble models
+2025-07-29 20:10:28,320 - __main__ - INFO - + Enhanced backtesting with comprehensive metrics
+2025-07-29 20:10:28,320 - __main__ - INFO - ENSEMBLE MODEL PERFORMANCE SUMMARY:
+2025-07-29 20:10:28,320 - __main__ - INFO - Cross-validation accuracy: 0.9221 (±0.0028)
+2025-07-29 20:10:28,321 - __main__ - INFO - Cross-validation ROC AUC: 0.9052 (±0.0069)
+2025-07-29 20:10:28,321 - __main__ - INFO - Cross-validation F1: 0.9593 (±0.0015)
+2025-07-29 20:17:19,570 - __main__ - INFO - Starting enhanced technical analysis demo...
+2025-07-29 20:17:19,570 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,570 - __main__ - INFO - ENHANCED ML TRADING SYSTEM DEMO
+2025-07-29 20:17:19,570 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,570 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,570 - __main__ - INFO - ENHANCED DEMO: Advanced Data Loading
+2025-07-29 20:17:19,570 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,636 - __main__ - INFO - Loaded data: (5000, 6)
+2025-07-29 20:17:19,636 - __main__ - INFO - Date range: 2023-01-01 00:00:00 to 2023-01-04 11:19:00
+2025-07-29 20:17:19,646 - __main__ - INFO - Memory usage: 0.23 MB
+2025-07-29 20:17:19,646 - __main__ - INFO - Performing data quality checks...
+2025-07-29 20:17:19,647 - __main__ - INFO - Missing values: 0
+2025-07-29 20:17:19,648 - __main__ - INFO - Duplicate rows: 0
+2025-07-29 20:17:19,651 - __main__ - INFO - Data types: float64           5
+datetime64[ns]    1
+Name: count, dtype: int64
+2025-07-29 20:17:19,651 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,651 - __main__ - INFO - ENHANCED DEMO: Advanced Technical Indicators
+2025-07-29 20:17:19,651 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:19,654 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:17:20,233 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-29 20:17:20,234 - __main__ - INFO - Original data shape: (5000, 6)
+2025-07-29 20:17:20,236 - __main__ - INFO - Data with indicators shape: (5000, 59)
+2025-07-29 20:17:20,236 - __main__ - INFO - Processing time: 0.58 seconds
+2025-07-29 20:17:20,236 - __main__ - INFO - Indicators per second: 91.42
+2025-07-29 20:17:20,236 - __main__ - INFO - Total indicators calculated: 53
+2025-07-29 20:17:20,290 - __main__ - INFO - Indicator statistics summary:
+2025-07-29 20:17:20,290 - __main__ - INFO - Mean values range: -97773966191559649611047770902134834201685103486866918370577232502989422242801459080153533099597018412613632.0000 to 7269369393529857856267934926577763347127680756326248274413932008943281440545475845593571702957328413312685715281240091674939994382181352487871009448934050657855293133999063454752722022431355384115483813804507136.0000
+2025-07-29 20:17:20,290 - __main__ - INFO - Standard deviation range: 0.1197 to inf
+2025-07-29 20:17:20,290 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:20,290 - __main__ - INFO - ENHANCED DEMO: Advanced Feature Engineering
+2025-07-29 20:17:20,290 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:20,306 - src.features - INFO - Building feature matrix
+2025-07-29 20:17:20,307 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:17:21,101 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:17:21,101 - src.features - INFO - Adding regime flags
+2025-07-29 20:17:21,111 - src.features - INFO - Added 19 regime flags
+2025-07-29 20:17:21,111 - src.features - INFO - Adding lagged features
+2025-07-29 20:17:21,127 - src.features - INFO - Added 44 lagged features
+2025-07-29 20:17:21,128 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:17:21,151 - src.features - INFO - Added 18 rolling z-scores
+2025-07-29 20:17:21,152 - src.features - INFO - Adding feature interactions
+2025-07-29 20:17:21,159 - src.features - INFO - Added 6 feature interactions
+2025-07-29 20:17:21,181 - src.features - INFO - Scaling features
+2025-07-29 20:17:21,191 - src.features - INFO - Found 145 features to scale
+2025-07-29 20:17:21,246 - src.features - INFO - Scaler fitted on 145 features
+2025-07-29 20:17:21,274 - src.features - INFO - Scaled 145 features successfully
+2025-07-29 20:17:21,286 - src.features - INFO - Dropped 0 rows with NaN values (0.0%)
+2025-07-29 20:17:21,287 - src.features - INFO - Final feature matrix shape: (5000, 146)
+2025-07-29 20:17:21,289 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:17:21,289 - __main__ - INFO - Feature matrix shape: (5000, 146)
+2025-07-29 20:17:21,290 - __main__ - INFO - Processing time: 0.98 seconds
+2025-07-29 20:17:21,291 - __main__ - INFO - Features per second: 148.49
+2025-07-29 20:17:21,291 - __main__ - INFO - Price Features: 31 features
+2025-07-29 20:17:21,292 - __main__ - INFO - Volume Features: 14 features
+2025-07-29 20:17:21,292 - __main__ - INFO - Technical Indicators: 83 features
+2025-07-29 20:17:21,293 - __main__ - INFO - Lagged Features: 44 features
+2025-07-29 20:17:21,293 - __main__ - INFO - Z-Score Features: 18 features
+2025-07-29 20:17:21,294 - __main__ - INFO - Feature quality analysis:
+2025-07-29 20:17:21,306 - __main__ - INFO - Features with zero variance: 3
+2025-07-29 20:17:21,485 - __main__ - INFO - Features with high correlation (>0.95): 1434
+2025-07-29 20:17:21,485 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:21,485 - __main__ - INFO - ENHANCED DEMO: Advanced Label Construction
+2025-07-29 20:17:21,485 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:21,502 - src.labels - INFO - Constructing all labels
+2025-07-29 20:17:21,506 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-29 20:17:21,510 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-29 20:17:21,511 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-29 20:17:21,515 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-29 20:17:21,517 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-29 20:17:21,521 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-29 20:17:21,523 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-29 20:17:21,528 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-29 20:17:21,528 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-29 20:17:21,532 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-29 20:17:21,534 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-29 20:17:21,539 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-29 20:17:21,544 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-29 20:17:21,544 - __main__ - INFO - Original data shape: (5000, 59)
+2025-07-29 20:17:21,545 - __main__ - INFO - Data with labels shape: (4995, 68)
+2025-07-29 20:17:21,546 - __main__ - INFO - Processing time: 0.04 seconds
+2025-07-29 20:17:21,546 - __main__ - INFO - Label columns: ['label_class_1', 'label_reg_1', 'label_class_3', 'label_reg_3', 'label_class_5', 'label_reg_5']
+2025-07-29 20:17:21,546 - __main__ - INFO - label_class_1 distribution: {1: 4611, 0: 384}
+2025-07-29 20:17:21,546 - __main__ - INFO - label_class_1 class balance: 0.083
+2025-07-29 20:17:21,548 - __main__ - INFO - label_class_3 distribution: {1: 4773, 0: 222}
+2025-07-29 20:17:21,548 - __main__ - INFO - label_class_3 class balance: 0.047
+2025-07-29 20:17:21,548 - __main__ - INFO - label_class_5 distribution: {1: 4825, 0: 170}
+2025-07-29 20:17:21,548 - __main__ - INFO - label_class_5 class balance: 0.035
+2025-07-29 20:17:21,548 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:21,548 - __main__ - INFO - ENHANCED DEMO: Advanced Model Training with Ensemble Methods
+2025-07-29 20:17:21,548 - __main__ - INFO - ================================================================================
+2025-07-29 20:17:21,560 - __main__ - INFO - Feature matrix shape after alignment: (4995, 146)
+2025-07-29 20:17:21,561 - __main__ - INFO - Label matrix shape after alignment: (4995, 68)
+2025-07-29 20:17:21,563 - __main__ - INFO - Final training data shape: (4995, 145)
+2025-07-29 20:17:21,564 - __main__ - INFO - Target distribution: {1: 4611, 0: 384}
+2025-07-29 20:17:21,565 - src.model - INFO - Training ensemble model for label_class_1
+2025-07-29 20:17:21,768 - src.model - INFO - Data cleaned: (4995, 145)
+2025-07-29 20:17:21,768 - src.model - INFO - Infinity values removed: 0
+2025-07-29 20:17:21,768 - src.model - INFO - Starting hyperparameter optimization...
+2025-07-29 20:18:37,568 - src.model - INFO - Best hyperparameters found: {'num_leaves': 52, 'learning_rate': 0.011172515691987572, 'feature_fraction': 0.748136186353282, 'bagging_fraction': 0.7419224910024235, 'bagging_freq': 3, 'min_child_samples': 45, 'reg_alpha': 3.397504238733419e-08, 'reg_lambda': 0.5310364438919675}
+2025-07-29 20:18:37,568 - src.model - INFO - Best CV score: 0.9059
+2025-07-29 20:18:37,570 - src.model - INFO - Training lgb model...
+2025-07-29 20:18:38,634 - src.model - INFO - lgb scores: {'accuracy': 0.9431431431431432, 'roc_auc': 0.9838796943902262, 'precision': 0.9427051360753018, 'recall': 0.9991325092170895, 'f1': 0.9700989682038323}
+2025-07-29 20:18:38,636 - src.model - INFO - Training rf model...
+2025-07-29 20:18:38,646 - src.model - WARNING - Failed to train rf model: Input X contains infinity or a value too large for dtype('float32').
+2025-07-29 20:18:38,646 - src.model - INFO - Training gb model...
+2025-07-29 20:18:38,659 - src.model - WARNING - Failed to train gb model: Input X contains infinity or a value too large for dtype('float32').
+2025-07-29 20:18:38,660 - src.model - WARNING - Not enough successful models for ensemble, using best single model
+2025-07-29 20:18:38,717 - src.model - INFO - Ensemble scores: {'accuracy': 0.9431431431431432, 'roc_auc': 0.9838796943902262, 'precision': 0.9427051360753018, 'recall': 0.9991325092170895, 'f1': 0.9700989682038323}
+2025-07-29 20:18:38,719 - __main__ - INFO - Training completed in 77.15 seconds
+2025-07-29 20:18:38,719 - __main__ - INFO - ENSEMBLE MODEL PERFORMANCE:
+2025-07-29 20:18:38,719 - __main__ - INFO - Accuracy: 0.9431
+2025-07-29 20:18:38,721 - __main__ - INFO - ROC AUC: 0.9839
+2025-07-29 20:18:38,721 - __main__ - INFO - Precision: 0.9427
+2025-07-29 20:18:38,721 - __main__ - INFO - Recall: 0.9991
+2025-07-29 20:18:38,722 - __main__ - INFO - F1 Score: 0.9701
+2025-07-29 20:18:38,722 - __main__ - INFO - INDIVIDUAL MODEL PERFORMANCE:
+2025-07-29 20:18:38,722 - __main__ - INFO - LGB:
+2025-07-29 20:18:38,722 - __main__ - INFO -   Accuracy: 0.9431
+2025-07-29 20:18:38,723 - __main__ - INFO -   ROC AUC: 0.9839
+2025-07-29 20:18:38,723 - __main__ - INFO -   F1 Score: 0.9701
+2025-07-29 20:18:38,723 - __main__ - INFO - RF:
+2025-07-29 20:18:38,723 - __main__ - INFO -   Accuracy: 0.0000
+2025-07-29 20:18:38,724 - __main__ - INFO -   ROC AUC: 0.0000
+2025-07-29 20:18:38,724 - __main__ - INFO -   F1 Score: 0.0000
+2025-07-29 20:18:38,725 - __main__ - INFO - GB:
+2025-07-29 20:18:38,725 - __main__ - INFO -   Accuracy: 0.0000
+2025-07-29 20:18:38,725 - __main__ - INFO -   ROC AUC: 0.0000
+2025-07-29 20:18:38,727 - __main__ - INFO -   F1 Score: 0.0000
+2025-07-29 20:18:38,727 - src.model - INFO - Performing cross-validation on ensemble model...
+2025-07-29 20:18:56,933 - src.model - INFO - CV accuracy: mean=0.9209, std=0.0021
+2025-07-29 20:18:56,933 - src.model - INFO - CV roc_auc: mean=0.9052, std=0.0100
+2025-07-29 20:18:56,933 - src.model - INFO - CV precision: mean=0.9259, std=0.0023
+2025-07-29 20:18:56,933 - src.model - INFO - CV recall: mean=0.9939, std=0.0034
+2025-07-29 20:18:56,933 - src.model - INFO - CV f1: mean=0.9587, std=0.0011
+2025-07-29 20:18:56,933 - src.model - INFO - Calculating feature importance...
+2025-07-29 20:18:56,935 - src.model - INFO - Saving models to artefacts/enhanced_ensemble_models.pkl
+2025-07-29 20:18:56,948 - src.model - INFO - Models saved successfully
+2025-07-29 20:18:56,963 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:56,963 - __main__ - INFO - ENHANCED DEMO: Advanced Real-Time Prediction
+2025-07-29 20:18:56,963 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:56,973 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:56,973 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:57,787 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:57,787 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:57,807 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:57,807 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:57,823 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:57,826 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:57,853 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:57,853 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:57,861 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:57,861 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:57,866 - src.features - INFO - Dropped 4577 rows with NaN values (91.5%)
+2025-07-29 20:18:57,868 - src.features - INFO - Live feature matrix shape: (423, 146)
+2025-07-29 20:18:57,874 - src.model - INFO - Prepared 146 features for real-time prediction
+2025-07-29 20:18:57,875 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:57,876 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:57,948 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:57,950 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:57,959 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:57,959 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:57,974 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:57,974 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:57,987 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:57,987 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:57,997 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:57,998 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:57,999 - src.features - INFO - Dropped 300 rows with NaN values (100.0%)
+2025-07-29 20:18:58,001 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:18:58,001 - src.model - WARNING - No features available for prediction
+2025-07-29 20:18:58,001 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:58,001 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:58,098 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:58,098 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:58,098 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:58,098 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:58,118 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:58,119 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:58,137 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:58,137 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:58,141 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:58,142 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:58,144 - src.features - INFO - Dropped 350 rows with NaN values (100.0%)
+2025-07-29 20:18:58,145 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:18:58,147 - src.model - WARNING - No features available for prediction
+2025-07-29 20:18:58,149 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:58,150 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:58,246 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:58,246 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:58,269 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:58,269 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:58,284 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:58,284 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:58,297 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:58,298 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:58,299 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:58,299 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:58,299 - src.features - INFO - Dropped 400 rows with NaN values (100.0%)
+2025-07-29 20:18:58,299 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:18:58,299 - src.model - WARNING - No features available for prediction
+2025-07-29 20:18:58,299 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:58,299 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:58,382 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:58,382 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:58,382 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:58,382 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:58,400 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:58,400 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:58,403 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:58,403 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:58,414 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:58,414 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:58,416 - src.features - INFO - Dropped 450 rows with NaN values (100.0%)
+2025-07-29 20:18:58,416 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:18:58,417 - src.model - WARNING - No features available for prediction
+2025-07-29 20:18:58,417 - src.features - INFO - Building live feature matrix
+2025-07-29 20:18:58,418 - src.indicators - INFO - Calculating all technical indicators
+2025-07-29 20:18:58,615 - src.indicators - INFO - Calculated 0 technical indicators
+2025-07-29 20:18:58,615 - src.features - INFO - Adding regime flags
+2025-07-29 20:18:58,632 - src.features - INFO - Added 0 regime flags
+2025-07-29 20:18:58,632 - src.features - INFO - Adding lagged features
+2025-07-29 20:18:58,647 - src.features - INFO - Added 0 lagged features
+2025-07-29 20:18:58,648 - src.features - INFO - Adding rolling z-scores
+2025-07-29 20:18:58,667 - src.features - INFO - Added 0 rolling z-scores
+2025-07-29 20:18:58,667 - src.features - INFO - Adding feature interactions
+2025-07-29 20:18:58,671 - src.features - INFO - Added 0 feature interactions
+2025-07-29 20:18:58,671 - src.features - WARNING - Scaler not ready, using unscaled features
+2025-07-29 20:18:58,673 - src.features - INFO - Dropped 500 rows with NaN values (100.0%)
+2025-07-29 20:18:58,673 - src.features - INFO - Live feature matrix shape: (0, 146)
+2025-07-29 20:18:58,673 - src.model - WARNING - No features available for prediction
+2025-07-29 20:18:58,674 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:58,674 - __main__ - INFO - ENHANCED DEMO: Advanced Backtesting with Ensemble Models
+2025-07-29 20:18:58,674 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:58,700 - __main__ - INFO - Backtest dataset shape: (4995, 214)
+2025-07-29 20:18:58,701 - src.backtest - INFO - Running backtest with model for label_class_1
+2025-07-29 20:18:58,715 - __main__ - ERROR - Enhanced backtesting failed: The number of features in data (319) is not the same as it was in training data (145).
+You can set ``predict_disable_shape_check=true`` to discard this error, but please be aware what you are doing.
+2025-07-29 20:18:58,719 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:58,719 - __main__ - INFO - ENHANCED DEMO COMPLETED SUCCESSFULLY!
+2025-07-29 20:18:58,719 - __main__ - INFO - ================================================================================
+2025-07-29 20:18:58,720 - __main__ - INFO - All enhanced components are working correctly:
+2025-07-29 20:18:58,720 - __main__ - INFO - + Advanced data loading with quality checks
+2025-07-29 20:18:58,720 - __main__ - INFO - + Enhanced technical indicators with performance monitoring
+2025-07-29 20:18:58,720 - __main__ - INFO - + Advanced feature engineering with quality analysis
+2025-07-29 20:18:58,720 - __main__ - INFO - + Ensemble model training with hyperparameter optimization
+2025-07-29 20:18:58,722 - __main__ - INFO - + Real-time prediction with ensemble models
+2025-07-29 20:18:58,722 - __main__ - INFO - + Enhanced backtesting with comprehensive metrics
+2025-07-29 20:18:58,722 - __main__ - INFO - ENSEMBLE MODEL PERFORMANCE SUMMARY:
+2025-07-29 20:18:58,723 - __main__ - INFO - Cross-validation accuracy: 0.9209 (±0.0021)
+2025-07-29 20:18:58,723 - __main__ - INFO - Cross-validation ROC AUC: 0.9052 (±0.0100)
+2025-07-29 20:18:58,723 - __main__ - INFO - Cross-validation F1: 0.9587 (±0.0011)
