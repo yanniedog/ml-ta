@@ -7,9 +7,10 @@ import logging
 import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional, Tuple
-from sklearn.model_selection import TimeSeriesSplit, cross_val_score, train_test_split
+from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, classification_report, precision_recall_fscore_support, mean_absolute_error
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier, RandomForestRegressor, GradientBoostingRegressor, VotingRegressor
+from sklearn.linear_model import Ridge
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
@@ -38,33 +39,35 @@ class TimeSeriesValidator:
         self.test_size = test_size
         self.logger = logging.getLogger(__name__)
     
-    def split_data(self, df: pd.DataFrame) -> List[Tuple[pd.DataFrame, pd.DataFrame]]:
-        """Split data chronologically for time series validation."""
-        splits = []
-        total_rows = len(df)
+    def split(self, X: pd.DataFrame, y: pd.Series = None, groups=None):
+        """Generate indices to split data into training and test set."""
+        self.logger.info(f"Generating {self.n_splits} splits for time series cross-validation.")
+        total_rows = len(X)
         test_rows = int(total_rows * self.test_size)
         
         for i in range(self.n_splits):
-            # Calculate split points
             test_start = total_rows - (self.n_splits - i) * test_rows
             test_end = test_start + test_rows
+            
+            train_end = test_start
             
             # Ensure valid ranges
             test_start = max(0, test_start)
             test_end = min(total_rows, test_end)
             
-            if test_start >= test_end:
+            if test_start >= test_end or train_end <= 0:
                 continue
+
+            train_indices = np.arange(0, train_end)
+            test_indices = np.arange(test_start, test_end)
             
-            # Split data
-            train_data = df.iloc[:test_start]
-            test_data = df.iloc[test_start:test_end]
-            
-            if len(train_data) > 0 and len(test_data) > 0:
-                splits.append((train_data, test_data))
-                self.logger.info(f"Split {i+1}: Train {len(train_data)}, Test {len(test_data)}")
-        
-        return splits
+            if len(train_indices) > 0 and len(test_indices) > 0:
+                self.logger.info(f"Split {i+1}: Train size={len(train_indices)}, Test size={len(test_indices)}")
+                yield train_indices, test_indices
+
+    def get_n_splits(self, X=None, y=None, groups=None) -> int:
+        """Returns the number of splitting iterations in the cross-validator."""
+        return self.n_splits
 
 
 class AdvancedModelTrainer:
@@ -81,148 +84,87 @@ class AdvancedModelTrainer:
 
     def train_ensemble_model(self, X, y, label_name, task_type='classification', feature_engineer=None):
         """Train an ensemble model with multiple algorithms using proper validation."""
-        logger.info(f"Training ensemble model for {label_name}")
+        logger.info(f"Training ensemble model for {label_name} with task type {task_type}")
 
         if feature_engineer is not None:
             self.feature_engineers[label_name] = feature_engineer
 
-        X_clean = X.copy()
-        X_clean = X_clean.replace([np.inf, -np.inf], np.nan)
-        X_clean = X_clean.fillna(X_clean.median())
-
-        for col in X_clean.columns:
-            if X_clean[col].dtype in ['float64', 'float32']:
-                Q1 = X_clean[col].quantile(0.001)
-                Q3 = X_clean[col].quantile(0.999)
-                X_clean[col] = X_clean[col].clip(Q1, Q3)
-                if X_clean[col].abs().max() > 1e6:
-                    X_clean[col] = X_clean[col].clip(-1e6, 1e6)
-
-        logger.info(f"Data cleaned: {X_clean.shape}")
-
+        # 1. Data Cleaning and Scaling
+        X_clean = X.copy().replace([np.inf, -np.inf], np.nan).fillna(X.median())
         scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X_clean)
+        X_scaled = pd.DataFrame(scaler.fit_transform(X_clean), columns=X_clean.columns, index=X_clean.index)
         self.scalers[label_name] = scaler
-        X_scaled = pd.DataFrame(X_scaled, columns=X_clean.columns, index=X_clean.index)
 
-        tscv = TimeSeriesSplit(n_splits=3)
+        # 2. Model Configuration
+        n_splits = self.config.model.get('cv_folds', 5)
+        test_size = self.config.model.get('cv_test_size', 0.2)
+        tscv = TimeSeriesValidator(n_splits=n_splits, test_size=test_size)
+        
+        if task_type == 'classification':
+            models_config = {
+                'lgb': lgb.LGBMClassifier(random_state=42),
+                'rf': RandomForestClassifier(n_estimators=100, random_state=42),
+                'gb': GradientBoostingClassifier(n_estimators=100, random_state=42),
+                'lr': LogisticRegression(random_state=42, solver='liblinear')
+            }
+            scoring = 'roc_auc'
+            EnsembleModel = VotingClassifier(estimators=[(name, model) for name, model in models_config.items()], voting='soft')
+        else: # regression
+            models_config = {
+                'lgb': lgb.LGBMRegressor(random_state=42),
+                'rf': RandomForestRegressor(n_estimators=100, random_state=42),
+                'gb': GradientBoostingRegressor(n_estimators=100, random_state=42),
+                'ridge': Ridge(random_state=42)
+            }
+            scoring = 'neg_mean_squared_error'
+            EnsembleModel = VotingRegressor(estimators=[(name, model) for name, model in models_config.items()])
 
-        models = {}
-        scores = {}
+        # 3. Train and Evaluate Individual Models
+        individual_scores = {}
+        for name, model in models_config.items():
+            logger.info(f"Evaluating model: {name}")
+            cv_scores = []
+            for train_index, val_index in tscv.split(X_scaled):
+                X_train, X_val = X_scaled.iloc[train_index], X_scaled.iloc[val_index]
+                y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+                model.fit(X_train, y_train)
+                if task_type == 'classification':
+                    preds = model.predict_proba(X_val)[:, 1]
+                    score = roc_auc_score(y_val, preds)
+                else:
+                    preds = model.predict(X_val)
+                    score = -mean_absolute_error(y_val, preds) # Optuna maximizes, so negate MAE
+                cv_scores.append(score)
+            individual_scores[name] = {'mean_score': np.mean(cv_scores), 'std': np.std(cv_scores)}
+            logger.info(f"  {name} CV {scoring}: {np.mean(cv_scores):.4f} (+/- {np.std(cv_scores):.4f})")
 
-        # LightGBM
-        logger.info("Training lgb model...")
-        lgb_model_wrapper = LightGBMModel(self.config)
-        lgb_params = lgb_model_wrapper.optimize_hyperparameters(X_clean, y, task_type=task_type, n_trials=20)
-        lgb_model = lgb.LGBMClassifier(**lgb_params, random_state=42)
-        lgb_scores = cross_val_score(lgb_model, X_clean, y, cv=tscv, scoring='roc_auc')
-        lgb_model.fit(X_clean, y)
-        models['lgb'] = lgb_model
-        scores['lgb'] = {
-            'roc_auc': lgb_scores.mean(),
-            'roc_auc_std': lgb_scores.std(),
-            'accuracy': accuracy_score(y, lgb_model.predict(X_clean)),
-            'precision': precision_score(y, lgb_model.predict(X_clean)),
-            'recall': recall_score(y, lgb_model.predict(X_clean)),
-            'f1': f1_score(y, lgb_model.predict(X_clean))
+        # 4. Train Final Ensemble Model
+        logger.info("Training final ensemble model...")
+        EnsembleModel.fit(X_scaled, y)
+        self.models[label_name] = EnsembleModel
+        self.feature_importance[label_name] = {}
+
+        # 5. Evaluate Ensemble
+        ensemble_cv_scores = []
+        for train_index, val_index in tscv.split(X_scaled):
+            X_train, X_val = X_scaled.iloc[train_index], X_scaled.iloc[val_index]
+            y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+            EnsembleModel.fit(X_train, y_train)
+            if task_type == 'classification':
+                preds = EnsembleModel.predict_proba(X_val)[:, 1]
+                score = roc_auc_score(y_val, preds)
+            else:
+                preds = EnsembleModel.predict(X_val)
+                score = -mean_absolute_error(y_val, preds) # Optuna maximizes, so negate MAE
+            ensemble_cv_scores.append(score)
+        final_scores = {
+            f'ensemble_{scoring}_mean': np.mean(ensemble_cv_scores),
+            f'ensemble_{scoring}_std': np.std(ensemble_cv_scores),
+            'individual_scores': individual_scores
         }
+        logger.info(f"Ensemble training complete. CV {scoring}: {final_scores[f'ensemble_{scoring}_mean']:.4f}")
 
-        # Random Forest
-        logger.info("Training rf model...")
-        rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-        rf_scores = cross_val_score(rf_model, X_clean, y, cv=tscv, scoring='roc_auc')
-        rf_model.fit(X_clean, y)
-        models['rf'] = rf_model
-        scores['rf'] = {
-            'roc_auc': rf_scores.mean(),
-            'roc_auc_std': rf_scores.std(),
-            'accuracy': accuracy_score(y, rf_model.predict(X_clean)),
-            'precision': precision_score(y, rf_model.predict(X_clean)),
-            'recall': recall_score(y, rf_model.predict(X_clean)),
-            'f1': f1_score(y, rf_model.predict(X_clean))
-        }
-
-        # Gradient Boosting
-        logger.info("Training gb model...")
-        gb_model = GradientBoostingClassifier(n_estimators=100, random_state=42)
-        gb_scores = cross_val_score(gb_model, X_clean, y, cv=tscv, scoring='roc_auc')
-        gb_model.fit(X_clean, y)
-        models['gb'] = gb_model
-        scores['gb'] = {
-            'roc_auc': gb_scores.mean(),
-            'roc_auc_std': gb_scores.std(),
-            'accuracy': accuracy_score(y, gb_model.predict(X_clean)),
-            'precision': precision_score(y, gb_model.predict(X_clean)),
-            'recall': recall_score(y, gb_model.predict(X_clean)),
-            'f1': f1_score(y, gb_model.predict(X_clean))
-        }
-
-        # Logistic Regression
-        logger.info("Training lr model...")
-        lr_model = LogisticRegression(random_state=42, solver='liblinear', C=1.0)
-        lr_scores = cross_val_score(lr_model, X_scaled, y, cv=tscv, scoring='roc_auc')
-        lr_model.fit(X_scaled, y)
-        models['lr'] = lr_model
-        scores['lr'] = {
-            'roc_auc': lr_scores.mean(),
-            'roc_auc_std': lr_scores.std(),
-            'accuracy': accuracy_score(y, lr_model.predict(X_scaled)),
-            'precision': precision_score(y, lr_model.predict(X_scaled)),
-            'recall': recall_score(y, lr_model.predict(X_scaled)),
-            'f1': f1_score(y, lr_model.predict(X_scaled))
-        }
-
-        # Create ensemble
-        logger.info("Training ensemble model...")
-        ensemble_model = VotingClassifier(
-            estimators=[
-                ('lgb', models['lgb']),
-                ('rf', models['rf']),
-                ('gb', models['gb']),
-                ('lr', models['lr'])
-            ],
-            voting='soft'
-        )
-
-        ensemble_scores = cross_val_score(ensemble_model, X_scaled, y, cv=tscv, scoring='roc_auc')
-        ensemble_model.fit(X_scaled, y)
-
-        models['ensemble'] = ensemble_model
-        scores['ensemble'] = {
-            'roc_auc': ensemble_scores.mean(),
-            'roc_auc_std': ensemble_scores.std(),
-            'accuracy': accuracy_score(y, ensemble_model.predict(X_scaled)),
-            'precision': precision_score(y, ensemble_model.predict(X_scaled)),
-            'recall': recall_score(y, ensemble_model.predict(X_scaled)),
-            'f1': f1_score(y, ensemble_model.predict(X_scaled))
-        }
-
-        self.models[label_name] = models
-        self.ensemble_model = ensemble_model
-
-        if hasattr(lgb_model, 'feature_importances_'):
-            feature_importance = pd.DataFrame({
-                'feature': X_clean.columns,
-                'importance': lgb_model.feature_importances_
-            }).sort_values('importance', ascending=False)
-            self.feature_importance[label_name] = feature_importance
-
-        return {
-            'models': models,
-            'scores': scores,
-            'feature_importance': self.feature_importance.get(label_name)
-        }
-
-    def cross_validate_ensemble(self, X, y, n_splits=5):
-        """Cross-validate ensemble model with TimeSeriesSplit."""
-        tscv = TimeSeriesSplit(n_splits=n_splits)
-        scores = cross_val_score(self.ensemble_model, X, y, cv=tscv, scoring='roc_auc')
-
-        return {
-            'roc_auc_mean': scores.mean(),
-            'roc_auc_std': scores.std(),
-            'roc_auc_scores': scores.tolist()
-        }
+        return final_scores
 
     def get_feature_importance(self, label_name):
         """Get feature importance from trained model."""
@@ -456,40 +398,68 @@ class LightGBMModel:
         return metrics
     
     def cross_validate(self, X: pd.DataFrame, y: pd.Series, 
-                      task_type: str = "classification", cv_folds: int = 3) -> Dict:
-        """Cross-validate model using TimeSeriesSplit."""
+                      task_type: str = "classification", cv_folds: int = 3, 
+                      use_early_stopping: bool = True) -> Dict:
+        """Advanced cross-validation with proper early stopping support."""
+        self.logger.info(f"Performing {cv_folds}-fold time series cross-validation...")
         tscv = TimeSeriesSplit(n_splits=cv_folds)
         
-        # Create a model without early stopping for CV
-        params = {
-            'objective': 'binary' if task_type == "classification" else 'regression',
-            'metric': 'binary_logloss' if task_type == "classification" else 'rmse',
-            'boosting_type': 'gbdt',
-            'num_leaves': 64,
-            'learning_rate': 0.03,
-            'n_estimators': 100,  # Reduced for CV
-            'subsample': 0.8,
-            'colsample_bytree': 0.8,
-            'reg_alpha': 1,
-            'reg_lambda': 3,
-            'verbose': -1,
-            'random_state': 42
-        }
-        
-        if task_type == "classification":
-            cv_model = lgb.LGBMClassifier(**params)
+        # Prepare model parameters from config, removing early stopping for compatibility if needed
+        params = self.config.model['params'].copy()
+        params.pop('early_stopping_rounds', None)
+        params['verbose'] = -1
+
+        if task_type == 'classification':
+            model = lgb.LGBMClassifier(**params)
+            scoring = ['accuracy', 'roc_auc', 'precision', 'recall', 'f1']
         else:
-            cv_model = lgb.LGBMRegressor(**params)
+            model = lgb.LGBMRegressor(**params)
+            scoring = ['r2', 'neg_mean_squared_error', 'neg_mean_absolute_error']
+
+        # Manual cross-validation loop to properly handle early stopping
+        if use_early_stopping and 'early_stopping_rounds' in self.config.model['params']:
+            self.logger.info("Using manual cross-validation with early stopping.")
+            metrics = {scorer: [] for scorer in scoring}
+            
+            for fold, (train_index, val_index) in enumerate(tscv.split(X)):
+                X_train, X_val = X.iloc[train_index], X.iloc[val_index]
+                y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+                
+                fit_params = {
+                    'eval_set': [(X_val, y_val)],
+                    'eval_metric': 'logloss' if task_type == 'classification' else 'rmse',
+                    'callbacks': [lgb.early_stopping(self.config.model['params']['early_stopping_rounds'], verbose=False)]
+                }
+                
+                model.fit(X_train, y_train, **fit_params)
+                y_pred = model.predict(X_val)
+                
+                if task_type == 'classification':
+                    y_proba = model.predict_proba(X_val)[:, 1]
+                    metrics['accuracy'].append(accuracy_score(y_val, y_pred))
+                    metrics['roc_auc'].append(roc_auc_score(y_val, y_proba))
+                    metrics['precision'].append(precision_score(y_val, y_pred, zero_division=0))
+                    metrics['recall'].append(recall_score(y_val, y_pred, zero_division=0))
+                    metrics['f1'].append(f1_score(y_val, y_pred, zero_division=0))
+                else:
+                    metrics['r2'].append(r2_score(y_val, y_pred))
+                    metrics['neg_mean_squared_error'].append(-mean_squared_error(y_val, y_pred))
+                    metrics['neg_mean_absolute_error'].append(-mean_absolute_error(y_val, y_pred))
+
+            # Average the metrics
+            cv_results = {f"test_{key}": np.mean(value) for key, value in metrics.items()}
+
+        else:
+            self.logger.info("Using sklearn.model_selection.cross_validate.")
+            cv_results = cross_validate(model, X, y, cv=tscv, scoring=scoring, n_jobs=-1)
+
+        # Log mean and std of scores
+        self.logger.info("Cross-validation results:")
+        for key, value in cv_results.items():
+            if key.startswith('test_'):
+                self.logger.info(f"  {key}: {np.mean(value):.4f} (+/- {np.std(value):.4f})")
         
-        cv_scores = {
-            'accuracy': cross_val_score(cv_model, X, y, cv=tscv, scoring='accuracy'),
-            'roc_auc': cross_val_score(cv_model, X, y, cv=tscv, scoring='roc_auc'),
-            'precision': cross_val_score(cv_model, X, y, cv=tscv, scoring='precision'),
-            'recall': cross_val_score(cv_model, X, y, cv=tscv, scoring='recall'),
-            'f1': cross_val_score(cv_model, X, y, cv=tscv, scoring='f1')
-        }
-        
-        return cv_scores
+        return cv_results
     
     def compute_shap_values(self, X: pd.DataFrame, sample_size: Optional[int] = None) -> Dict:
         """Compute SHAP values for model interpretability."""
@@ -567,8 +537,20 @@ class LightGBMModel:
     
     def optimize_hyperparameters(self, X, y, task_type='classification', n_trials=50):
         """Optimize hyperparameters for the LightGBM model."""
-        optimizer = LightGBMHyperparameterOptimizer(lgb.LGBMClassifier, self.config, X, y, task_type, n_trials)
+        self.logger.info(f"Optimizing hyperparameters for {task_type} task...")
+        
+        if task_type == 'classification':
+            model_class = lgb.LGBMClassifier
+        else:
+            model_class = lgb.LGBMRegressor
+
+        optimizer = LightGBMHyperparameterOptimizer(model_class, self.config, X, y, task_type, n_trials)
         best_params = optimizer.optimize()
+        
+        # Update the model's internal parameters with the best ones found
+        self.config.model['params'].update(best_params)
+        self.logger.info("Model parameters updated with optimized hyperparameters.")
+
         return best_params
     
     def load_model(self, filepath: str, task_type: str = "classification") -> None:
@@ -896,44 +878,3 @@ class RealTimeEnsemblePredictor:
         
         return predictor.predict(data)
 
-
-def main():
-    """Main function for model training."""
-    from pathlib import Path
-    import sys
-    sys.path.append(str(Path(__file__).parent.parent))
-    
-    from src.utils import load_config, setup_logging
-    from src.data import DataLoader
-    from src.labels import LabelConstructor
-    
-    # Load configuration
-    config = load_config("config/settings.yaml")
-    setup_logging(config)
-    
-    # Load data
-    loader = DataLoader(config)
-    df = loader.load_gold_data("SOLUSDT", "1m")
-    
-    if df is None or df.empty:
-        print("No data available for training")
-        return
-    
-    # Construct labels
-    label_constructor = LabelConstructor(config)
-    df_with_labels = label_constructor.construct_all_labels(df)
-    
-    # Prepare data for training
-    label_column = "label_class_1"
-    X = df_with_labels.drop(columns=[c for c in df_with_labels.columns if 'label' in c])
-    y = df_with_labels[label_column]
-
-    # Train model
-    trainer = AdvancedModelTrainer(config)
-    trainer.train_ensemble_model(X, y, label_column, task_type='classification')
-
-    print(f"Ensemble model training completed for {label_column}.")
-
-
-if __name__ == "__main__":
-    main()

@@ -11139,3 +11139,290 @@ You can set ``predict_disable_shape_check=true`` to discard this error, but plea
 2025-07-30 19:52:32,992 - __main__ - INFO - Training ensemble model for label_class_1
 2025-07-30 19:52:33,317 - __main__ - INFO - Data cleaned: (4990, 149)
 2025-07-30 19:52:33,318 - __main__ - INFO - Infinity values removed: 0
+2025-07-30 20:22:50,880 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:22:50,894 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:22:51,649 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:22:51,662 - src.features - INFO - Building feature matrix
+2025-07-30 20:22:51,667 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:22:51,669 - src.features - INFO - Adding regime flags
+2025-07-30 20:22:51,669 - src.features - INFO - Adding regime flags
+2025-07-30 20:22:51,679 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:22:51,680 - src.features - INFO - Adding lagged features
+2025-07-30 20:22:51,680 - src.features - INFO - Adding lagged features
+2025-07-30 20:22:51,692 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:22:51,693 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:22:51,693 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:22:51,707 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:22:51,708 - src.features - INFO - Adding feature interactions
+2025-07-30 20:22:51,708 - src.features - INFO - Adding feature interactions
+2025-07-30 20:22:51,715 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:22:51,715 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:22:51,720 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:22:51,755 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:22:51,761 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:22:51,771 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:22:51,771 - src.features - INFO - Transforming features
+2025-07-30 20:22:51,781 - src.features - INFO - Transformed 134 features
+2025-07-30 20:22:51,782 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:22:51,792 - src.labels - INFO - Constructing all labels
+2025-07-30 20:22:51,796 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:22:51,801 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:22:51,801 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:22:51,808 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:22:51,810 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:22:51,818 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:22:51,821 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:22:51,826 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:22:51,827 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:22:51,833 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:22:51,835 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:22:51,841 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:22:51,846 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:22:51,846 - src.labels - INFO - Validating labels
+2025-07-30 20:22:51,849 - src.labels - INFO - Label validation passed
+2025-07-30 20:24:51,159 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:24:51,171 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:24:51,928 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:24:51,941 - src.features - INFO - Building feature matrix
+2025-07-30 20:24:51,946 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:24:51,946 - src.features - INFO - Adding regime flags
+2025-07-30 20:24:51,947 - src.features - INFO - Adding regime flags
+2025-07-30 20:24:51,956 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:24:51,957 - src.features - INFO - Adding lagged features
+2025-07-30 20:24:51,957 - src.features - INFO - Adding lagged features
+2025-07-30 20:24:51,966 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:24:51,967 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:24:51,968 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:24:51,981 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:24:51,982 - src.features - INFO - Adding feature interactions
+2025-07-30 20:24:51,982 - src.features - INFO - Adding feature interactions
+2025-07-30 20:24:51,988 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:24:51,989 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:24:51,992 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:24:52,027 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:24:52,030 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:24:52,039 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:24:52,040 - src.features - INFO - Transforming features
+2025-07-30 20:24:52,047 - src.features - INFO - Transformed 134 features
+2025-07-30 20:24:52,048 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:24:52,059 - src.labels - INFO - Constructing all labels
+2025-07-30 20:24:52,062 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:24:52,068 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:24:52,069 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:24:52,074 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:24:52,075 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:24:52,082 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:24:52,084 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:24:52,089 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:24:52,091 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:24:52,097 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:24:52,098 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:24:52,103 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:24:52,106 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:24:52,107 - src.labels - INFO - Validating labels
+2025-07-30 20:24:52,111 - src.labels - INFO - Label validation passed
+2025-07-30 20:26:12,332 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:26:12,340 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:26:13,116 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:26:13,126 - src.features - INFO - Building feature matrix
+2025-07-30 20:26:13,131 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:26:13,131 - src.features - INFO - Adding regime flags
+2025-07-30 20:26:13,131 - src.features - INFO - Adding regime flags
+2025-07-30 20:26:13,140 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:26:13,140 - src.features - INFO - Adding lagged features
+2025-07-30 20:26:13,140 - src.features - INFO - Adding lagged features
+2025-07-30 20:26:13,150 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:26:13,150 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:26:13,150 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:26:13,165 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:26:13,166 - src.features - INFO - Adding feature interactions
+2025-07-30 20:26:13,166 - src.features - INFO - Adding feature interactions
+2025-07-30 20:26:13,174 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:26:13,175 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:26:13,176 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:26:13,209 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:26:13,213 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:26:13,222 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:26:13,223 - src.features - INFO - Transforming features
+2025-07-30 20:26:13,233 - src.features - INFO - Transformed 134 features
+2025-07-30 20:26:13,234 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:26:13,246 - src.labels - INFO - Constructing all labels
+2025-07-30 20:26:13,249 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:26:13,256 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:26:13,257 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:26:13,263 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:26:13,265 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:26:13,271 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:26:13,272 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:26:13,276 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:26:13,278 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:26:13,283 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:26:13,285 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:26:13,289 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:26:13,292 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:26:13,293 - src.labels - INFO - Validating labels
+2025-07-30 20:26:13,295 - src.labels - INFO - Label validation passed
+2025-07-30 20:27:02,266 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:27:02,275 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:27:03,095 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:27:03,110 - src.features - INFO - Building feature matrix
+2025-07-30 20:27:03,116 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:27:03,117 - src.features - INFO - Adding regime flags
+2025-07-30 20:27:03,117 - src.features - INFO - Adding regime flags
+2025-07-30 20:27:03,126 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:27:03,126 - src.features - INFO - Adding lagged features
+2025-07-30 20:27:03,126 - src.features - INFO - Adding lagged features
+2025-07-30 20:27:03,135 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:27:03,136 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:27:03,136 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:27:03,149 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:27:03,150 - src.features - INFO - Adding feature interactions
+2025-07-30 20:27:03,150 - src.features - INFO - Adding feature interactions
+2025-07-30 20:27:03,155 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:27:03,156 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:27:03,158 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:27:03,191 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:27:03,195 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:27:03,204 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:27:03,204 - src.features - INFO - Transforming features
+2025-07-30 20:27:03,211 - src.features - INFO - Transformed 134 features
+2025-07-30 20:27:03,212 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:27:03,222 - src.labels - INFO - Constructing all labels
+2025-07-30 20:27:03,226 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:27:03,235 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:27:03,237 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:27:03,243 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:27:03,244 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:27:03,252 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:27:03,253 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:27:03,258 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:27:03,260 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:27:03,266 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:27:03,267 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:27:03,273 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:27:03,276 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:27:03,278 - src.labels - INFO - Validating labels
+2025-07-30 20:27:03,280 - src.labels - INFO - Label validation passed
+2025-07-30 20:28:21,132 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:28:21,142 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:28:22,043 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:28:22,047 - src.features - INFO - Building feature matrix
+2025-07-30 20:28:22,066 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:28:22,066 - src.features - INFO - Adding regime flags
+2025-07-30 20:28:22,067 - src.features - INFO - Adding regime flags
+2025-07-30 20:28:22,079 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:28:22,079 - src.features - INFO - Adding lagged features
+2025-07-30 20:28:22,079 - src.features - INFO - Adding lagged features
+2025-07-30 20:28:22,091 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:28:22,091 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:28:22,091 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:28:22,107 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:28:22,108 - src.features - INFO - Adding feature interactions
+2025-07-30 20:28:22,108 - src.features - INFO - Adding feature interactions
+2025-07-30 20:28:22,118 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:28:22,118 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:28:22,122 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:28:22,159 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:28:22,166 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:28:22,178 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:28:22,178 - src.features - INFO - Transforming features
+2025-07-30 20:28:22,190 - src.features - INFO - Transformed 134 features
+2025-07-30 20:28:22,190 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:28:22,203 - src.labels - INFO - Constructing all labels
+2025-07-30 20:28:22,206 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:28:22,214 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:28:22,214 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:28:22,214 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:28:22,214 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:28:22,235 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:28:22,237 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:28:22,244 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:28:22,246 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:28:22,254 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:28:22,255 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:28:22,261 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:28:22,265 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:28:22,266 - src.labels - INFO - Validating labels
+2025-07-30 20:28:22,269 - src.labels - INFO - Label validation passed
+2025-07-30 20:30:22,116 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:30:22,128 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:30:22,914 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:30:22,932 - src.features - INFO - Building feature matrix
+2025-07-30 20:30:22,939 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:30:22,940 - src.features - INFO - Adding regime flags
+2025-07-30 20:30:22,940 - src.features - INFO - Adding regime flags
+2025-07-30 20:30:22,947 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:30:22,947 - src.features - INFO - Adding lagged features
+2025-07-30 20:30:22,947 - src.features - INFO - Adding lagged features
+2025-07-30 20:30:22,975 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:30:22,978 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:30:22,978 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:30:23,005 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:30:23,005 - src.features - INFO - Adding feature interactions
+2025-07-30 20:30:23,005 - src.features - INFO - Adding feature interactions
+2025-07-30 20:30:23,014 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:30:23,015 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:30:23,017 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:30:23,060 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:30:23,069 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:30:23,085 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:30:23,085 - src.features - INFO - Transforming features
+2025-07-30 20:30:23,097 - src.features - INFO - Transformed 134 features
+2025-07-30 20:30:23,097 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:30:23,114 - src.labels - INFO - Constructing all labels
+2025-07-30 20:30:23,119 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:30:23,128 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:30:23,131 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:30:23,138 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:30:23,138 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:30:23,150 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:30:23,151 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:30:23,157 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:30:23,157 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:30:23,167 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:30:23,169 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:30:23,179 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:30:23,185 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:30:23,186 - src.labels - INFO - Validating labels
+2025-07-30 20:30:23,192 - src.labels - INFO - Label validation passed
+2025-07-30 20:32:34,513 - src.data - INFO - Loaded bronze data: (5000, 6)
+2025-07-30 20:32:34,526 - src.indicators - INFO - Calculating all technical indicators
+2025-07-30 20:32:35,301 - src.indicators - INFO - Calculated 53 technical indicators
+2025-07-30 20:32:35,310 - src.features - INFO - Building feature matrix
+2025-07-30 20:32:35,319 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:32:35,319 - src.features - INFO - Adding regime flags
+2025-07-30 20:32:35,319 - src.features - INFO - Adding regime flags
+2025-07-30 20:32:35,337 - src.features - INFO - Added 19 regime flags
+2025-07-30 20:32:35,337 - src.features - INFO - Adding lagged features
+2025-07-30 20:32:35,338 - src.features - INFO - Adding lagged features
+2025-07-30 20:32:35,352 - src.features - INFO - Added 44 lagged features
+2025-07-30 20:32:35,353 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:32:35,353 - src.features - INFO - Adding rolling z-scores
+2025-07-30 20:32:35,371 - src.features - INFO - Added 12 rolling z-scores
+2025-07-30 20:32:35,371 - src.features - INFO - Adding feature interactions
+2025-07-30 20:32:35,371 - src.features - INFO - Adding feature interactions
+2025-07-30 20:32:35,382 - src.features - INFO - Added 6 feature interactions
+2025-07-30 20:32:35,383 - src.features - INFO - Stored 134 feature columns in pipeline
+2025-07-30 20:32:35,386 - src.features - WARNING - Columns with NaN values: {'close_lag_1': 1, 'close_lag_2': 2, 'close_lag_3': 3, 'close_lag_5': 5, 'volume_lag_1': 1, 'volume_lag_2': 2, 'volume_lag_3': 3, 'volume_lag_5': 5, 'high_lag_1': 1, 'high_lag_2': 2, 'high_lag_3': 3, 'high_lag_5': 5, 'low_lag_1': 1, 'low_lag_2': 2, 'low_lag_3': 3, 'low_lag_5': 5, 'open_lag_1': 1, 'open_lag_2': 2, 'open_lag_3': 3, 'open_lag_5': 5, 'rsi_lag_1': 1, 'rsi_lag_2': 2, 'rsi_lag_3': 3, 'rsi_lag_5': 5, 'macd_macd_lag_1': 1, 'macd_macd_lag_2': 2, 'macd_macd_lag_3': 3, 'macd_macd_lag_5': 5, 'bb_upper_lag_1': 1, 'bb_upper_lag_2': 2, 'bb_upper_lag_3': 3, 'bb_upper_lag_5': 5, 'bb_lower_lag_1': 1, 'bb_lower_lag_2': 2, 'bb_lower_lag_3': 3, 'bb_lower_lag_5': 5, 'stoch_k_percent_lag_1': 1, 'stoch_k_percent_lag_2': 2, 'stoch_k_percent_lag_3': 3, 'stoch_k_percent_lag_5': 5, 'atr_lag_1': 1, 'atr_lag_2': 2, 'atr_lag_3': 3, 'atr_lag_5': 5, 'close_zscore_20': 19, 'close_zscore_50': 49, 'close_zscore_100': 99, 'volume_zscore_20': 19, 'volume_zscore_50': 49, 'volume_zscore_100': 99, 'rsi_zscore_20': 2882, 'rsi_zscore_50': 2637, 'rsi_zscore_100': 2502, 'macd_macd_zscore_20': 19, 'macd_macd_zscore_50': 49, 'macd_macd_zscore_100': 99}
+2025-07-30 20:32:35,421 - src.features - INFO - Remaining rows: 5000
+2025-07-30 20:32:35,427 - src.features - INFO - Fitting feature pipeline on training data
+2025-07-30 20:32:35,440 - src.features - INFO - Fitted scaler on 134 features
+2025-07-30 20:32:35,440 - src.features - INFO - Transforming features
+2025-07-30 20:32:35,453 - src.features - INFO - Transformed 134 features
+2025-07-30 20:32:35,453 - src.features - INFO - Final feature matrix shape: (5000, 134)
+2025-07-30 20:32:35,465 - src.labels - INFO - Constructing all labels
+2025-07-30 20:32:35,470 - src.labels - INFO - Constructing classification labels for horizon 1
+2025-07-30 20:32:35,477 - src.labels - INFO - Created 5000 labeled samples for horizon 1
+2025-07-30 20:32:35,477 - src.labels - INFO - Constructing regression labels for horizon 1
+2025-07-30 20:32:35,487 - src.labels - INFO - Created 4999 labeled samples for horizon 1
+2025-07-30 20:32:35,487 - src.labels - INFO - Constructing classification labels for horizon 3
+2025-07-30 20:32:35,496 - src.labels - INFO - Created 5000 labeled samples for horizon 3
+2025-07-30 20:32:35,499 - src.labels - INFO - Constructing regression labels for horizon 3
+2025-07-30 20:32:35,505 - src.labels - INFO - Created 4997 labeled samples for horizon 3
+2025-07-30 20:32:35,505 - src.labels - INFO - Constructing classification labels for horizon 5
+2025-07-30 20:32:35,513 - src.labels - INFO - Created 5000 labeled samples for horizon 5
+2025-07-30 20:32:35,515 - src.labels - INFO - Constructing regression labels for horizon 5
+2025-07-30 20:32:35,520 - src.labels - INFO - Created 4995 labeled samples for horizon 5
+2025-07-30 20:32:35,526 - src.labels - INFO - Final labeled dataset shape: (4995, 68)
+2025-07-30 20:32:35,527 - src.labels - INFO - Validating labels
+2025-07-30 20:32:35,529 - src.labels - INFO - Label validation passed

@@ -308,9 +308,7 @@ class FeatureEngineer:
         # Store original columns for consistency
         self.original_columns = df.columns.tolist()
         
-        # Calculate technical indicators
-        indicators = TechnicalIndicators(self.config)
-        df_with_indicators = indicators.calculate_all_indicators(df)
+        df_with_indicators = df.copy()
         
         # Log NaN values for debugging
         nan_counts = df_with_indicators.isnull().sum()
@@ -326,22 +324,18 @@ class FeatureEngineer:
         # Add regime flags
         self.logger.info("Adding regime flags")
         df_with_indicators = self.add_regime_flags(df_with_indicators)
-        self.logger.info("Added 19 regime flags")
         
         # Add lagged features
         self.logger.info("Adding lagged features")
         df_with_indicators = self.add_lags(df_with_indicators)
-        self.logger.info("Added 44 lagged features")
         
         # Add rolling z-scores
         self.logger.info("Adding rolling z-scores")
         df_with_indicators = self.add_rolling_z_scores(df_with_indicators)
-        self.logger.info("Added 12 rolling z-scores")
         
         # Add feature interactions
         self.logger.info("Adding feature interactions")
         df_with_indicators = self.add_interactions(df_with_indicators)
-        self.logger.info("Added 6 feature interactions")
         
         # Store feature columns for consistency
         self.feature_columns = [col for col in df_with_indicators.columns 
@@ -521,6 +515,14 @@ class FeatureEngineer:
     def get_scaler_info(self) -> Dict:
         """Get information about the fitted scaler (alias for get_pipeline_info)."""
         return self.get_pipeline_info()
+
+    def get_feature_names(self) -> Optional[List[str]]:
+        """Get the list of feature names from the fitted pipeline."""
+        if self.is_pipeline_fitted and self.feature_pipeline.feature_columns is not None:
+            return self.feature_pipeline.feature_columns
+        else:
+            self.logger.warning("Pipeline not fitted, no feature names available.")
+            return None
     
     def drop_nan_rows(self, df: pd.DataFrame) -> pd.DataFrame:
         """Drop rows with NaN values and log the percentage."""

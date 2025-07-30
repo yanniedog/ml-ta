@@ -229,10 +229,15 @@ def test_model_training(df):
         print(f"✓ Model training completed in {training_time:.2f} seconds")
         
         # Check results
-        ensemble_scores = model_results['scores']['ensemble']
-        assert ensemble_scores['accuracy'] > 0.5, "Model accuracy too low"
-        print(f"✓ Ensemble accuracy: {ensemble_scores['accuracy']:.4f}")
-        print(f"✓ Ensemble ROC AUC: {ensemble_scores['roc_auc']:.4f}")
+        roc_auc_mean = model_results.get('ensemble_roc_auc_mean', 0)
+        assert roc_auc_mean > 0.5, f"Model ROC AUC too low: {roc_auc_mean:.4f}"
+        print(f"✓ Ensemble ROC AUC: {roc_auc_mean:.4f}")
+
+        # Save the trained model
+        model_path = Path(config.model.get('save_path', 'models/'))
+        model_path.mkdir(parents=True, exist_ok=True)
+        trainer.save_models(model_path / "advanced_model.joblib")
+        print(f"✓ Model saved to {model_path / 'advanced_model.joblib'}")
         
         return trainer
         
