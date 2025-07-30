@@ -1,15 +1,25 @@
+print("Executing src/backtest.py top-level")
+
+try:
+    import logging
+    from pathlib import Path
+    from typing import Dict, List, Optional, Any, Tuple
+    import numpy as np
+    import pandas as pd
+    from tqdm import tqdm
+    from src.utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
+    from src.risk_management import PositionSizer, RiskLimits
+    from src.labels import LabelConstructor
+    from src.report import ReportGenerator
+    print("Top-level imports successful.")
+except Exception as e:
+    print(f"Error during top-level import: {e}")
+    import sys
+    sys.exit(1)
+
 """
 Backtesting module for technical analysis strategies.
 """
-import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-
-import numpy as np
-import pandas as pd
-
-from src.utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
-from src.risk_management import PositionSizer, RiskLimits
 
 
 class Backtester:
@@ -564,8 +574,21 @@ class Backtester:
 def main():
     """Main function for backtesting."""
     print("Backtester main function started.")
-    from src.utils import load_config, setup_logging, set_deterministic_seed, load_parquet
-    from src.model import ModelTrainer
+    try:
+        print("Attempting to import from src.utils...")
+        from src.utils import load_config, setup_logging, set_deterministic_seed, load_parquet
+        print("Successfully imported from src.utils.")
+    except Exception as e:
+        print(f"Error importing from src.utils: {e}")
+        return
+
+    try:
+        print("Attempting to import from src.model...")
+        from src.model import ModelTrainer
+        print("Successfully imported from src.model.")
+    except Exception as e:
+        print(f"Error importing from src.model: {e}")
+        return
     
     # Load configuration
     config = load_config("config/settings.yaml")

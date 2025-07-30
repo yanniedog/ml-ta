@@ -180,3 +180,5 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 run_output.log
+logs/app.log
+*.log
