@@ -1,7 +1,7 @@
 # Technical Analysis Configuration
 app:
   name: "Technical Analysis Backtesting"
-  version: "1.0.0"
+  version: "1.1.0"
   seed: 42
 
 data:
@@ -54,14 +54,18 @@ model:
   params:
     objective: "binary"
     metric: "binary_logloss"
-    num_leaves: 64
-    learning_rate: 0.03
-    n_estimators: 1200
-    subsample: 0.8
-    colsample_bytree: 0.8
-    reg_alpha: 1
-    reg_lambda: 3
-    early_stopping_rounds: 100
+    boosting_type: 'gbdt'
+    # CRITICAL: Anti-overfitting parameters moved from code
+    num_leaves: 31
+    learning_rate: 0.01
+    n_estimators: 500
+    subsample: 0.7
+    colsample_bytree: 0.7
+    reg_alpha: 5
+    reg_lambda: 10
+    min_child_samples: 20
+    min_child_weight: 1
+    early_stopping_rounds: 50
     verbose: -1
     random_state: 42
 
@@ -80,8 +84,20 @@ walkforward:
 backtest:
   taker_fee_bps: 10
   slippage_bps: 2
-  position_threshold: 0.5
   fixed_notional: 10000  # USD
+  # Risk management
+  stop_loss_pct: 0.02
+  take_profit_pct: 0.04
+  max_hold_periods: 24
+  # Probability thresholds for entry/exit
+  long_entry_prob: 0.6
+  short_entry_prob: 0.4 # Symmetrical to long entry (1 - 0.6)
+  long_exit_prob: 0.4
+  short_exit_prob: 0.6
+  # Entry condition filters (set to 0 to disable, as per previous fix)
+  min_volume_threshold: 0
+  min_volatility_threshold: 0
+  min_trend_strength: 0
 
 features:
   lags: [1, 2, 3, 5]

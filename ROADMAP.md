@@ -3,7 +3,7 @@
 ## 🎯 **Project Overview**
 Comprehensive roadmap to transform the current ML trading system into a production-ready, robust, and scalable platform.
 
-## 📊 **COMPREHENSIVE PROJECT CRITIQUE (Updated: 2024-07-30)**
+## 📊 **COMPREHENSIVE PROJECT CRITIQUE (Updated: 2025-07-30)**
 
 ### **🏆 STRENGTHS - What's Working Exceptionally Well**
 
@@ -79,6 +79,10 @@ Comprehensive roadmap to transform the current ML trading system into a producti
 3. **📋 TODO**: Implement real-time alerts and notifications
 4. **📋 TODO**: Add walk-forward analysis framework
 5. **📋 TODO**: Implement proper cross-validation
+6. **📋 TODO**: Harden backtesting logic (realistic entry/exit, probability thresholds, risk parameters)
+7. **📋 TODO**: Consolidate configuration (single source of truth for all hyperparameters and thresholds)
+8. **📋 TODO**: Add strict out-of-sample hold-out evaluation
+9. **📋 TODO**: Integrate automated feature selection and early stopping for overfitting control
 
 ### **Phase 3: Advanced Features (Week 3-4)**
 1. **📋 TODO**: Multi-asset trading support
@@ -123,6 +127,9 @@ Comprehensive roadmap to transform the current ML trading system into a producti
 2. **📋 TODO**: Model Validation - Add out-of-sample testing
 3. **📋 TODO**: Performance Monitoring - Real-time dashboard with key metrics
 4. **📋 TODO**: Error Recovery - Robust error handling for market data failures
+5. **📋 TODO**: Configuration Management Consolidation - remove duplicated parameters between YAML and code
+6. **📋 TODO**: Backtesting Realism - restore realistic entry/exit thresholds and integrate slippage modeling
+7. **📋 TODO**: Overfitting Control - add feature selection pipeline and stronger regularization
 
 ### **Low Priority**
 1. **📋 TODO**: Code Optimization - Profile and optimize slow components

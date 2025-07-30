@@ -803,25 +803,56 @@ class ModelTrainer:
 
 
 class RealTimePredictor:
-    """Real-time predictor for a single model."""
+    """Real-time predictor with proper feature pipeline."""
     
-    def __init__(self, config, model, feature_engineer):
+    def __init__(self, config: Config, trained_model: LightGBMModel, 
+                 feature_engineer: FeatureEngineer):
         self.config = config
-        self.model = model
+        self.model = trained_model
         self.feature_engineer = feature_engineer
         self.logger = logging.getLogger(__name__)
-        self.prediction_history = []
+        
+        # Check if feature engineer is ready
+        if not self.feature_engineer.is_pipeline_ready():
+            self.logger.warning("Feature engineer pipeline is not ready")
     
-    def prepare_live_features(self, data):
+    def prepare_live_features(self, latest_data: pd.DataFrame) -> pd.DataFrame:
         """Prepare features for live prediction."""
-        # This should handle a single data point or a small batch
-        return self.feature_engineer.build_live_feature_matrix(data)
+        try:
+            # Build live feature matrix
+            feature_matrix = self.feature_engineer.build_live_feature_matrix(latest_data)
+            
+            # Remove timestamp and label columns
+            exclude_columns = ['timestamp']
+            label_columns = [col for col in feature_matrix.columns if col.startswith('label_')]
+            return_columns = [col for col in feature_matrix.columns if col.startswith('return_')]
+            exclude_columns.extend(label_columns)
+            exclude_columns.extend(return_columns)
+            
+            feature_columns = [col for col in feature_matrix.columns if col not in exclude_columns]
+            X = feature_matrix[feature_columns]
+            
+            # Ensure feature consistency with the fitted pipeline
+            X = self.feature_engineer.ensure_feature_consistency(X)
+            
+            return X
+            
+        except Exception as e:
+            self.logger.error(f"Error preparing live features: {e}")
+            return pd.DataFrame()
     
-    def predict(self, data: pd.DataFrame) -> Dict:
-        """Make real-time prediction with confidence score."""
+    def predict(self, latest_data: pd.DataFrame) -> Dict:
+        """Make real-time prediction."""
         try:
             # Prepare features
-            X = self.prepare_live_features(data)
+            X = self.prepare_live_features(latest_data)
+            
+            if X.empty:
+                return {
+                    'prediction': None,
+                    'confidence': 0.0,
+                    'error': 'No features available'
+                }
             
             # Make prediction
             prediction_proba = self.model.predict_proba(X)
