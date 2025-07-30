@@ -10,8 +10,8 @@ from sklearn.model_selection import TimeSeriesSplit
 import warnings
 warnings.filterwarnings('ignore')
 
-from .indicators import TechnicalIndicators
-from .utils import Config, ensure_directory, save_parquet
+from src.indicators import TechnicalIndicators
+from src.utils import Config, ensure_directory, save_parquet
 
 
 class FeaturePipeline:

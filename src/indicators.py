@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 logger = logging.getLogger(__name__)
 
-from .utils import Config
+from src.utils import Config
 
 
 class TechnicalIndicators:

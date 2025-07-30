@@ -8,7 +8,7 @@ ensemble methods, hyperparameter optimization, and robust time series validation
 import logging
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import (accuracy_score, roc_auc_score, precision_score, recall_score, f1_score,
                              mean_squared_error, mean_absolute_error, r2_score)
@@ -23,11 +23,13 @@ import joblib
 from pathlib import Path
 import warnings
 
-from .utils import Config
-from .features import FeatureEngineer
+from src.utils import Config
+from src.features import FeatureEngineer
 
 warnings.filterwarnings('ignore', category=UserWarning, module='lightgbm')
 logger = logging.getLogger(__name__)
+
+LightGBMModel = Union[lgb.LGBMClassifier, lgb.LGBMRegressor]
 
 
 class TimeSeriesValidator:

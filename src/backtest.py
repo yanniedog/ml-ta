@@ -2,12 +2,14 @@
 Backtesting module for technical analysis strategies.
 """
 import logging
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
-from .utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
+from src.utils import Config, calculate_sharpe_ratio, calculate_max_drawdown, calculate_calmar_ratio
+from src.risk_management import PositionSizer, RiskLimits
 
 
 class Backtester:
@@ -26,13 +28,21 @@ class Backtester:
         self.min_volume_threshold = 0  # Removed volume threshold completely
         self.min_volatility_threshold = 0  # Removed volatility threshold completely
         self.min_trend_strength = 0  # Removed trend strength threshold completely
-        
-        self.fixed_notional = config.backtest["fixed_notional"]
-        
+
+        # Initialize risk management
+        self.risk_limits = RiskLimits(
+            max_position_size=self.config.risk["max_position_size"],
+            max_portfolio_risk=0.02,  # Example value, can be configured
+            max_drawdown=0.15,  # Example value, can be configured
+        )
+        self.position_sizer = PositionSizer(self.config, self.risk_limits)
+        self.risk_per_trade = self.config.risk["risk_per_trade"]
+        self.use_dynamic_sizing = self.config.risk["use_dynamic_sizing"]
+
         # Add proper exit logic
-        self.stop_loss_pct = 0.02  # 2% stop loss
-        self.take_profit_pct = 0.04  # 4% take profit
-        self.max_hold_time = 24  # Maximum hold time in periods
+        self.stop_loss_pct = self.config.risk["stop_loss_pct"]
+        self.take_profit_pct = self.config.risk["take_profit_pct"]
+        self.max_hold_time = config.backtest["max_hold_periods"]  # Maximum hold time in periods
         
         # Total transaction cost per side
         self.total_cost_per_side = self.taker_fee_bps + self.slippage_bps
@@ -61,10 +71,6 @@ class Backtester:
         # CRITICAL FIX: Always return True to force maximum trade generation
         # Skip all checks to ensure trades are generated
         return True
-        
-    def calculate_position_size(self, price: float) -> float:
-        """Calculate position size based on fixed notional."""
-        return self.fixed_notional / price
     
     def calculate_transaction_cost(self, price: float, position_size: float, side: str) -> float:
         """Calculate transaction cost for a trade."""
@@ -136,144 +142,130 @@ class Backtester:
             probabilities = probabilities.fillna(0.5)
         
         # Initialize tracking variables
-        position = 0  # 0 = no position, 1 = long, -1 = short
-        entry_price = 0
-        entry_index = 0
+        initial_capital = 100000.0  # Start with $100,000
+        capital = initial_capital
+        equity_curve = [initial_capital]
         trades = []
-        equity_curve = []
-        current_equity = self.fixed_notional
-        
+        position = 0  # 0: flat, 1: long, -1: short
+        position_size = 0.0
+        entry_price = 0.0
+        entry_time = None
+        entry_index = 0
+
         # Get price data
         prices = df['close'].values
-        
+
         # Handle timestamp column - use index if timestamp not available
         if 'timestamp' in df.columns:
             timestamps = df['timestamp'].values
         else:
             # Use index as timestamp if no timestamp column
             timestamps = df.index.values
-        
+
         for i in range(len(df)):
             current_price = prices[i]
             current_prediction = predictions.iloc[i]
             current_prob = probabilities.iloc[i] if probabilities is not None else 0.5
-            
-            # CRITICAL FIX: Improved entry logic with probability thresholds
-            if position == 0:  # No position
-                # Enter long if prediction is 1 and probability > 0.6
-                # Enter short if prediction is 0 and probability < 0.4
-                if current_prediction == 1 and current_prob > 0.6:
-                    if i + 1 < len(df):
-                        entry_price = df.iloc[i + 1]['open']  # Next open
-                        position_size = self.calculate_position_size(entry_price)
-                        position = 1  # Long position
-                        entry_index = i + 1
-                        entry_price_actual = entry_price
-                        self.logger.debug(f"Entered LONG position at {entry_price} with prob {current_prob:.3f}")
+
+            # Entry logic for long position
+            if position == 0 and current_prediction == 1 and current_prob > self.config.backtest['long_entry_prob']:
+                entry_price = current_price
+                stop_loss_price = entry_price * (1 - self.stop_loss_pct)
                 
-                elif current_prediction == 0 and current_prob < 0.4:
-                    if i + 1 < len(df):
-                        entry_price = df.iloc[i + 1]['open']  # Next open
-                        position_size = self.calculate_position_size(entry_price)
-                        position = -1  # Short position
-                        entry_index = i + 1
-                        entry_price_actual = entry_price
-                        self.logger.debug(f"Entered SHORT position at {entry_price} with prob {current_prob:.3f}")
-            
-            # Check for position exit with proper risk management
+                volatility = self.calculate_volatility(df['close'].values[:i+1])
+                position_size = self.position_sizer.calculate_dynamic_position_size(
+                    capital=capital,
+                    risk_per_trade=self.risk_per_trade,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss_price,
+                    volatility=volatility if self.use_dynamic_sizing else None
+                )
+
+                if position_size > 0:
+                    position = 1
+                    entry_time = df.index[i]
+                    entry_index = i
+                    self.logger.debug(f"Entered LONG position at {entry_price}, Size: {position_size:.2f}")
+
+            # Entry logic for short position
+            elif position == 0 and current_prediction == 0 and current_prob < self.config.backtest['short_entry_prob']:
+                entry_price = current_price
+                stop_loss_price = entry_price * (1 + self.stop_loss_pct)
+
+                volatility = self.calculate_volatility(df['close'].values[:i+1])
+                position_size = self.position_sizer.calculate_dynamic_position_size(
+                    capital=capital,
+                    risk_per_trade=self.risk_per_trade,
+                    entry_price=entry_price,
+                    stop_loss=stop_loss_price,
+                    volatility=volatility if self.use_dynamic_sizing else None
+                )
+
+                if position_size > 0:
+                    position = -1
+                    entry_time = df.index[i]
+                    entry_index = i
+                    self.logger.debug(f"Entered SHORT position at {entry_price}, Size: {position_size:.2f}")
+
+            # Exit logic
             elif position != 0:
-                # Calculate current P&L
-                if position == 1:  # Long position
-                    current_pnl_pct = (current_price - entry_price_actual) / entry_price_actual
-                else:  # Short position
-                    current_pnl_pct = (entry_price_actual - current_price) / entry_price_actual
-                
-                # Exit conditions
-                stop_loss_hit = current_pnl_pct <= -self.stop_loss_pct
-                take_profit_hit = current_pnl_pct >= self.take_profit_pct
+                if position == 1:
+                    pnl_pct = (current_price - entry_price) / entry_price
+                    stop_loss_hit = pnl_pct <= -self.stop_loss_pct
+                    take_profit_hit = pnl_pct >= self.take_profit_pct
+                    prediction_exit = current_prob < self.config.backtest['long_exit_prob']
+                else: # short
+                    pnl_pct = (entry_price - current_price) / entry_price
+                    stop_loss_hit = pnl_pct <= -self.stop_loss_pct
+                    take_profit_hit = pnl_pct >= self.take_profit_pct
+                    prediction_exit = current_prob > self.config.backtest['short_exit_prob']
+
                 time_exit = (i >= entry_index + self.max_hold_time)
-                
-                # CRITICAL FIX: Add prediction-based exit for better trade management
-                if position == 1:  # Long position
-                    prediction_exit = (current_prediction == 0 and current_prob < 0.4)
-                else:  # Short position
-                    prediction_exit = (current_prediction == 1 and current_prob > 0.6)
-                
-                exit_condition = stop_loss_hit or take_profit_hit or time_exit or prediction_exit
-                
-                if exit_condition:
-                    # Exit at current close
+
+                if stop_loss_hit or take_profit_hit or time_exit or prediction_exit:
                     exit_price = current_price
+                    trade_func = self.execute_trade if position == 1 else self.execute_short_trade
+                    trade_result = trade_func(entry_price, exit_price, position_size)
                     
-                    # CRITICAL FIX: Handle short position P&L calculation
-                    if position == 1:  # Long position
-                        trade_result = self.execute_trade(entry_price, exit_price, position_size)
-                    else:  # Short position
-                        # For short positions, we sell first, then buy back
-                        trade_result = self.execute_short_trade(entry_price, exit_price, position_size)
-                    
-                    # Add trade metadata
+                    exit_reason = 'stop_loss' if stop_loss_hit else 'take_profit' if take_profit_hit else 'time_exit' if time_exit else 'prediction_exit'
                     trade_result.update({
                         'entry_time': timestamps[entry_index],
                         'exit_time': timestamps[i],
-                        'entry_index': entry_index,
-                        'exit_index': i,
                         'hold_period': i - entry_index,
                         'position_type': 'long' if position == 1 else 'short',
-                        'exit_reason': 'stop_loss' if stop_loss_hit else 
-                                     'take_profit' if take_profit_hit else 
-                                     'prediction_exit' if prediction_exit else
-                                     'time_exit' if time_exit else 'manual'
+                        'exit_reason': exit_reason
                     })
-                    
                     trades.append(trade_result)
-                    
-                    # Update equity
-                    current_equity += trade_result['net_pnl']
-                    
-                    # Reset position
+                    capital += trade_result['net_pnl']
                     position = 0
-                    entry_price = 0
-                    entry_index = 0
-                    entry_price_actual = 0
-                    
-                    self.logger.debug(f"Exited {'LONG' if position == 1 else 'SHORT'} position at {exit_price}, P&L: {trade_result['net_pnl']:.2f}, Reason: {trade_result['exit_reason']}")
-            
-            # Record equity curve
-            equity_curve.append(current_equity)
-        
-        # Close any open position at the end
+                    self.logger.debug(f"Exited position at {exit_price}, PnL: {trade_result['net_pnl']:.2f}, Reason: {exit_reason}")
+
+            equity_curve.append(capital)
+
         if position != 0:
             exit_price = prices[-1]
-            if position == 1:  # Long position
-                trade_result = self.execute_trade(entry_price, exit_price, position_size)
-            else:  # Short position
-                trade_result = self.execute_short_trade(entry_price, exit_price, position_size)
-            
+            trade_func = self.execute_trade if position == 1 else self.execute_short_trade
+            trade_result = trade_func(entry_price, exit_price, position_size)
             trade_result.update({
                 'entry_time': timestamps[entry_index],
                 'exit_time': timestamps[-1],
-                'entry_index': entry_index,
-                'exit_index': len(df) - 1,
                 'hold_period': len(df) - 1 - entry_index,
                 'position_type': 'long' if position == 1 else 'short',
                 'exit_reason': 'end_of_data'
             })
-            
             trades.append(trade_result)
-            current_equity += trade_result['net_pnl']
-            equity_curve.append(current_equity)
-        
-        # CRITICAL FIX: Ensure equity curve is not empty
+            capital += trade_result['net_pnl']
+            equity_curve.append(capital)
+
         if not equity_curve:
-            equity_curve = [self.fixed_notional]
-        
-        self.logger.info(f"Backtest completed: {len(trades)} trades, Final equity: {equity_curve[-1]}")
-        
+            equity_curve = [initial_capital]
+
+        self.logger.info(f"Backtest completed. Trades: {len(trades)}, Final Equity: {capital:.2f}")
+
         return {
             'trades': trades,
             'equity_curve': equity_curve,
-            'final_equity': equity_curve[-1] if equity_curve else self.fixed_notional
+            'final_equity': capital
         }
     
     def calculate_performance_metrics(self, trades: List[Dict], equity_curve: List[float], 
@@ -300,13 +292,11 @@ class Backtester:
         
         # CRITICAL FIX: Handle empty equity curve
         if not equity_curve:
-            equity_curve = [self.fixed_notional]
+            equity_curve = [100000.0] # Default initial capital
         
-        # Convert trades to DataFrame for easier analysis
         trades_df = pd.DataFrame(trades)
         
-        # CRITICAL FIX: Calculate total return properly
-        initial_equity = self.fixed_notional
+        initial_equity = equity_curve[0]
         final_equity = equity_curve[-1] if equity_curve else initial_equity
         
         # Handle NaN values in final equity
@@ -399,66 +389,50 @@ class Backtester:
     def run_backtest_with_model(self, df: pd.DataFrame, model, label_column: str, 
                                fitted_feature_engineer=None) -> Dict:
         """Run backtest using a trained model."""
-        logger.info(f"Running backtest with model for {label_column}")
+        self.logger.info(f"Running backtest for label: {label_column}")
+        
+        feature_columns = [col for col in df.columns if col.startswith('feature_')]
+        X = df[feature_columns]
+        
+        if fitted_feature_engineer:
+            self.logger.info("Applying fitted feature engineer")
+            X = fitted_feature_engineer.transform(X)
         
         try:
-            # CRITICAL FIX: Ensure we have the required columns
-            required_cols = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            missing_cols = [col for col in required_cols if col not in df.columns]
-            if missing_cols:
-                raise ValueError(f"Missing required columns: {missing_cols}")
-            
-            # CRITICAL FIX: Clean the data first
-            df_clean = df.copy()
-            df_clean = df_clean.fillna(method='ffill').fillna(method='bfill')
-            df_clean = df_clean.dropna(subset=['open', 'high', 'low', 'close', 'volume'])
-            
-            if len(df_clean) == 0:
-                raise ValueError("No valid data after cleaning")
-            
-            # Build features
-            if fitted_feature_engineer is None:
-                feature_engineer = FeatureEngineer(self.config)
-                feature_matrix = feature_engineer.build_feature_matrix(df_clean, fit_scaler=True)
-            else:
-                feature_matrix = fitted_feature_engineer.build_feature_matrix(df_clean, fit_scaler=False)
-            
-            # Ensure feature matrix has the same index as the original data
-            feature_matrix = feature_matrix.reindex(df_clean.index)
-            
-            # Get predictions
-            try:
-                if hasattr(model, 'predict_proba'):
-                    probabilities = model.predict_proba(feature_matrix)[:, 1]
-                else:
-                    probabilities = model.predict(feature_matrix)
-                predictions = (probabilities > 0.5).astype(int)
-            except Exception as e:
-                logger.error(f"Error getting predictions: {e}")
-                # Create dummy predictions if model fails
-                predictions = pd.Series(0, index=feature_matrix.index)
-                probabilities = pd.Series(0.5, index=feature_matrix.index)
-            
-            # Run backtest
-            results = self.run_backtest(df_clean, predictions, probabilities)
-            
-            return results
-            
+            predictions = model.predict(X)
+            probabilities = model.predict_proba(X)[:, 1]
         except Exception as e:
-            logger.error(f"Error in backtest with model: {e}")
-            return {
-                'total_return': 0.0,
-                'sharpe_ratio': 0.0,
-                'max_drawdown': 0.0,
-                'hit_rate': 0.0,
-                'total_trades': 0,
-                'win_rate': 0.0,
-                'profit_factor': 0.0,
-                'avg_trade_duration': 0.0,
-                'trades': [],
-                'equity_curve': [1.0],
-                'error': str(e)
-            }
+            self.logger.error(f"Error during prediction: {e}")
+            return {}
+        
+        predictions = pd.Series(predictions, index=df.index)
+        probabilities = pd.Series(probabilities, index=df.index)
+        
+        backtest_results = self.run_backtest(df, predictions, probabilities)
+        
+        performance_metrics = self.calculate_performance_metrics(
+            backtest_results['trades'],
+            backtest_results['equity_curve'],
+            df
+        )
+        
+        advanced_metrics = self.calculate_advanced_metrics(
+            pd.Series(backtest_results['equity_curve']),
+            backtest_results['trades']
+        )
+        performance_metrics.update(advanced_metrics)
+        
+        self.logger.info(f"Total Return: {performance_metrics.get('total_return', 0):.2%}")
+        self.logger.info(f"Sharpe Ratio: {performance_metrics.get('sharpe_ratio', 0):.2f}")
+        self.logger.info(f"Max Drawdown: {performance_metrics.get('max_drawdown', 0):.2%}")
+        self.logger.info(f"Hit Rate: {performance_metrics.get('hit_rate', 0):.2%}")
+        self.logger.info(f"Total Trades: {performance_metrics.get('total_trades', 0)}")
+        
+        return {
+            'performance': performance_metrics,
+            'trades': backtest_results['trades'],
+            'equity_curve': backtest_results['equity_curve']
+        }
     
     def calculate_advanced_metrics(self, equity_curve: pd.Series, trades: List[Dict]) -> Dict:
         """Calculate advanced performance metrics."""
@@ -589,50 +563,72 @@ class Backtester:
 
 def main():
     """Main function for backtesting."""
-    from .utils import load_config, setup_logging, set_deterministic_seed, load_parquet
-    from .model import ModelTrainer
+    print("Backtester main function started.")
+    from src.utils import load_config, setup_logging, set_deterministic_seed, load_parquet
+    from src.model import ModelTrainer
     
     # Load configuration
     config = load_config("config/settings.yaml")
     
+    print("Configuration loaded successfully.")
     # Setup logging
     logger = setup_logging(config)
-    
+    print("Logging setup complete.")
     # Set deterministic seed
     set_deterministic_seed(config.app["seed"])
+    print("Seed set.")
     
     # Load sample data and run backtest
+    print("Entering try block to load data and run backtest.")
     try:
         gold_dir = f"{config.paths['data']}/gold"
         gold_files = list(Path(gold_dir).glob("*.parquet"))
         
         if gold_files:
+            logger.info(f"Found {len(gold_files)} gold files. Loading {gold_files[0]}.")
             df = load_parquet(str(gold_files[0]))
+            print(f"Data loaded from {gold_files[0]}.")
             
             # Train a model first
+            from src.model import ModelTrainer
             trainer = ModelTrainer(config)
             label_columns = [col for col in df.columns if col.startswith('label_')]
+            logger.info(f"Found {len(label_columns)} label columns: {label_columns}")
             
+            print(f"Found labels: {label_columns}")
             if label_columns:
-                results = trainer.train_single_model(df, label_columns[0], "classification")
-                model = results['model']
+                selected_label = label_columns[0]
+                logger.info(f"Training model for label: {selected_label}")
+                results = trainer.train_single_model(df, selected_label, "classification")
                 
-                # Run backtest
-                backtester = Backtester(config)
-                backtest_results = backtester.run_backtest_with_model(df, model, label_columns[0])
-                
-                print("Backtest Results:")
-                print(f"Total Return: {backtest_results['performance']['total_return']:.2%}")
-                print(f"Sharpe Ratio: {backtest_results['performance']['sharpe_ratio']:.2f}")
-                print(f"Max Drawdown: {backtest_results['performance']['max_drawdown']:.2%}")
-                print(f"Hit Rate: {backtest_results['performance']['hit_rate']:.2%}")
-                print(f"Total Trades: {backtest_results['performance']['total_trades']}")
+                print("Model training finished.")
+                if 'model' in results and results['model'] is not None:
+                    model = results['model']
+                    logger.info("Model training successful. Running backtest.")
+                    
+                    # Run backtest
+                    print("Preparing to run backtest with trained model.")
+                    backtester = Backtester(config)
+                    backtest_results = backtester.run_backtest_with_model(df, model, selected_label)
+                    
+                    print("Backtest Results:")
+                    print(f"Total Return: {backtest_results['performance'].get('total_return', 0):.2%}")
+                    print(f"Sharpe Ratio: {backtest_results['performance'].get('sharpe_ratio', 0):.2f}")
+                    print(f"Max Drawdown: {backtest_results['performance'].get('max_drawdown', 0):.2%}")
+                    print(f"Hit Rate: {backtest_results['performance'].get('hit_rate', 0):.2%}")
+                    print(f"Total Trades: {backtest_results['performance'].get('total_trades', 0)}")
+                else:
+                    logger.error("Model training failed. No model was returned.")
+            else:
+                logger.error("No label columns found in the data.")
                 
         else:
             logger.error("No gold data files found")
+            print("No gold data files found.")
             
     except Exception as e:
         logger.error(f"Error in backtesting: {e}")
+        print(f"An exception occurred: {e}")
 
 
 if __name__ == "__main__":

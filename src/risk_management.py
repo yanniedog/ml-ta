@@ -8,7 +8,7 @@ import pandas as pd
 from dataclasses import dataclass
 from enum import Enum
 
-from .utils import Config
+from src.utils import Config
 
 
 class PositionSide(Enum):
@@ -90,6 +90,22 @@ class PositionSizer:
         self.risk_limits = risk_limits
         self.logger = logging.getLogger(__name__)
     
+    def calculate_dynamic_position_size(self, capital: float, risk_per_trade: float, 
+                                      entry_price: float, stop_loss: Optional[float] = None, 
+                                      volatility: Optional[float] = None) -> float:
+        """Calculate position size with dynamic adjustment for volatility."""
+        
+        # Adjust risk per trade based on volatility
+        if volatility is not None:
+            # Example: reduce risk for high-volatility assets
+            # This logic can be customized based on strategy
+            if volatility > 0.05:  # 5% volatility threshold
+                risk_per_trade *= 0.8  # Reduce risk by 20%
+            elif volatility < 0.01: # 1% volatility threshold
+                risk_per_trade *= 1.2 # Increase risk by 20%
+
+        return self.calculate_position_size(capital, risk_per_trade, entry_price, stop_loss)
+
     def calculate_position_size(self, capital: float, risk_per_trade: float, 
                               entry_price: float, stop_loss: Optional[float] = None) -> float:
         """Calculate position size based on risk management rules."""

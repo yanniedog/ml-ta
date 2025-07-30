@@ -14,7 +14,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 import numpy as np
 
-from .utils import Config, ensure_directory, save_parquet, load_parquet
+from src.utils import Config, ensure_directory, save_parquet, load_parquet
 
 
 class BinanceDataFetcher:
@@ -361,7 +361,7 @@ class DataLoader:
 
 def main():
     """Main function for data fetching."""
-    from .utils import load_config, setup_logging, set_deterministic_seed
+    from src.utils import load_config, setup_logging, set_deterministic_seed
     
     # Load configuration
     config = load_config("config/settings.yaml")

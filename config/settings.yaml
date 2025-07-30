@@ -81,17 +81,19 @@ walkforward:
     "1h": 4000
     "4h": 2500
 
+risk:
+  use_dynamic_sizing: true
+  risk_per_trade: 0.01 # 1% of capital per trade
+  max_position_size: 0.1 # 10% of capital max
+  stop_loss_pct: 0.02 # 2% stop loss
+  take_profit_pct: 0.04 # 4% take profit
+
 backtest:
   taker_fee_bps: 10
   slippage_bps: 2
-  fixed_notional: 10000  # USD
-  # Risk management
-  stop_loss_pct: 0.02
-  take_profit_pct: 0.04
-  max_hold_periods: 24
-  # Probability thresholds for entry/exit
+  max_hold_periods: 20  # Max hold time in periods (e.g., days)
   long_entry_prob: 0.6
-  short_entry_prob: 0.4 # Symmetrical to long entry (1 - 0.6)
+  short_entry_prob: 0.4
   long_exit_prob: 0.4
   short_exit_prob: 0.6
   # Entry condition filters (set to 0 to disable, as per previous fix)

@@ -14,7 +14,7 @@ from plotly.subplots import make_subplots
 import seaborn as sns
 from jinja2 import Template
 
-from .utils import Config, ensure_directory, get_config_hash, format_timestamp
+from src.utils import Config, ensure_directory, get_config_hash, format_timestamp
 
 
 class ReportGenerator:
@@ -454,7 +454,7 @@ class ReportGenerator:
 
 def main():
     """Main function for report generation."""
-    from .utils import load_config, setup_logging, set_deterministic_seed
+    from src.utils import load_config, setup_logging, set_deterministic_seed
     
     # Load configuration
     config = load_config("config/settings.yaml")

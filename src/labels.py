@@ -7,7 +7,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from .utils import Config, ensure_directory, save_parquet
+from src.utils import Config, ensure_directory, save_parquet
 
 
 class LabelConstructor:
@@ -217,7 +217,7 @@ class LabelConstructor:
 
 def main():
     """Main function for label construction."""
-    from .utils import load_config, setup_logging, set_deterministic_seed
+    from src.utils import load_config, setup_logging, set_deterministic_seed
     
     # Load configuration
     config = load_config("config/settings.yaml")
