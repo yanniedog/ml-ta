@@ -125,25 +125,24 @@ def demo_feature_engineering(df):
         logger.info(f"Original data shape: {df.shape}")
         logger.info(f"Feature matrix shape: {feature_matrix.shape}")
         
-        # Show feature categories
-        feature_categories = {
-            'Price Features': [col for col in feature_matrix.columns if any(x in col for x in ['close', 'high', 'low', 'open'])],
-            'Volume Features': [col for col in feature_matrix.columns if 'volume' in col],
-            'Technical Indicators': [col for col in feature_matrix.columns if any(x in col for x in ['rsi', 'macd', 'bb_', 'stoch'])],
-            'Regime Flags': [col for col in feature_matrix.columns if any(x in col for x in ['_trend', '_vol', '_squeeze', '_expansion'])],
-            'Lagged Features': [col for col in feature_matrix.columns if 'lag_' in col],
-            'Z-Score Features': [col for col in feature_matrix.columns if 'zscore' in col],
-            'Interaction Features': [col for col in feature_matrix.columns if any(x in col for x in ['price_volume', 'rsi_macd', 'bb_position'])]
-        }
+        # Analyze feature types
+        price_features = [col for col in feature_matrix.columns if any(x in col for x in ['open', 'high', 'low', 'close', 'volume'])]
+        volume_features = [col for col in feature_matrix.columns if 'volume' in col]
+        technical_features = [col for col in feature_matrix.columns if col not in price_features + volume_features]
+        regime_features = [col for col in feature_matrix.columns if 'regime' in col]
+        lagged_features = [col for col in feature_matrix.columns if 'lag' in col]
+        zscore_features = [col for col in feature_matrix.columns if 'zscore' in col]
+        interaction_features = [col for col in feature_matrix.columns if 'interaction' in col]
         
-        for category, features in feature_categories.items():
-            if features:
-                logger.info(f"{category}: {len(features)} features")
-        
-        # Show scaler info
-        scaler_info = feature_engineer.get_scaler_info()
-        logger.info(f"Scaler fitted: {scaler_info['is_fitted']}")
-        logger.info(f"Features scaled: {scaler_info['feature_columns_count']}")
+        logger.info(f"Price Features: {len(price_features)} features")
+        logger.info(f"Volume Features: {len(volume_features)} features")
+        logger.info(f"Technical Indicators: {len(technical_features)} features")
+        logger.info(f"Regime Flags: {len(regime_features)} features")
+        logger.info(f"Lagged Features: {len(lagged_features)} features")
+        logger.info(f"Z-Score Features: {len(zscore_features)} features")
+        logger.info(f"Interaction Features: {len(interaction_features)} features")
+        logger.info(f"Scaler fitted: {hasattr(feature_engineer, 'scaler')}")
+        logger.info(f"Features scaled: {len(feature_matrix.columns)}")
         
         return feature_matrix, feature_engineer
         
@@ -186,7 +185,7 @@ def demo_label_construction(df):
         return None
 
 
-def demo_model_training(df_with_features, df_with_labels):
+def demo_model_training(df_with_features, df_with_labels, original_df):
     """Demonstrate model training functionality."""
     logger = logging.getLogger(__name__)
     logger.info("=" * 60)
@@ -212,8 +211,19 @@ def demo_model_training(df_with_features, df_with_labels):
         logger.info(f"Feature matrix shape after alignment: {df_features_aligned.shape}")
         logger.info(f"Label matrix shape after alignment: {df_labels_aligned.shape}")
         
-        # Combine features and labels
-        df_combined = pd.concat([df_features_aligned, df_labels_aligned[['label_class_1']]], axis=1)
+        # CRITICAL FIX: Ensure original OHLCV data is preserved for feature engineering
+        # Get the original data that was used for feature engineering
+        original_data = original_df  # This should be the original OHLCV data
+        
+        # Combine original data with labels
+        df_combined = pd.concat([original_data, df_labels_aligned[['label_class_1']]], axis=1)
+        
+        # Ensure we have the required columns
+        required_columns = ['open', 'high', 'low', 'close', 'volume', 'label_class_1']
+        missing_columns = [col for col in required_columns if col not in df_combined.columns]
+        if missing_columns:
+            logger.error(f"Missing required columns: {missing_columns}")
+            return None
         
         # Check for NaN values in the target variable
         nan_count = df_combined['label_class_1'].isna().sum()
@@ -381,8 +391,39 @@ def main():
         return
     
     # Step 3: Feature Engineering
-    feature_matrix, feature_engineer = demo_feature_engineering(df_with_indicators)
-    if feature_matrix is None:
+    logger.info("============================================================")
+    logger.info("DEMO: Feature Engineering")
+    logger.info("============================================================")
+    
+    try:
+        config = load_config("config/settings.yaml")
+        feature_engineer = FeatureEngineer(config)
+        feature_matrix, feature_engineer = demo_feature_engineering(df_with_indicators)
+        
+        logger.info(f"Original data shape: {df_with_indicators.shape}")
+        logger.info(f"Feature matrix shape: {feature_matrix.shape}")
+        
+        # Analyze feature types
+        price_features = [col for col in feature_matrix.columns if any(x in col for x in ['open', 'high', 'low', 'close', 'volume'])]
+        volume_features = [col for col in feature_matrix.columns if 'volume' in col]
+        technical_features = [col for col in feature_matrix.columns if col not in price_features + volume_features]
+        regime_features = [col for col in feature_matrix.columns if 'regime' in col]
+        lagged_features = [col for col in feature_matrix.columns if 'lag' in col]
+        zscore_features = [col for col in feature_matrix.columns if 'zscore' in col]
+        interaction_features = [col for col in feature_matrix.columns if 'interaction' in col]
+        
+        logger.info(f"Price Features: {len(price_features)} features")
+        logger.info(f"Volume Features: {len(volume_features)} features")
+        logger.info(f"Technical Indicators: {len(technical_features)} features")
+        logger.info(f"Regime Flags: {len(regime_features)} features")
+        logger.info(f"Lagged Features: {len(lagged_features)} features")
+        logger.info(f"Z-Score Features: {len(zscore_features)} features")
+        logger.info(f"Interaction Features: {len(interaction_features)} features")
+        logger.info(f"Scaler fitted: {hasattr(feature_engineer, 'scaler')}")
+        logger.info(f"Features scaled: {len(feature_matrix.columns)}")
+        
+    except Exception as e:
+        logger.error(f"Feature engineering failed: {e}")
         logger.error("Demo failed at feature engineering step")
         return
     
@@ -393,7 +434,7 @@ def main():
         return
     
     # Step 5: Model Training
-    training_results = demo_model_training(feature_matrix, df_with_labels)
+    training_results = demo_model_training(feature_matrix, df_with_labels, df)
     if training_results is None:
         logger.error("Demo failed at model training step")
         return

@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
 """
-Technical indicators module with leak-safe, vectorized implementations.
+Technical indicators module for cryptocurrency trading analysis.
 """
-import logging
-from typing import Optional, Tuple
 
+import logging
 import numpy as np
 import pandas as pd
+from typing import Dict, List, Optional, Tuple
+import warnings
+warnings.filterwarnings('ignore')
+
+logger = logging.getLogger(__name__)
 
 from .utils import Config
 
@@ -25,10 +30,10 @@ class TechnicalIndicators:
         """Exponential Moving Average."""
         return prices.ewm(span=window).mean()
     
-    def macd(self, prices: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.DataFrame:
-        """Moving Average Convergence Divergence."""
-        ema_fast = self.ema(prices, fast)
-        ema_slow = self.ema(prices, slow)
+    def macd(self, close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9) -> pd.DataFrame:
+        """Calculate MACD (Moving Average Convergence Divergence)."""
+        ema_fast = self.ema(close, fast)
+        ema_slow = self.ema(close, slow)
         macd_line = ema_fast - ema_slow
         signal_line = self.ema(macd_line, signal)
         histogram = macd_line - signal_line
@@ -154,7 +159,7 @@ class TechnicalIndicators:
         
         # Chikou Span (Lagging Span)
         chikou_span = pd.Series(index=high.index, dtype=float)
-        if len(high) > kijun:
+        if len(high.index) > kijun:
             chikou_span.iloc[:-kijun] = high.iloc[kijun:].values
         
         return pd.DataFrame({
@@ -469,152 +474,321 @@ class TechnicalIndicators:
         return close.rolling(window=window).std()
     
     def calculate_all_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Calculate all technical indicators for the given DataFrame."""
-        self.logger.info("Calculating all technical indicators")
+        """Calculate all technical indicators with robust NaN handling."""
+        logger.info("Calculating all technical indicators")
         
+        # Ensure we have the required columns
+        required_cols = ['open', 'high', 'low', 'close', 'volume']
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            raise ValueError(f"Missing required columns: {missing_cols}")
+        
+        # Create a copy to avoid modifying original data
         result_df = df.copy()
         
-        # Extract OHLCV data
-        high = df['high']
-        low = df['low']
+        # CRITICAL FIX: Handle NaN values in input data
+        result_df = result_df.fillna(method='ffill').fillna(method='bfill')
+        
+        # Ensure numeric types
+        for col in ['open', 'high', 'low', 'close', 'volume']:
+            result_df[col] = pd.to_numeric(result_df[col], errors='coerce')
+        
+        # Remove any remaining NaN values
+        result_df = result_df.dropna(subset=['open', 'high', 'low', 'close', 'volume'])
+        
+        if result_df.empty:
+            raise ValueError("No valid data after cleaning")
+        
+        # Calculate indicators with proper error handling
+        try:
+            # Moving averages
+            result_df = self._add_moving_averages(result_df)
+            
+            # MACD
+            result_df = self._add_macd(result_df)
+            
+            # RSI
+            result_df = self._add_rsi(result_df)
+            
+            # Stochastic
+            result_df = self._add_stochastic(result_df)
+            
+            # Bollinger Bands
+            result_df = self._add_bollinger_bands(result_df)
+            
+            # Parabolic SAR
+            result_df = self._add_parabolic_sar(result_df)
+            
+            # Ichimoku
+            result_df = self._add_ichimoku(result_df)
+            
+            # ATR
+            result_df = self._add_atr(result_df)
+            
+            # CCI
+            result_df = self._add_cci(result_df)
+            
+            # ROC
+            result_df = self._add_roc(result_df)
+            
+            # Williams %R
+            result_df = self._add_williams_r(result_df)
+            
+            # Keltner Channels
+            result_df = self._add_keltner_channels(result_df)
+            
+            # SuperTrend
+            result_df = self._add_supertrend(result_df)
+            
+            # DPO
+            result_df = self._add_dpo(result_df)
+            
+            # TRIX
+            result_df = self._add_trix(result_df)
+            
+            # Momentum
+            result_df = self._add_momentum(result_df)
+            
+            # ADX
+            result_df = self._add_adx(result_df)
+            
+            # Volume indicators
+            result_df = self._add_volume_indicators(result_df)
+            
+            # CRITICAL FIX: Handle infinite values
+            result_df = result_df.replace([np.inf, -np.inf], np.nan)
+            
+            # CRITICAL FIX: Fill NaN values with appropriate methods
+            result_df = self._fill_nan_values_appropriately(result_df)
+            
+            # Count new indicators
+            original_cols = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
+            new_indicators = [col for col in result_df.columns if col not in original_cols]
+            
+            logger.info(f"Calculated {len(new_indicators)} technical indicators")
+            
+        except Exception as e:
+            logger.error(f"Error calculating indicators: {e}")
+            raise
+        
+        return result_df
+    
+    def _fill_nan_values_appropriately(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Fill NaN values with appropriate methods based on indicator type."""
+        # For price-based indicators, use forward fill then backward fill
+        price_indicators = ['sma_50', 'sma_200', 'ema_12', 'ema_26', 'ema_50', 'ema_200',
+                           'bb_upper', 'bb_middle', 'bb_lower', 'keltner_upper', 'keltner_middle', 'keltner_lower',
+                           'ichimoku_tenkan_sen', 'ichimoku_kijun_sen', 'ichimoku_senkou_span_a', 'ichimoku_senkou_span_b']
+        
+        # For oscillator indicators, use median
+        oscillator_indicators = ['rsi', 'stoch_k_percent', 'stoch_d_percent', 'cci', 'roc', 'williams_r',
+                               'dpo', 'momentum', 'adx_adx', 'adx_plus_di', 'adx_minus_di']
+        
+        # For volume indicators, use 0
+        volume_indicators = ['obv', 'mfi', 'ad_line', 'chaikin_money_flow', 'vwap', 'chaikin_oscillator',
+                           'eom_emv', 'force_index', 'volume_roc', 'nvi', 'mfv']
+        
+        # Fill price indicators
+        for col in price_indicators:
+            if col in df.columns:
+                df[col] = df[col].fillna(method='ffill').fillna(method='bfill')
+        
+        # Fill oscillator indicators
+        for col in oscillator_indicators:
+            if col in df.columns:
+                median_val = df[col].median()
+                # Ensure median_val is a scalar
+                if isinstance(median_val, pd.Series):
+                    median_val = median_val.iloc[0] if not median_val.empty else 50.0
+                if pd.isna(median_val) or median_val == 0:
+                    median_val = 50.0  # Default neutral value
+                df[col] = df[col].fillna(median_val)
+        
+        # Fill volume indicators
+        for col in volume_indicators:
+            if col in df.columns:
+                df[col] = df[col].fillna(0.0)
+        
+        # Fill remaining NaN values with forward fill
+        df = df.fillna(method='ffill').fillna(method='bfill')
+        
+        return df
+    
+    def _add_moving_averages(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add moving average indicators."""
         close = df['close']
-        open_price = df['open']
-        volume = df['volume']
         
         # SMA indicators
         for window in self.config.indicators["sma"]:
-            result_df[f'sma_{window}'] = self.sma(close, window)
+            df[f'sma_{window}'] = self.sma(close, window)
         
         # EMA indicators
         for window in self.config.indicators["ema"]:
-            result_df[f'ema_{window}'] = self.ema(close, window)
+            df[f'ema_{window}'] = self.ema(close, window)
         
-        # MACD
+        return df
+    
+    def _add_macd(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add MACD indicator."""
+        close = df['close']
         macd_params = self.config.indicators["macd"]
-        macd_result = self.macd(close, macd_params[0], macd_params[1], macd_params[2]).add_prefix('macd_')
-        result_df = pd.concat([result_df, macd_result], axis=1)
-        
-        # RSI
+        macd_result = self.macd(close, macd_params[0], macd_params[1], macd_params[2])
+        return pd.concat([df, macd_result.add_prefix('macd_')], axis=1)
+    
+    def _add_rsi(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add RSI indicator."""
+        close = df['close']
         rsi_params = self.config.indicators["rsi"]
-        result_df['rsi'] = self.rsi(close, rsi_params[0])
-        
-        # Stochastic
+        df['rsi'] = self.rsi(close, rsi_params[0])
+        return df
+    
+    def _add_stochastic(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Stochastic indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         stoch_params = self.config.indicators["stochastic"]
-        stoch_result = self.stochastic(high, low, close, stoch_params[0], stoch_params[1]).add_prefix('stoch_')
-        result_df = pd.concat([result_df, stoch_result], axis=1)
-        
-        # Bollinger Bands
+        stoch_result = self.stochastic(high, low, close, stoch_params[0], stoch_params[1])
+        return pd.concat([df, stoch_result.add_prefix('stoch_')], axis=1)
+    
+    def _add_bollinger_bands(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Bollinger Bands indicator."""
+        close = df['close']
         bb_params = self.config.indicators["bollinger"]
-        bb_result = self.bollinger_bands(close, bb_params[0], bb_params[1]).add_prefix('bb_')
-        result_df = pd.concat([result_df, bb_result], axis=1)
-        
-        # Parabolic SAR
+        bb_result = self.bollinger_bands(close, bb_params[0], bb_params[1])
+        return pd.concat([df, bb_result.add_prefix('bb_')], axis=1)
+    
+    def _add_parabolic_sar(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Parabolic SAR indicator."""
+        high, low = df['high'], df['low']
         psar_params = self.config.indicators["parabolic_sar"]
-        result_df['parabolic_sar'] = self.parabolic_sar(high, low, psar_params[0], psar_params[1])
-        
-        # Ichimoku
+        df['parabolic_sar'] = self.parabolic_sar(high, low, psar_params[0], psar_params[1])
+        return df
+    
+    def _add_ichimoku(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Ichimoku indicator."""
+        high, low = df['high'], df['low']
         ichimoku_params = self.config.indicators["ichimoku"]
-        ichimoku_result = self.ichimoku(high, low, ichimoku_params[0], ichimoku_params[1], ichimoku_params[2]).add_prefix('ichimoku_')
-        result_df = pd.concat([result_df, ichimoku_result], axis=1)
-        
-        # ATR
+        ichimoku_result = self.ichimoku(high, low, ichimoku_params[0], ichimoku_params[1], ichimoku_params[2])
+        return pd.concat([df, ichimoku_result.add_prefix('ichimoku_')], axis=1)
+    
+    def _add_atr(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add ATR indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         atr_params = self.config.indicators["atr"]
-        result_df['atr'] = self.atr(high, low, close, atr_params[0])
-        
-        # CCI
+        df['atr'] = self.atr(high, low, close, atr_params[0])
+        return df
+    
+    def _add_cci(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add CCI indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         cci_params = self.config.indicators["cci"]
-        result_df['cci'] = self.cci(high, low, close, cci_params[0])
-        
-        # ROC
+        df['cci'] = self.cci(high, low, close, cci_params[0])
+        return df
+    
+    def _add_roc(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add ROC indicator."""
+        close = df['close']
         roc_params = self.config.indicators["roc"]
-        result_df['roc'] = self.roc(close, roc_params[0])
-        
-        # Williams %R
+        df['roc'] = self.roc(close, roc_params[0])
+        return df
+    
+    def _add_williams_r(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Williams %R indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         williams_params = self.config.indicators["williams_r"]
-        result_df['williams_r'] = self.williams_r(high, low, close, williams_params[0])
-        
-        # Keltner Channels
+        df['williams_r'] = self.williams_r(high, low, close, williams_params[0])
+        return df
+    
+    def _add_keltner_channels(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Keltner Channels indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         keltner_params = self.config.indicators["keltner"]
-        keltner_result = self.keltner_channels(high, low, close, keltner_params[0], keltner_params[1], keltner_params[2]).add_prefix('keltner_')
-        result_df = pd.concat([result_df, keltner_result], axis=1)
-        
-        # Supertrend
+        keltner_result = self.keltner_channels(high, low, close, keltner_params[0], keltner_params[1], keltner_params[2])
+        return pd.concat([df, keltner_result.add_prefix('keltner_')], axis=1)
+    
+    def _add_supertrend(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add SuperTrend indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         supertrend_params = self.config.indicators["supertrend"]
-        supertrend_result = self.supertrend(high, low, close, supertrend_params[0], supertrend_params[1]).add_prefix('supertrend_')
-        result_df = pd.concat([result_df, supertrend_result], axis=1)
-        
-        # DPO
+        supertrend_result = self.supertrend(high, low, close, supertrend_params[0], supertrend_params[1])
+        return pd.concat([df, supertrend_result.add_prefix('supertrend_')], axis=1)
+    
+    def _add_dpo(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add DPO indicator."""
+        close = df['close']
         dpo_params = self.config.indicators["dpo"]
-        result_df['dpo'] = self.dpo(close, dpo_params[0])
-        
-        # TRIX
+        df['dpo'] = self.dpo(close, dpo_params[0])
+        return df
+    
+    def _add_trix(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add TRIX indicator."""
+        close = df['close']
         trix_params = self.config.indicators["trix"]
-        trix_result = self.trix(close, trix_params[0], trix_params[1]).add_prefix('trix_')
-        result_df = pd.concat([result_df, trix_result], axis=1)
-        
-        # Momentum
+        trix_result = self.trix(close, trix_params[0], trix_params[1])
+        return pd.concat([df, trix_result.add_prefix('trix_')], axis=1)
+    
+    def _add_momentum(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add Momentum indicator."""
+        close = df['close']
         momentum_params = self.config.indicators["momentum"]
-        result_df['momentum'] = self.momentum(close, momentum_params[0])
-        
-        # ADX
+        df['momentum'] = self.momentum(close, momentum_params[0])
+        return df
+    
+    def _add_adx(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add ADX indicator."""
+        high, low, close = df['high'], df['low'], df['close']
         adx_params = self.config.indicators["adx"]
-        adx_result = self.adx(high, low, close, adx_params[0]).add_prefix('adx_')
-        result_df = pd.concat([result_df, adx_result], axis=1)
+        adx_result = self.adx(high, low, close, adx_params[0])
+        return pd.concat([df, adx_result.add_prefix('adx_')], axis=1)
+    
+    def _add_volume_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Add volume-based indicators."""
+        high, low, close, volume = df['high'], df['low'], df['close'], df['volume']
         
         # OBV
-        result_df['obv'] = self.obv(close, volume)
+        df['obv'] = self.obv(close, volume)
         
         # MFI
         mfi_params = self.config.indicators["mfi"]
-        result_df['mfi'] = self.mfi(high, low, close, volume, mfi_params[0])
+        df['mfi'] = self.mfi(high, low, close, volume, mfi_params[0])
         
         # Accumulation/Distribution Line
-        result_df['ad_line'] = self.accumulation_distribution(high, low, close, volume)
+        df['ad_line'] = self.accumulation_distribution(high, low, close, volume)
         
         # Chaikin Money Flow
         cmf_params = self.config.indicators["chaikin_money_flow"]
-        result_df['chaikin_money_flow'] = self.chaikin_money_flow(high, low, close, volume, cmf_params[0])
+        df['chaikin_money_flow'] = self.chaikin_money_flow(high, low, close, volume, cmf_params[0])
         
         # VWAP
         vwap_params = self.config.indicators["vwap"]
-        result_df['vwap'] = self.vwap(high, low, close, volume, reset_daily=True)
+        df['vwap'] = self.vwap(high, low, close, volume, reset_daily=True)
         
         # Chaikin Oscillator
         co_params = self.config.indicators["chaikin_oscillator"]
-        result_df['chaikin_oscillator'] = self.chaikin_oscillator(high, low, close, volume, co_params[0], co_params[1])
+        df['chaikin_oscillator'] = self.chaikin_oscillator(high, low, close, volume, co_params[0], co_params[1])
         
         # Ease of Movement
         eom_params = self.config.indicators["ease_of_movement"]
-        eom_result = self.ease_of_movement(high, low, volume, eom_params[0]).add_prefix('eom_')
-        result_df = pd.concat([result_df, eom_result], axis=1)
+        eom_result = self.ease_of_movement(high, low, volume, eom_params[0])
+        df = pd.concat([df, eom_result.add_prefix('eom_')], axis=1)
         
         # Force Index
         fi_params = self.config.indicators["force_index"]
-        result_df['force_index'] = self.force_index(close, volume, fi_params[0])
+        df['force_index'] = self.force_index(close, volume, fi_params[0])
         
         # Volume ROC
         vroc_params = self.config.indicators["volume_roc"]
-        result_df['volume_roc'] = self.volume_roc(volume, vroc_params[0])
+        df['volume_roc'] = self.volume_roc(volume, vroc_params[0])
         
         # NVI
         nvi_params = self.config.indicators["nvi"]
-        result_df['nvi'] = self.nvi(close, volume, nvi_params[0])
+        df['nvi'] = self.nvi(close, volume, nvi_params[0])
         
         # MFV
         mfv_params = self.config.indicators["mfv"]
-        result_df['mfv'] = self.mfv(high, low, close, volume, mfv_params[0])
+        df['mfv'] = self.mfv(high, low, close, volume, mfv_params[0])
         
         # Close Standard Deviation
         close_std_params = self.config.indicators["close_std"]
-        result_df['close_std'] = self.close_std(close, close_std_params[0])
+        df['close_std'] = self.close_std(close, close_std_params[0])
         
-        # Drop duplicate columns, keeping the last occurrence (the prefixed one)
-        result_df = result_df.loc[:, ~result_df.columns.duplicated(keep='last')]
-        
-        # Count actual new indicators added
-        original_columns = set(df.columns)
-        new_columns = set(result_df.columns) - original_columns
-        indicators_added = len(new_columns)
-        
-        self.logger.info(f"Calculated {indicators_added} technical indicators")
-        return result_df
+        return df

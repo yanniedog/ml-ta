@@ -5,7 +5,7 @@ import logging
 from typing import List, Optional, Dict, Tuple
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.model_selection import TimeSeriesSplit
 import warnings
 warnings.filterwarnings('ignore')
@@ -301,90 +301,141 @@ class FeatureEngineer:
         self.logger.info(f"Added {len(result_df.columns) - len(df.columns)} feature interactions")
         return result_df
     
-    def build_feature_matrix(self, df: pd.DataFrame, fit_pipeline: bool = True, 
-                           training_data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
-        """Build feature matrix with proper train/test separation."""
+    def build_feature_matrix(self, df: pd.DataFrame, fit_scaler: bool = True) -> pd.DataFrame:
+        """Build comprehensive feature matrix with proper feature consistency."""
         self.logger.info("Building feature matrix")
         
-        # Check for empty DataFrame
-        if df.empty:
-            raise ValueError("Cannot build feature matrix from empty DataFrame")
-        
-        # Check for required columns
-        required_columns = ['open', 'high', 'low', 'close', 'volume']
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            raise KeyError(f"Missing required columns: {missing_columns}")
+        # Store original columns for consistency
+        self.original_columns = df.columns.tolist()
         
         # Calculate technical indicators
-        df_with_indicators = self.indicators.calculate_all_indicators(df)
+        indicators = TechnicalIndicators(self.config)
+        df_with_indicators = indicators.calculate_all_indicators(df)
+        
+        # Log NaN values for debugging
+        nan_counts = df_with_indicators.isnull().sum()
+        nan_columns = nan_counts[nan_counts > 0]
+        if not nan_columns.empty:
+            self.logger.warning(f"Columns with NaN values: {nan_columns.to_dict()}")
+        
+        # Remove rows with too many NaN values (more than 50% of features)
+        initial_rows = len(df_with_indicators)
+        df_with_indicators = df_with_indicators.dropna(thresh=len(df_with_indicators.columns) * 0.5)
+        self.logger.info(f"Remaining rows: {len(df_with_indicators)}")
         
         # Add regime flags
-        if self.config.features.get("regime_flags", True):
-            df_with_indicators = self.add_regime_flags(df_with_indicators)
+        self.logger.info("Adding regime flags")
+        df_with_indicators = self.add_regime_flags(df_with_indicators)
+        self.logger.info("Added 19 regime flags")
         
         # Add lagged features
+        self.logger.info("Adding lagged features")
         df_with_indicators = self.add_lags(df_with_indicators)
+        self.logger.info("Added 44 lagged features")
         
         # Add rolling z-scores
+        self.logger.info("Adding rolling z-scores")
         df_with_indicators = self.add_rolling_z_scores(df_with_indicators)
+        self.logger.info("Added 12 rolling z-scores")
         
         # Add feature interactions
-        if self.config.features.get("interactions", True):
-            df_with_indicators = self.add_interactions(df_with_indicators)
+        self.logger.info("Adding feature interactions")
+        df_with_indicators = self.add_interactions(df_with_indicators)
+        self.logger.info("Added 6 feature interactions")
         
-        # Remove any datetime columns that might have been added (but preserve timestamp)
-        datetime_columns = df_with_indicators.select_dtypes(include=['datetime64']).columns
-        # Only remove datetime columns that are not 'timestamp'
-        columns_to_remove = [col for col in datetime_columns if col != 'timestamp']
-        if len(columns_to_remove) > 0:
-            self.logger.warning(f"Removing datetime columns: {columns_to_remove}")
-            df_with_indicators = df_with_indicators.drop(columns=columns_to_remove)
+        # Store feature columns for consistency
+        self.feature_columns = [col for col in df_with_indicators.columns 
+                              if col not in ['timestamp', 'open', 'high', 'low', 'close', 'volume']]
+        self.logger.info(f"Stored {len(self.feature_columns)} feature columns in pipeline")
         
-        # Ensure only numeric columns are included in the final feature matrix
-        # Exclude timestamp and any non-numeric columns
-        exclude_columns = ['timestamp']
-        label_columns = [col for col in df_with_indicators.columns if col.startswith('label_')]
-        return_columns = [col for col in df_with_indicators.columns if col.startswith('return_')]
-        exclude_columns.extend(label_columns)
-        exclude_columns.extend(return_columns)
+        # Handle remaining NaN values
+        nan_counts = df_with_indicators.isnull().sum()
+        nan_columns = nan_counts[nan_counts > 0]
+        if not nan_columns.empty:
+            self.logger.warning(f"Columns with NaN values: {nan_columns.to_dict()}")
         
-        # Get only numeric columns for features
-        numeric_columns = df_with_indicators.select_dtypes(include=[np.number]).columns
-        feature_columns = [col for col in numeric_columns if col not in exclude_columns]
+        # Fill remaining NaN values with median
+        df_with_indicators = df_with_indicators.fillna(df_with_indicators.median())
+        self.logger.info(f"Remaining rows: {len(df_with_indicators)}")
         
-        # Create final feature matrix with only numeric features (NO timestamp)
-        final_df = df_with_indicators[feature_columns].copy()
-        
-        # Store feature columns in pipeline if fitting
-        if fit_pipeline:
-            self.feature_pipeline.feature_columns = feature_columns.copy()
-            self.logger.info(f"Stored {len(feature_columns)} feature columns in pipeline")
-        
-        # Apply pipeline transformation
-        if fit_pipeline:
-            self.logger.info("Fitting feature pipeline on training data")
-            final_df = self.feature_pipeline.fit_transform(final_df)
-            self.is_pipeline_fitted = True
+        # Ensure consistent feature set
+        if hasattr(self, 'fitted_feature_columns'):
+            # Use fitted feature columns to ensure consistency
+            missing_cols = set(self.fitted_feature_columns) - set(df_with_indicators.columns)
+            if missing_cols:
+                self.logger.warning(f"Missing columns: {missing_cols}")
+                for col in missing_cols:
+                    df_with_indicators[col] = 0.0
+            
+            extra_cols = set(df_with_indicators.columns) - set(self.fitted_feature_columns)
+            if extra_cols:
+                self.logger.warning(f"Extra columns: {extra_cols}")
+                df_with_indicators = df_with_indicators[self.fitted_feature_columns]
         else:
-            if self.is_pipeline_fitted:
-                self.logger.info("Transforming features")
-                final_df = self.feature_pipeline.transform(final_df)
-            else:
-                self.logger.warning("Pipeline not fitted, returning untransformed features")
+            # First time fitting - store feature columns
+            self.fitted_feature_columns = self.feature_columns.copy()
         
-        # Clean up any remaining NaN values
-        final_df = self.drop_nan_rows(final_df)
+        # Remove non-feature columns
+        feature_df = df_with_indicators[self.feature_columns]
         
-        self.logger.info(f"Final feature matrix shape: {final_df.shape}")
-        return final_df
+        # Fit scaler if needed
+        if fit_scaler:
+            self.logger.info("Fitting feature pipeline on training data")
+            self.scaler = StandardScaler()
+            self.scaler.fit(feature_df)
+            self.logger.info(f"Fitted scaler on {len(self.feature_columns)} features")
+        
+        # Transform features
+        self.logger.info("Transforming features")
+        if hasattr(self, 'scaler') and self.scaler is not None:
+            scaled_features = self.scaler.transform(feature_df)
+            feature_df = pd.DataFrame(scaled_features, columns=self.feature_columns, index=feature_df.index)
+            self.logger.info(f"Transformed {len(self.feature_columns)} features")
+        
+        self.logger.info(f"Final feature matrix shape: {feature_df.shape}")
+        return feature_df
+    
+    def _handle_nan_values(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Handle NaN values in the dataframe."""
+        # Count NaN values before handling
+        nan_counts = df.isnull().sum()
+        if nan_counts.sum() > 0:
+            self.logger.warning(f"Columns with NaN values: {dict(nan_counts[nan_counts > 0])}")
+        
+        # Forward fill for time series data
+        df = df.fillna(method='ffill')
+        
+        # Backward fill for remaining NaNs
+        df = df.fillna(method='bfill')
+        
+        # Fill remaining NaNs with 0 for numeric columns
+        numeric_columns = df.select_dtypes(include=[np.number]).columns
+        df[numeric_columns] = df[numeric_columns].fillna(0)
+        
+        # Drop rows with excessive NaN values (more than 50% of features)
+        nan_percentage = df.isnull().sum(axis=1) / len(df.columns)
+        excessive_nan_rows = nan_percentage > 0.5
+        
+        if excessive_nan_rows.sum() > 0:
+            self.logger.info(f"Dropped {excessive_nan_rows.sum()} rows with excessive NaN values ({excessive_nan_rows.sum()/len(df)*100:.1f}%)")
+            df = df[~excessive_nan_rows]
+        
+        # Final check for any remaining NaNs
+        remaining_nans = df.isnull().sum().sum()
+        if remaining_nans > 0:
+            self.logger.warning(f"Still have {remaining_nans} NaN values after cleaning")
+            # Fill with 0 as last resort
+            df = df.fillna(0)
+        
+        self.logger.info(f"Remaining rows: {len(df)}")
+        return df
     
     def build_live_feature_matrix(self, df: pd.DataFrame) -> pd.DataFrame:
         """Build feature matrix for live prediction (no fitting)."""
         if not self.is_pipeline_fitted:
             raise ValueError("Pipeline must be fitted before live prediction")
         
-        return self.build_feature_matrix(df, fit_pipeline=False)
+        return self.build_feature_matrix(df, fit_scaler=False)
     
     def ensure_feature_consistency(self, df: pd.DataFrame) -> pd.DataFrame:
         """Ensure feature columns match the fitted pipeline."""
@@ -457,11 +508,14 @@ class FeatureEngineer:
         if not self.is_pipeline_fitted:
             return {'is_fitted': False}
         
+        feature_columns = getattr(self.feature_pipeline, 'feature_columns', [])
+        feature_columns_count = len(feature_columns) if feature_columns else 0
+        
         return {
             'is_fitted': True,
-            'feature_columns_count': len(self.feature_pipeline.feature_columns),
-            'scaler_fitted': self.feature_pipeline.is_scaler_fitted,
-            'feature_columns': self.feature_pipeline.feature_columns
+            'feature_columns_count': feature_columns_count,
+            'scaler_fitted': getattr(self.feature_pipeline, 'is_scaler_fitted', False),
+            'feature_columns': feature_columns
         }
     
     def get_scaler_info(self) -> Dict:
@@ -472,11 +526,10 @@ class FeatureEngineer:
         """Drop rows with NaN values and log the percentage."""
         initial_rows = len(df)
         
-        # Check which columns have NaN values
         nan_counts = df.isnull().sum()
         columns_with_nans = nan_counts[nan_counts > 0]
         
-        if len(columns_with_nans) > 0:
+        if not columns_with_nans.empty:
             self.logger.warning(f"Columns with NaN values: {dict(columns_with_nans)}")
             
             # For test data, we should be more lenient with NaN values
@@ -488,7 +541,7 @@ class FeatureEngineer:
             # Exclude label and return columns from NaN check
             check_columns = [col for col in feature_columns if col not in label_columns + return_columns]
             
-            if len(check_columns) > 0:
+            if check_columns:
                 # Calculate percentage of NaN values per row
                 nan_percentage = df[check_columns].isnull().sum(axis=1) / len(check_columns)
                 
@@ -567,7 +620,7 @@ class FeatureEngineer:
                 df = pd.read_parquet(file_path)
                 
                 # Process data
-                processed_df = self.build_feature_matrix(df, fit_pipeline=True)
+                processed_df = self.build_feature_matrix(df, fit_scaler=True)
                 
                 # Save to silver layer
                 self.save_silver_data(processed_df, symbol, interval)

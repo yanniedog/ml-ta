@@ -97,61 +97,69 @@ class AdvancedModelTrainer:
         
         def objective(trial):
             try:
-                # LightGBM parameters with stronger regularization to prevent overfitting
-                lgb_params = {
-                    'num_leaves': trial.suggest_int('num_leaves', 10, 100),
-                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3),
-                    'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
-                    'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
+                # LightGBM parameters with MUCH STRONGER regularization to prevent overfitting
+                params = {
+                    'objective': 'binary',
+                    'metric': 'binary_logloss',
+                    'boosting_type': 'gbdt',
+                    'num_leaves': trial.suggest_int('num_leaves', 10, 50),  # Reduced from 100+
+                    'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1),  # Reduced max
+                    'feature_fraction': trial.suggest_float('feature_fraction', 0.3, 0.8),
+                    'bagging_fraction': trial.suggest_float('bagging_fraction', 0.3, 0.8),
                     'bagging_freq': trial.suggest_int('bagging_freq', 1, 10),
-                    'min_child_samples': trial.suggest_int('min_child_samples', 5, 50),
-                    'reg_alpha': trial.suggest_float('reg_alpha', 1e-8, 10.0, log=True),
-                    'reg_lambda': trial.suggest_float('reg_lambda', 1e-8, 10.0, log=True),
-                    # Add stronger regularization
-                    'min_data_in_leaf': trial.suggest_int('min_data_in_leaf', 10, 100),
-                    'max_depth': trial.suggest_int('max_depth', 3, 10),
-                    'subsample': trial.suggest_float('subsample', 0.6, 1.0),
-                    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
+                    'min_child_samples': trial.suggest_int('min_child_samples', 20, 100),  # Increased min
+                    'min_child_weight': trial.suggest_float('min_child_weight', 0.001, 0.1),
+                    'reg_alpha': trial.suggest_float('reg_alpha', 0.01, 1.0),  # L1 regularization
+                    'reg_lambda': trial.suggest_float('reg_lambda', 0.01, 1.0),  # L2 regularization
+                    'subsample': trial.suggest_float('subsample', 0.5, 0.9),
+                    'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 0.9),
+                    'max_depth': trial.suggest_int('max_depth', 3, 8),  # Reduced max depth
+                    'min_split_gain': trial.suggest_float('min_split_gain', 0.0, 0.1),
                     'early_stopping_rounds': 50,
-                    'verbose': -1
+                    'verbose': -1,
+                    'random_state': 42
                 }
                 
-                # Use TimeSeriesSplit for proper validation
+                # Use TimeSeriesSplit for proper time series validation
                 tscv = TimeSeriesSplit(n_splits=3)
                 scores = []
                 
                 for train_idx, val_idx in tscv.split(X_clean):
-                    X_train_fold, X_val_fold = X_clean.iloc[train_idx], X_clean.iloc[val_idx]
-                    y_train_fold, y_val_fold = y.iloc[train_idx], y.iloc[val_idx]
+                    X_train_fold = X_clean.iloc[train_idx]
+                    y_train_fold = y.iloc[train_idx]
+                    X_val_fold = X_clean.iloc[val_idx]
+                    y_val_fold = y.iloc[val_idx]
+                    
+                    # Create dataset
+                    train_data = lgb.Dataset(X_train_fold, label=y_train_fold)
+                    val_data = lgb.Dataset(X_val_fold, label=y_val_fold, reference=train_data)
                     
                     # Train model
-                    model = lgb.LGBMClassifier(**lgb_params, random_state=42)
-                    model.fit(X_train_fold, y_train_fold, 
-                            eval_set=[(X_val_fold, y_val_fold)],
-                            callbacks=[lgb.early_stopping(50), lgb.log_evaluation(0)])
+                    model = lgb.train(
+                        params,
+                        train_data,
+                        valid_sets=[val_data],
+                        num_boost_round=100,  # Reduced from 1000+
+                        callbacks=[lgb.early_stopping(50), lgb.log_evaluation(0)]
+                    )
                     
-                    # Predict
-                    y_pred_proba = model.predict_proba(X_val_fold)[:, 1]
-                    
-                    # Calculate ROC AUC (better for imbalanced data)
-                    try:
-                        score = roc_auc_score(y_val_fold, y_pred_proba)
-                        scores.append(score)
-                    except:
-                        scores.append(0.5)  # Default score for edge cases
+                    # Predict and calculate score
+                    y_pred = model.predict(X_val_fold)
+                    score = roc_auc_score(y_val_fold, y_pred)
+                    scores.append(score)
                 
-                # Return mean score
                 return np.mean(scores)
                 
             except Exception as e:
-                logger.warning(f"Trial failed: {e}")
-                return 0.5  # Return default score for failed trials
+                logger.error(f"Error in hyperparameter optimization: {e}")
+                return 0.0
         
+        # Run optimization
         study = optuna.create_study(direction='maximize')
         study.optimize(objective, n_trials=n_trials)
         
-        logger.info(f"Best hyperparameters found: {study.best_params}")
-        logger.info(f"Best CV score: {study.best_value:.4f}")
+        logger.info(f"Best hyperparameters: {study.best_params}")
+        logger.info(f"Best score: {study.best_value:.4f}")
         
         return study.best_params
     
@@ -368,37 +376,56 @@ class LightGBMModel:
     def train_model(self, X_train: pd.DataFrame, y_train: pd.Series, 
                    X_val: pd.DataFrame, y_val: pd.Series,
                    task_type: str = "classification") -> lgb.LGBMClassifier:
-        """Train LightGBM model with proper validation."""
+        """Train LightGBM model with proper validation and anti-overfitting measures."""
         self.logger.info("Training LightGBM model")
         
-        # Model parameters
+        # CRITICAL FIX: Anti-overfitting parameters
         params = {
             'objective': 'binary' if task_type == "classification" else 'regression',
             'metric': 'binary_logloss' if task_type == "classification" else 'rmse',
             'boosting_type': 'gbdt',
-            'num_leaves': 64,
-            'learning_rate': 0.03,
-            'n_estimators': 1200,
-            'subsample': 0.8,
-            'colsample_bytree': 0.8,
-            'reg_alpha': 1,
-            'reg_lambda': 3,
-            'early_stopping_rounds': 100,
+            # CRITICAL: Reduce model complexity to prevent overfitting
+            'num_leaves': 31,  # Reduced from 64
+            'learning_rate': 0.01,  # Reduced from 0.03
+            'n_estimators': 500,  # Reduced from 1200
+            'subsample': 0.7,  # Reduced from 0.8
+            'colsample_bytree': 0.7,  # Reduced from 0.8
+            # CRITICAL: Increase regularization
+            'reg_alpha': 5,  # Increased from 1
+            'reg_lambda': 10,  # Increased from 3
+            'min_child_samples': 20,  # Added to prevent overfitting
+            'min_child_weight': 1,  # Added to prevent overfitting
+            'early_stopping_rounds': 50,  # Reduced from 100
             'verbose': -1,
             'random_state': 42
         }
         
-        # Create dataset
-        train_data = lgb.Dataset(X_train, label=y_train)
-        val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
+        # CRITICAL: Use scikit-learn compatible classifier
+        self.model = lgb.LGBMClassifier(**params)
         
-        # Train model
-        self.model = lgb.train(
-            params,
-            train_data,
-            valid_sets=[val_data],
-            callbacks=[lgb.log_evaluation(0)]
+        # CRITICAL: Add validation set for early stopping
+        eval_set = [(X_val, y_val)] if len(X_val) > 0 else None
+        
+        # Train with validation
+        self.model.fit(
+            X_train, y_train,
+            eval_set=eval_set,
+            callbacks=[lgb.early_stopping(50), lgb.log_evaluation(0)]
         )
+        
+        # CRITICAL: Validate model performance
+        train_pred = self.model.predict(X_train)
+        val_pred = self.model.predict(X_val)
+        
+        train_acc = accuracy_score(y_train, train_pred)
+        val_acc = accuracy_score(y_val, val_pred)
+        
+        self.logger.info(f"Train accuracy: {train_acc:.4f}")
+        self.logger.info(f"Validation accuracy: {val_acc:.4f}")
+        
+        # CRITICAL: Check for overfitting
+        if train_acc - val_acc > 0.1:  # More than 10% difference indicates overfitting
+            self.logger.warning(f"POTENTIAL OVERFITTING DETECTED: Train acc {train_acc:.4f} vs Val acc {val_acc:.4f}")
         
         self.is_trained = True
         self.logger.info("LightGBM model training completed")
@@ -411,21 +438,21 @@ class LightGBMModel:
         if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        predictions = self.model.predict(X_test)
-        
         if task_type == "classification":
-            # Convert probabilities to binary predictions
-            binary_predictions = (predictions > 0.5).astype(int)
+            # Get probability predictions for ROC AUC
+            proba_predictions = self.model.predict_proba(X_test)[:, 1]
+            binary_predictions = self.model.predict(X_test)
             
             metrics = {
                 'accuracy': accuracy_score(y_test, binary_predictions),
-                'roc_auc': roc_auc_score(y_test, predictions),
+                'roc_auc': roc_auc_score(y_test, proba_predictions),
                 'precision': precision_score(y_test, binary_predictions),
                 'recall': recall_score(y_test, binary_predictions),
                 'f1': f1_score(y_test, binary_predictions)
             }
         else:
             # Regression metrics
+            predictions = self.model.predict(X_test)
             from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
             metrics = {
                 'rmse': np.sqrt(mean_squared_error(y_test, predictions)),
@@ -440,12 +467,33 @@ class LightGBMModel:
         """Cross-validate model using TimeSeriesSplit."""
         tscv = TimeSeriesSplit(n_splits=cv_folds)
         
+        # Create a model without early stopping for CV
+        params = {
+            'objective': 'binary' if task_type == "classification" else 'regression',
+            'metric': 'binary_logloss' if task_type == "classification" else 'rmse',
+            'boosting_type': 'gbdt',
+            'num_leaves': 64,
+            'learning_rate': 0.03,
+            'n_estimators': 100,  # Reduced for CV
+            'subsample': 0.8,
+            'colsample_bytree': 0.8,
+            'reg_alpha': 1,
+            'reg_lambda': 3,
+            'verbose': -1,
+            'random_state': 42
+        }
+        
+        if task_type == "classification":
+            cv_model = lgb.LGBMClassifier(**params)
+        else:
+            cv_model = lgb.LGBMRegressor(**params)
+        
         cv_scores = {
-            'accuracy': cross_val_score(self.model, X, y, cv=tscv, scoring='accuracy'),
-            'roc_auc': cross_val_score(self.model, X, y, cv=tscv, scoring='roc_auc'),
-            'precision': cross_val_score(self.model, X, y, cv=tscv, scoring='precision'),
-            'recall': cross_val_score(self.model, X, y, cv=tscv, scoring='recall'),
-            'f1': cross_val_score(self.model, X, y, cv=tscv, scoring='f1')
+            'accuracy': cross_val_score(cv_model, X, y, cv=tscv, scoring='accuracy'),
+            'roc_auc': cross_val_score(cv_model, X, y, cv=tscv, scoring='roc_auc'),
+            'precision': cross_val_score(cv_model, X, y, cv=tscv, scoring='precision'),
+            'recall': cross_val_score(cv_model, X, y, cv=tscv, scoring='recall'),
+            'f1': cross_val_score(cv_model, X, y, cv=tscv, scoring='f1')
         }
         
         return cv_scores
@@ -482,8 +530,17 @@ class LightGBMModel:
         if self.model is None:
             return pd.DataFrame()
         
-        importance = self.model.feature_importance(importance_type='gain')
-        feature_names = self.model.feature_name()
+        importance = self.model.feature_importances_
+        
+        # Handle different LightGBM versions
+        try:
+            feature_names = self.model.feature_name_in
+        except AttributeError:
+            try:
+                feature_names = self.model.feature_name
+            except AttributeError:
+                # Fallback to generic feature names
+                feature_names = [f'feature_{i}' for i in range(len(importance))]
         
         feature_importance = pd.DataFrame({
             'feature': feature_names,
@@ -504,19 +561,21 @@ class LightGBMModel:
         if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        return self.model.predict(X)
+        return self.model.predict_proba(X)
     
     def save_model(self, filepath: str) -> None:
         """Save trained model."""
         if not self.is_trained:
             raise ValueError("Model not trained yet")
         
-        self.model.save_model(filepath)
+        import joblib
+        joblib.dump(self.model, filepath)
         self.logger.info(f"Model saved to {filepath}")
     
     def load_model(self, filepath: str, task_type: str = "classification") -> None:
         """Load trained model."""
-        self.model = lgb.Booster(model_file=filepath)
+        import joblib
+        self.model = joblib.load(filepath)
         self.is_trained = True
         self.logger.info(f"Model loaded from {filepath}")
 
@@ -547,6 +606,18 @@ class ModelTrainer:
         test_df = df.iloc[split_idx:]
         
         self.logger.info(f"Train set: {len(train_df)}, Test set: {len(test_df)}")
+        
+        # CRITICAL FIX: Ensure training data has all required columns
+        required_columns = ['open', 'high', 'low', 'close', 'volume']
+        missing_columns = [col for col in required_columns if col not in train_df.columns]
+        if missing_columns:
+            self.logger.error(f"Missing required columns in training data: {missing_columns}")
+            # Try to get original data from the combined dataset
+            if hasattr(self, 'original_data') and self.original_data is not None:
+                train_df = self.original_data.iloc[:len(train_df)]
+                self.logger.info("Using original data for training")
+            else:
+                raise ValueError(f"Training data missing required columns: {missing_columns}")
         
         # Build features for training data
         X_train = feature_engineer.build_feature_matrix(train_df, fit_pipeline=True)
